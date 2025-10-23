@@ -743,12 +743,18 @@
                 ⚠️ 請切換到英文輸入法！目前輸入的不是英文字符，請按 Shift 或點擊輸入法切換到英文模式。
             </div>
             
+            <div class="input-warning" id="uppercaseWarning">
+                💡 需要大寫字母！<br>
+                方法1：按下 Caps Lock 切換所有大小寫<br>
+                方法2：按住 Shift + 小寫字母 = 大寫字母
+            </div>
+            
             <div class="text-display" id="textDisplay">
                 點擊「開始練習」開始打字練習！
             </div>
             
             <div class="input-area">
-                <input type="text" class="typing-input" id="typingInput" placeholder="點擊這裡這裡開始 或按下空白鍵開始 -  有|閃爍後 才能開始打字" disabled>
+                <input type="text" class="typing-input" id="typingInput" placeholder="按下空白鍵開始或按下右上角開始練習 -  有|閃爍後 才能開始打字" disabled>
             </div>
             
             <div class="keyboard">
@@ -769,68 +775,68 @@
                     </div>
                 </div>
                 <div class="keyboard-row">
-                    <div class="key" data-key="`">~<br>`</div>
-                    <div class="key" data-key="1">!<br>1</div>
-                    <div class="key" data-key="2">@<br>2</div>
-                    <div class="key" data-key="3">#<br>3</div>
-                    <div class="key" data-key="4">$<br>4</div>
-                    <div class="key" data-key="5">%<br>5</div>
-                    <div class="key" data-key="6">^<br>6</div>
-                    <div class="key" data-key="7">&<br>7</div>
-                    <div class="key" data-key="8">*<br>8</div>
-                    <div class="key" data-key="9">(<br>9</div>
-                    <div class="key" data-key="0">)<br>0</div>
-                    <div class="key" data-key="-">_<br>-</div>
-                    <div class="key" data-key="=">+<br>=</div>
+                    <div class="key" data-key="`">~<br>`<br><small>小</small></div>
+                    <div class="key" data-key="1">!<br>1<br><small>小</small></div>
+                    <div class="key" data-key="2">@<br>2<br><small>無</small></div>
+                    <div class="key" data-key="3">#<br>3<br><small>中</small></div>
+                    <div class="key" data-key="4">$<br>4<br><small>食</small></div>
+                    <div class="key" data-key="5">%<br>5<br><small>食</small></div>
+                    <div class="key" data-key="6">^<br>6<br><small>食</small></div>
+                    <div class="key" data-key="7">&<br>7<br><small>食</small></div>
+                    <div class="key" data-key="8">*<br>8<br><small>中</small></div>
+                    <div class="key" data-key="9">(<br>9<br><small>無</small></div>
+                    <div class="key" data-key="0">)<br>0<br><small>小</small></div>
+                    <div class="key" data-key="-">_<br>-<br><small>小</small></div>
+                    <div class="key" data-key="=">+<br>=<br><small>小</small></div>
                     <div class="key wide" data-key="Backspace">⌫</div>
                 </div>
                 <div class="keyboard-row">
                     <div class="key wide" data-key="Tab">Tab</div>
-                    <div class="key" data-key="q">Q</div>
-                    <div class="key" data-key="w">W</div>
-                    <div class="key" data-key="e">E</div>
-                    <div class="key" data-key="r">R</div>
-                    <div class="key" data-key="t">T</div>
-                    <div class="key" data-key="y">Y</div>
-                    <div class="key" data-key="u">U</div>
-                    <div class="key" data-key="i">I</div>
-                    <div class="key" data-key="o">O</div>
-                    <div class="key" data-key="p">P</div>
-                    <div class="key" data-key="[">{<br>[</div>
-                    <div class="key" data-key="]">}<br>]</div>
+                    <div class="key" data-key="q">Q<br><small>小</small></div>
+                    <div class="key" data-key="w">W<br><small>無</small></div>
+                    <div class="key" data-key="e">E<br><small>中</small></div>
+                    <div class="key" data-key="r">R<br><small>食</small></div>
+                    <div class="key" data-key="t">T<br><small>食</small></div>
+                    <div class="key" data-key="y">Y<br><small>食</small></div>
+                    <div class="key" data-key="u">U<br><small>食</small></div>
+                    <div class="key" data-key="i">I<br><small>中</small></div>
+                    <div class="key" data-key="o">O<br><small>無</small></div>
+                    <div class="key" data-key="p">P<br><small>小</small></div>
+                    <div class="key" data-key="[">{<br>[<br><small>小</small></div>
+                    <div class="key" data-key="]">}<br>]<br><small>小</small></div>
                     <div class="key wide" data-key="\\">|<br>\</div>
                 </div>
                 <div class="keyboard-row">
                     <div class="key wide" data-key="CapsLock">Caps</div>
-                    <div class="key" data-key="a">A</div>
-                    <div class="key" data-key="s">S</div>
-                    <div class="key" data-key="d">D</div>
-                    <div class="key" data-key="f">F</div>
-                    <div class="key" data-key="g">G</div>
-                    <div class="key" data-key="h">H</div>
-                    <div class="key" data-key="j">J</div>
-                    <div class="key" data-key="k">K</div>
-                    <div class="key" data-key="l">L</div>
-                    <div class="key" data-key=";">:<br>;</div>
-                    <div class="key" data-key="'">"<br>'</div>
+                    <div class="key" data-key="a">A<br><small>小</small></div>
+                    <div class="key" data-key="s">S<br><small>無</small></div>
+                    <div class="key" data-key="d">D<br><small>中</small></div>
+                    <div class="key" data-key="f">F<br><small>食</small></div>
+                    <div class="key" data-key="g">G<br><small>食</small></div>
+                    <div class="key" data-key="h">H<br><small>食</small></div>
+                    <div class="key" data-key="j">J<br><small>食</small></div>
+                    <div class="key" data-key="k">K<br><small>中</small></div>
+                    <div class="key" data-key="l">L<br><small>無</small></div>
+                    <div class="key" data-key=";">:<br>;<br><small>小</small></div>
+                    <div class="key" data-key="'">"<br>'<br><small>小</small></div>
                     <div class="key wide" data-key="Enter">Enter</div>
                 </div>
                 <div class="keyboard-row">
                     <div class="key wide" data-key="Shift">Shift</div>
-                    <div class="key" data-key="z">Z</div>
-                    <div class="key" data-key="x">X</div>
-                    <div class="key" data-key="c">C</div>
-                    <div class="key" data-key="v">V</div>
-                    <div class="key" data-key="b">B</div>
-                    <div class="key" data-key="n">N</div>
-                    <div class="key" data-key="m">M</div>
-                    <div class="key" data-key=","><br>,</div>
-                    <div class="key" data-key=".">><br>.</div>
-                    <div class="key" data-key="/">?<br>/</div>
+                    <div class="key" data-key="z">Z<br><small>小</small></div>
+                    <div class="key" data-key="x">X<br><small>無</small></div>
+                    <div class="key" data-key="c">C<br><small>中</small></div>
+                    <div class="key" data-key="v">V<br><small>食</small></div>
+                    <div class="key" data-key="b">B<br><small>食</small></div>
+                    <div class="key" data-key="n">N<br><small>食</small></div>
+                    <div class="key" data-key="m">M<br><small>食</small></div>
+                    <div class="key" data-key=","><br>,<br><small>中</small></div>
+                    <div class="key" data-key=".">><br>.<br><small>無</small></div>
+                    <div class="key" data-key="/">?<br>/<br><small>小</small></div>
                     <div class="key wide" data-key="Shift">Shift</div>
                 </div>
                 <div class="keyboard-row">
-                    <div class="key space" data-key=" ">Space</div>
+                    <div class="key space" data-key=" ">Space<br><small>拇</small></div>
                 </div>
             </div>
             
@@ -914,6 +920,20 @@
             ' ': 'left-thumb'
         };
 
+        // Special characters that require Shift key
+        const shiftCharMapping = {
+            '!': '1', '@': '2', '#': '3', '$': '4', '%': '5',
+            '^': '6', '&': '7', '*': '8', '(': '9', ')': '0',
+            '_': '-', '+': '=', '~': '`',
+            'Q': 'q', 'W': 'w', 'E': 'e', 'R': 'r', 'T': 't',
+            'Y': 'y', 'U': 'u', 'I': 'i', 'O': 'o', 'P': 'p',
+            '{': '[', '}': ']', '|': '\\',
+            'A': 'a', 'S': 's', 'D': 'd', 'F': 'f', 'G': 'g',
+            'H': 'h', 'J': 'j', 'K': 'k', 'L': 'l', ':': ';', '"': "'",
+            'Z': 'z', 'X': 'x', 'C': 'c', 'V': 'v', 'B': 'b',
+            'N': 'n', 'M': 'm', '<': ',', '>': '.', '?': '/'
+        };
+
         const lessons = [
             {
                 title: "01 基礎鍵位練習(中排字母)",
@@ -987,7 +1007,7 @@
             }
         ];
         
-        let currentLesson = 0;
+        let currentLesson = -1;
         let currentText = '';
         let currentIndex = 0;
         let startTime = null;
@@ -1254,6 +1274,7 @@
             
             textDisplay.innerHTML = '點擊「開始練習」開始打字練習！';
             inputWarning.classList.remove('show');
+            document.getElementById('uppercaseWarning').classList.remove('show');
             
             document.querySelectorAll('.key.next').forEach(key => {
                 key.classList.remove('next');
@@ -1277,6 +1298,31 @@
             } else {
                 inputWarning.classList.remove('show');
                 return true;
+            }
+        }
+        
+        function checkUppercaseNeeded() {
+            const uppercaseWarning = document.getElementById('uppercaseWarning');
+            
+            if (currentIndex < currentText.length && currentIndex < typingInput.value.length) {
+                const expectedChar = currentText[currentIndex];
+                const typedChar = typingInput.value[currentIndex];
+                
+                // Check if we expect uppercase but got lowercase
+                if (expectedChar && typedChar && 
+                    expectedChar === expectedChar.toUpperCase() && 
+                    expectedChar !== expectedChar.toLowerCase() && // It's a letter
+                    typedChar === expectedChar.toLowerCase()) {
+                    
+                    uppercaseWarning.classList.add('show');
+                    return true;
+                } else {
+                    uppercaseWarning.classList.remove('show');
+                    return false;
+                }
+            } else {
+                uppercaseWarning.classList.remove('show');
+                return false;
             }
         }
         
@@ -1314,26 +1360,34 @@
                 finger.classList.remove('active');
             });
             
-            // Remove previous finger highlighting
-            document.querySelectorAll('.finger.active').forEach(finger => {
-                finger.classList.remove('active');
-            });
-            
             if (currentIndex < currentText.length) {
-                const nextChar = currentText[currentIndex].toLowerCase();
+                const nextChar = currentText[currentIndex];
                 let keyToHighlight = nextChar;
+                let needsShift = false;
                 
-                if (nextChar === ' ') {
+                // Check if this character requires Shift
+                if (shiftCharMapping[nextChar]) {
+                    keyToHighlight = shiftCharMapping[nextChar];
+                    needsShift = true;
+                    
+                    // Highlight Shift key
+                    const shiftKeys = document.querySelectorAll('[data-key="Shift"]');
+                    shiftKeys.forEach(shiftKey => {
+                        shiftKey.classList.add('next');
+                    });
+                } else if (nextChar === ' ') {
                     keyToHighlight = ' ';
+                } else {
+                    keyToHighlight = nextChar.toLowerCase();
                 }
                 
-                // Highlight the key
+                // Highlight the main key
                 const keyElement = document.querySelector(`[data-key="${keyToHighlight}"]`);
                 if (keyElement) {
                     keyElement.classList.add('next');
                 }
                 
-                // Highlight the corresponding finger
+                // Highlight the corresponding finger(s)
                 const fingerToUse = fingerMapping[keyToHighlight];
                 if (fingerToUse) {
                     const fingerElement = document.querySelector(`[data-finger="${fingerToUse}"]`);
@@ -1341,25 +1395,37 @@
                         fingerElement.classList.add('active');
                     }
                 }
+                
+                // If Shift is needed, also highlight the opposite pinky for Shift
+                if (needsShift) {
+                    // Determine which Shift key to use based on the main key's finger
+                    const mainFinger = fingerMapping[keyToHighlight];
+                    let shiftFinger = '';
+                    
+                    if (mainFinger && mainFinger.startsWith('left')) {
+                        shiftFinger = 'right-pinky'; // Use right Shift for left hand keys
+                    } else {
+                        shiftFinger = 'left-pinky'; // Use left Shift for right hand keys
+                    }
+                    
+                    const shiftFingerElement = document.querySelector(`[data-finger="${shiftFinger}"]`);
+                    if (shiftFingerElement) {
+                        shiftFingerElement.classList.add('active');
+                    }
+                }
             }
         }
         
         // Event listeners
         typingInput.addEventListener('click', function(e) {
-            console.log('Input clicked!', {
-                disabled: typingInput.disabled,
-                gamePageVisible: gamePage.style.display === 'block',
-                currentLesson: currentLesson,
-                hasLesson: lessons[currentLesson] !== undefined
-            });
-            
-            if (typingInput.disabled && gamePage.style.display === 'block' && lessons[currentLesson]) {
+            // Simple check: if input is disabled and we have a lesson selected
+            if (typingInput.disabled && currentLesson !== -1) {
                 startLesson();
             }
         });
         
         document.addEventListener('keydown', function(e) {
-            if (e.code === 'Space' && typingInput.disabled && lessons[currentLesson] && gamePage.style.display === 'block') {
+            if (e.code === 'Space' && typingInput.disabled && currentLesson !== -1) {
                 e.preventDefault();
                 startLesson();
                 return;
@@ -1396,6 +1462,7 @@
             
             displayText();
             highlightNextKey();
+            checkUppercaseNeeded(); // Check if uppercase hint is needed
             updateStats();
             
             if (typed === currentText) {
@@ -1436,5 +1503,5 @@
         // Initialize
         initHomepage();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992f944c07718098',t:'MTc2MTIwNTE1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992fa78965aa8098',t:'MTc2MTIwNTk0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
