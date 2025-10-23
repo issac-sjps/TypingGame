@@ -226,7 +226,7 @@
             font-size: 1.2rem;
             line-height: 1.5;
             margin-bottom: 12px;
-            min-height: 60px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -374,6 +374,7 @@
             min-width: max(35px, 3.5vw);
             height: max(35px, 3.5vw);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-weight: bold;
@@ -382,6 +383,19 @@
             cursor: pointer;
             flex: 1;
             max-width: 4.5vw;
+        }
+        
+        .key-letter {
+            font-size: max(0.9rem, min(1.1rem, 1.2vw));
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        .finger-hint {
+            font-size: max(0.4rem, min(0.5rem, 0.6vw));
+            opacity: 0.7;
+            margin-top: 2px;
+            line-height: 1;
         }
         
         .key:hover {
@@ -629,23 +643,30 @@
         }
         
         .modal-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
             margin-top: 25px;
+        }
+        
+        .modal-button-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         
         .modal-btn {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
             border: none;
-            padding: 15px 25px;
-            border-radius: 25px;
-            font-size: 1.1rem;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            min-width: 120px;
+            max-width: 150px;
         }
         
         .modal-btn:hover {
@@ -705,9 +726,11 @@
         
         <!-- Game Page -->
         <div class="game-page" id="gamePage">
-            <button class="back-button" onclick="goToHomepage()">← 返回關卡選擇</button>
-            <div style="text-align: center; margin-bottom: 10px; font-size: 0.9rem; opacity: 0.8;">
-                💡 按下 F11 可以變成全螢幕模式，再按一下 F11 關閉全螢幕模式
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <button class="back-button" onclick="goToHomepage()" style="margin-bottom: 0;">← 返回關卡選擇</button>
+                <div style="font-size: 0.8rem; opacity: 0.7;">
+                    💡 按下 F11 可以變成全螢幕模式，再按一下 F11 關閉全螢幕模式
+                </div>
             </div>
             
             <div class="lesson-stats-row">
@@ -792,51 +815,51 @@
                 </div>
                 <div class="keyboard-row">
                     <div class="key wide" data-key="Tab">Tab</div>
-                    <div class="key" data-key="q">Q<br><small>小</small></div>
-                    <div class="key" data-key="w">W<br><small>無</small></div>
-                    <div class="key" data-key="e">E<br><small>中</small></div>
-                    <div class="key" data-key="r">R<br><small>食</small></div>
-                    <div class="key" data-key="t">T<br><small>食</small></div>
-                    <div class="key" data-key="y">Y<br><small>食</small></div>
-                    <div class="key" data-key="u">U<br><small>食</small></div>
-                    <div class="key" data-key="i">I<br><small>中</small></div>
-                    <div class="key" data-key="o">O<br><small>無</small></div>
-                    <div class="key" data-key="p">P<br><small>小</small></div>
+                    <div class="key" data-key="q"><span class="key-letter">Q</span><span class="finger-hint">小</span></div>
+                    <div class="key" data-key="w"><span class="key-letter">W</span><span class="finger-hint">無</span></div>
+                    <div class="key" data-key="e"><span class="key-letter">E</span><span class="finger-hint">中</span></div>
+                    <div class="key" data-key="r"><span class="key-letter">R</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="t"><span class="key-letter">T</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="y"><span class="key-letter">Y</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="u"><span class="key-letter">U</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="i"><span class="key-letter">I</span><span class="finger-hint">中</span></div>
+                    <div class="key" data-key="o"><span class="key-letter">O</span><span class="finger-hint">無</span></div>
+                    <div class="key" data-key="p"><span class="key-letter">P</span><span class="finger-hint">小</span></div>
                     <div class="key" data-key="[">{<br>[<br><small>小</small></div>
                     <div class="key" data-key="]">}<br>]<br><small>小</small></div>
                     <div class="key wide" data-key="\\">|<br>\</div>
                 </div>
                 <div class="keyboard-row">
                     <div class="key wide" data-key="CapsLock">Caps</div>
-                    <div class="key" data-key="a">A<br><small>小</small></div>
-                    <div class="key" data-key="s">S<br><small>無</small></div>
-                    <div class="key" data-key="d">D<br><small>中</small></div>
-                    <div class="key" data-key="f">F<br><small>食</small></div>
-                    <div class="key" data-key="g">G<br><small>食</small></div>
-                    <div class="key" data-key="h">H<br><small>食</small></div>
-                    <div class="key" data-key="j">J<br><small>食</small></div>
-                    <div class="key" data-key="k">K<br><small>中</small></div>
-                    <div class="key" data-key="l">L<br><small>無</small></div>
+                    <div class="key" data-key="a"><span class="key-letter">A</span><span class="finger-hint">小</span></div>
+                    <div class="key" data-key="s"><span class="key-letter">S</span><span class="finger-hint">無</span></div>
+                    <div class="key" data-key="d"><span class="key-letter">D</span><span class="finger-hint">中</span></div>
+                    <div class="key" data-key="f"><span class="key-letter">F</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="g"><span class="key-letter">G</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="h"><span class="key-letter">H</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="j"><span class="key-letter">J</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="k"><span class="key-letter">K</span><span class="finger-hint">中</span></div>
+                    <div class="key" data-key="l"><span class="key-letter">L</span><span class="finger-hint">無</span></div>
                     <div class="key" data-key=";">:<br>;<br><small>小</small></div>
                     <div class="key" data-key="'">"<br>'<br><small>小</small></div>
                     <div class="key wide" data-key="Enter">Enter</div>
                 </div>
                 <div class="keyboard-row">
                     <div class="key wide" data-key="Shift">Shift</div>
-                    <div class="key" data-key="z">Z<br><small>小</small></div>
-                    <div class="key" data-key="x">X<br><small>無</small></div>
-                    <div class="key" data-key="c">C<br><small>中</small></div>
-                    <div class="key" data-key="v">V<br><small>食</small></div>
-                    <div class="key" data-key="b">B<br><small>食</small></div>
-                    <div class="key" data-key="n">N<br><small>食</small></div>
-                    <div class="key" data-key="m">M<br><small>食</small></div>
+                    <div class="key" data-key="z"><span class="key-letter">Z</span><span class="finger-hint">小</span></div>
+                    <div class="key" data-key="x"><span class="key-letter">X</span><span class="finger-hint">無</span></div>
+                    <div class="key" data-key="c"><span class="key-letter">C</span><span class="finger-hint">中</span></div>
+                    <div class="key" data-key="v"><span class="key-letter">V</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="b"><span class="key-letter">B</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="n"><span class="key-letter">N</span><span class="finger-hint">食</span></div>
+                    <div class="key" data-key="m"><span class="key-letter">M</span><span class="finger-hint">食</span></div>
                     <div class="key" data-key=","><br>,<br><small>中</small></div>
                     <div class="key" data-key=".">><br>.<br><small>無</small></div>
                     <div class="key" data-key="/">?<br>/<br><small>小</small></div>
                     <div class="key wide" data-key="Shift">Shift</div>
                 </div>
                 <div class="keyboard-row">
-                    <div class="key space" data-key=" ">Space<br><small>拇</small></div>
+                    <div class="key space" data-key=" ">Space</div>
                 </div>
             </div>
             
@@ -884,15 +907,17 @@
             </div>
             
             <div class="modal-actions">
-                <button class="modal-btn primary" id="nextLessonBtn" onclick="goToNextLesson()" style="display: none;">
-                    🚀 挑戰下一關
-                </button>
-                <button class="modal-btn secondary" onclick="resetTest(); closeModal();">
-                    🔄 再試一次
-                </button>
-                <button class="modal-btn tertiary" onclick="goToHomepage(); closeModal();">
-                    📚 選擇其他關卡
-                </button>
+                <div class="modal-button-row">
+                    <button class="modal-btn primary" id="nextLessonBtn" onclick="goToNextLesson()" style="display: none;">
+                        🚀 挑戰下一關
+                    </button>
+                    <button class="modal-btn secondary" onclick="resetTest(); closeModal();">
+                        🔄 再試一次
+                    </button>
+                    <button class="modal-btn tertiary" onclick="goToHomepage(); closeModal();">
+                        📚 選擇其他關卡
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1503,5 +1528,5 @@
         // Initialize
         initHomepage();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992fa78965aa8098',t:'MTc2MTIwNTk0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992fadde30904a98',t:'MTc2MTIwNjIwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
