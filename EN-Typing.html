@@ -184,8 +184,14 @@
         }
         
         .current-lesson-instruction {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             opacity: 0.9;
+        }
+        
+        .stats-controls-container {
+            display: flex;
+            gap: 10px;
+            min-width: 400px;
         }
         
         .stats {
@@ -194,7 +200,7 @@
             background: rgba(255, 255, 255, 0.1);
             padding: 12px;
             border-radius: 15px;
-            min-width: 300px;
+            flex: 1;
         }
         
         .stat-item {
@@ -273,57 +279,59 @@
             border-radius: 15px;
             margin-bottom: 15px;
             position: relative;
+            width: 100%;
+            max-width: 100%;
         }
         
         .hands-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 15px;
-            padding: 0 50px;
+            margin-bottom: max(15px, 1.5vw);
+            padding: 0 max(50px, 5vw);
         }
         
         .hand {
             display: flex;
-            gap: 8px;
+            gap: max(8px, 0.8vw);
             align-items: flex-end;
         }
         
         .finger {
-            width: 18px;
-            height: 45px;
+            width: max(18px, 1.8vw);
+            height: max(45px, 4.5vw);
             background: rgba(255, 255, 255, 0.3);
-            border-radius: 8px 8px 4px 4px;
+            border-radius: max(8px, 0.8vw) max(8px, 0.8vw) max(4px, 0.4vw) max(4px, 0.4vw);
             position: relative;
             transition: all 0.3s ease;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            font-size: 0.6rem;
+            font-size: max(0.5rem, min(0.6rem, 0.8vw));
             font-weight: bold;
             color: rgba(255, 255, 255, 0.8);
-            padding-bottom: 3px;
+            padding-bottom: max(3px, 0.3vw);
         }
         
         .finger.thumb {
-            height: 30px;
-            width: 22px;
-            margin-top: 15px;
+            height: max(30px, 3vw);
+            width: max(22px, 2.2vw);
+            margin-top: max(15px, 1.5vw);
         }
         
         .finger.pinky {
-            height: 35px;
+            height: max(35px, 3.5vw);
         }
         
         .finger.ring {
-            height: 42px;
+            height: max(42px, 4.2vw);
         }
         
         .finger.middle {
-            height: 45px;
+            height: max(45px, 4.5vw);
         }
         
         .finger.index {
-            height: 42px;
+            height: max(42px, 4.2vw);
         }
         
         .finger.active {
@@ -354,23 +362,26 @@
             display: flex;
             justify-content: center;
             margin-bottom: 5px;
-            gap: 3px;
+            gap: min(3px, 0.3vw);
+            width: 100%;
         }
         
         .key {
             background: rgba(255, 255, 255, 0.2);
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 6px;
-            padding: 8px;
-            min-width: 35px;
-            height: 35px;
+            border-radius: min(6px, 0.5vw);
+            padding: min(8px, 0.8vw);
+            min-width: max(35px, 3.5vw);
+            height: max(35px, 3.5vw);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.8rem;
+            font-size: max(0.6rem, min(0.8rem, 1vw));
             transition: all 0.1s ease;
             cursor: pointer;
+            flex: 1;
+            max-width: 4.5vw;
         }
         
         .key:hover {
@@ -397,27 +408,31 @@
         }
         
         .key.space {
-            min-width: 150px;
+            min-width: max(150px, 15vw);
+            max-width: 25vw;
+            flex: 3;
         }
         
         .key.wide {
-            min-width: 60px;
+            min-width: max(60px, 6vw);
+            max-width: 8vw;
+            flex: 1.5;
         }
         
         .controls {
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 120px;
         }
         
         .btn {
             background: linear-gradient(45deg, #ff6b6b, #ee5a24);
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -701,25 +716,27 @@
                     <div class="current-lesson-instruction" id="currentLessonInstruction"></div>
                 </div>
                 
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-value" id="wpm">0</div>
-                        <div class="stat-label">每分鐘字數</div>
+                <div class="stats-controls-container">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="wpm">0</div>
+                            <div class="stat-label">每分鐘字數</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="accuracy">100%</div>
+                            <div class="stat-label">準確度</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="time">60</div>
+                            <div class="stat-label">剩餘時間</div>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="accuracy">100%</div>
-                        <div class="stat-label">準確度</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="time">60</div>
-                        <div class="stat-label">剩餘時間</div>
+                    
+                    <div class="controls">
+                        <button class="btn" onclick="startLesson()">開始練習</button>
+                        <button class="btn secondary" onclick="resetTest()">重新開始</button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="startLesson()">開始練習</button>
-                <button class="btn secondary" onclick="resetTest()">重新開始</button>
             </div>
             
             <div class="input-warning" id="inputWarning">
@@ -1399,5 +1416,5 @@
         // Initialize
         initHomepage();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992f81e950538098',t:'MTc2MTIwNDQwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992f87ae311d8098',t:'MTc2MTIwNDYzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
