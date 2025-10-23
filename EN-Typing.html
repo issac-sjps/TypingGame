@@ -748,7 +748,7 @@
             </div>
             
             <div class="input-area">
-                <input type="text" class="typing-input" id="typingInput" placeholder="點擊這裡 有|閃爍後 才能開始打字" disabled>
+                <input type="text" class="typing-input" id="typingInput" placeholder="點擊這裡這裡開始 或按下空白鍵開始 -  有|閃爍後 才能開始打字" disabled>
             </div>
             
             <div class="keyboard">
@@ -910,8 +910,8 @@
             '[': 'right-pinky', ']': 'right-pinky', '\\': 'right-pinky', ';': 'right-pinky',
             "'": 'right-pinky', '/': 'right-pinky',
             
-            // Space bar - both thumbs, but we'll use right thumb as default
-            ' ': 'right-thumb'
+            // Space bar - both thumbs, but we'll use left thumb as default
+            ' ': 'left-thumb'
         };
 
         const lessons = [
@@ -1345,6 +1345,28 @@
         }
         
         // Event listeners
+        typingInput.addEventListener('click', function(e) {
+            console.log('Input clicked!', {
+                disabled: typingInput.disabled,
+                gamePageVisible: gamePage.style.display === 'block',
+                currentLesson: currentLesson,
+                hasLesson: lessons[currentLesson] !== undefined
+            });
+            
+            if (typingInput.disabled && gamePage.style.display === 'block' && lessons[currentLesson]) {
+                startLesson();
+            }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' && typingInput.disabled && lessons[currentLesson] && gamePage.style.display === 'block') {
+                e.preventDefault();
+                startLesson();
+                return;
+            }
+            highlightKey(e.key);
+        });
+        
         typingInput.addEventListener('input', function(e) {
             const typed = e.target.value;
             
@@ -1381,9 +1403,7 @@
             }
         });
         
-        document.addEventListener('keydown', function(e) {
-            highlightKey(e.key);
-        });
+
         
         document.querySelectorAll('.key').forEach(key => {
             key.addEventListener('click', function() {
@@ -1416,5 +1436,5 @@
         // Initialize
         initHomepage();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992f87ae311d8098',t:'MTc2MTIwNDYzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992f944c07718098',t:'MTc2MTIwNTE1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
