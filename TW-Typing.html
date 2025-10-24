@@ -195,7 +195,7 @@
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
         .practice-area {
@@ -415,22 +415,31 @@
         .finger[data-finger*="pinky"] { 
             background: linear-gradient(135deg, #805ad5, #6b46c1); 
             border-color: #9f7aea; 
+            opacity: 0.3;
         }
         .finger[data-finger*="ring"] { 
             background: linear-gradient(135deg, #3182ce, #2c5282); 
             border-color: #4299e1; 
+            opacity: 0.3;
         }
         .finger[data-finger*="middle"] { 
             background: linear-gradient(135deg, #38a169, #2f855a); 
             border-color: #48bb78; 
+            opacity: 0.3;
         }
         .finger[data-finger*="index"] { 
             background: linear-gradient(135deg, #d69e2e, #b7791f); 
             border-color: #ecc94b; 
+            opacity: 0.3;
         }
         .finger[data-finger*="thumb"] { 
             background: linear-gradient(135deg, #e53e3e, #c53030); 
             border-color: #f56565; 
+            opacity: 0.3;
+        }
+        
+        .finger.active { 
+            opacity: 1 !important;
         }
 
         /* 鍵盤提示區域 */
@@ -456,13 +465,15 @@
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
             cursor: pointer;
-            margin: 0 5px;
             transition: all 0.2s;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            flex: 1;
+            min-width: 120px;
+            white-space: nowrap;
         }
 
         .btn:hover {
@@ -541,7 +552,11 @@
             }
             
             .controls {
-                grid-template-columns: 1fr;
+                flex-direction: column;
+            }
+            
+            .btn {
+                min-width: 100px;
             }
             
             .hands-container {
@@ -711,11 +726,14 @@
 
             <div class="practice-area">
                 <div class="target-text" id="targetText">按下「開始練習」來開始訓練！</div>
+                <div class="keyboard-hint" id="keyboardHint">
+                    <div class="current-key-hint" id="currentKeyHint">準備開始練習</div>
+                </div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
                 <div class="input-area">
-                    <input type="text" class="user-input" id="userInput" placeholder="在這裡輸入..." disabled>
+                    <input type="text" class="user-input" id="userInput" placeholder="按開始練習 或 按下空白鍵開始輸入" disabled>
                 </div>
                 <div id="message"></div>
             </div>
@@ -739,11 +757,7 @@
                     </div>
                 </div>
 
-                <!-- 鍵盤提示 -->
-                <div class="keyboard-hint" id="keyboardHint">
-                    <div>💡 <span class="current-key-hint" id="currentKeyHint">準備開始練習</span></div>
-                    <div style="margin-top: 5px; font-size: 0.8rem; opacity: 0.8;">每個按鍵下方顯示建議使用的手指</div>
-                </div>
+
 
                 <!-- 第一排：數字和符號 -->
                 <div class="keyboard-row">
@@ -1168,6 +1182,10 @@
             document.getElementById('userInput').disabled = false;
             document.getElementById('userInput').focus();
             nextExercise();
+            // 確保立即顯示提示
+            setTimeout(() => {
+                highlightNextKey();
+            }, 100);
         }
 
         // 下一題
@@ -1181,7 +1199,9 @@
             
             currentExercise = exercises[exerciseIndex];
             document.getElementById('targetText').textContent = currentExercise;
-            document.getElementById('userInput').value = '';
+            const input = document.getElementById('userInput');
+            input.value = '';
+            input.dataset.waitingConfirm = 'false';
             document.getElementById('message').innerHTML = '';
             updateProgress();
             startTime = Date.now();
@@ -1202,7 +1222,24 @@
             const userInput = document.getElementById('userInput').value;
             if (userInput.length < currentExercise.length) {
                 const nextChar = currentExercise[userInput.length];
-                const nextKey = document.querySelector(`[data-key="${nextChar}"]`);
+                
+                // 尋找對應的鍵盤按鍵
+                let nextKey = null;
+                
+                // 先嘗試直接匹配
+                nextKey = document.querySelector(`[data-key="${nextChar}"]`);
+                
+                // 如果沒找到，嘗試匹配鍵盤上的注音符號
+                if (!nextKey) {
+                    const keys = document.querySelectorAll('.key');
+                    keys.forEach(key => {
+                        const mainChar = key.querySelector('.key-main');
+                        if (mainChar && mainChar.textContent === nextChar) {
+                            nextKey = key;
+                        }
+                    });
+                }
+                
                 if (nextKey) {
                     nextKey.classList.add('active');
                     
@@ -1214,11 +1251,22 @@
                     }
                     
                     // 更新鍵盤提示
-                    const fingerHint = nextKey.querySelector('.finger-hint').textContent;
-                    const keyName = nextKey.querySelector('.key-main').textContent;
+                    const fingerHintElement = nextKey.querySelector('.finger-hint');
+                    const keyNameElement = nextKey.querySelector('.key-main');
                     
+                    if (fingerHintElement && keyNameElement) {
+                        const fingerHint = fingerHintElement.textContent;
+                        const keyName = keyNameElement.textContent;
+                        
+                        document.getElementById('currentKeyHint').innerHTML = 
+                            `請按 <strong style="color: #667eea; font-size: 1.2em;">${keyName}</strong> 鍵 (使用${fingerHint}指)`;
+                    } else {
+                        document.getElementById('currentKeyHint').innerHTML = 
+                            `請按 <strong style="color: #667eea; font-size: 1.2em;">${nextChar}</strong> 鍵`;
+                    }
+                } else {
                     document.getElementById('currentKeyHint').innerHTML = 
-                        `請按 <strong style="color: #667eea; font-size: 1.2em;">${keyName}</strong> 鍵 (使用${fingerHint}指)`;
+                        `請輸入 <strong style="color: #667eea; font-size: 1.2em;">${nextChar}</strong>`;
                 }
             } else {
                 document.getElementById('currentKeyHint').textContent = '準備下一個字符';
@@ -1267,6 +1315,35 @@
             showMessage('關卡已重置！', 'success');
         }
 
+        // 監聽鍵盤按鍵
+        document.addEventListener('keydown', function(e) {
+            const input = document.getElementById('userInput');
+            
+            // 如果按下空白鍵且遊戲未開始，則開始練習
+            if (e.code === 'Space' && !isActive && document.getElementById('gamePage').style.display !== 'none') {
+                e.preventDefault();
+                startPractice();
+                return;
+            }
+            
+            // 如果按下Enter且正在等待確認
+            if (e.code === 'Enter' && isActive && input.dataset.waitingConfirm === 'true') {
+                e.preventDefault();
+                input.dataset.waitingConfirm = 'false';
+                
+                exerciseIndex++;
+                if (levelProgress[currentLevel - 1] >= levelData[currentLevel].total) {
+                    showMessage('🏆 恭喜完成本關卡！', 'success');
+                    setTimeout(() => {
+                        goHome();
+                    }, 1500);
+                } else {
+                    nextExercise();
+                }
+                return;
+            }
+        });
+
         // 監聽輸入
         document.getElementById('userInput').addEventListener('input', function(e) {
             if (!isActive) return;
@@ -1298,24 +1375,23 @@
                 correctExercises++;
                 levelProgress[currentLevel - 1]++;
                 updateStats();
-                showMessage('🎉 太棒了！完全正確！', 'success');
+                showMessage('🎉 太棒了！完全正確！按 Enter 繼續下一題', 'success');
                 
                 // 清除高亮
                 document.querySelectorAll('.key').forEach(key => {
                     key.classList.remove('active');
                 });
+                document.querySelectorAll('.finger').forEach(finger => {
+                    finger.classList.remove('active');
+                });
                 
-                setTimeout(() => {
-                    exerciseIndex++;
-                    if (levelProgress[currentLevel - 1] >= levelData[currentLevel].total) {
-                        showMessage('🏆 恭喜完成本關卡！', 'success');
-                        setTimeout(() => {
-                            goHome();
-                        }, 1500);
-                    } else {
-                        nextExercise();
-                    }
-                }, 500);
+                // 更新提示
+                document.getElementById('currentKeyHint').innerHTML = 
+                    '🎉 答對了！按 <strong style="color: #38a169;">Enter</strong> 鍵繼續下一題';
+                
+                // 標記為等待確認狀態
+                e.target.dataset.waitingConfirm = 'true';
+                
             } else if (userInput.length === currentExercise.length) {
                 totalExercises++;
                 updateStats();
@@ -1362,5 +1438,5 @@
         updateStats();
         updateLevelProgress();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99388003e4dbf234',t:'MTc2MTI5ODY5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99388ff194cdf234',t:'MTc2MTI5OTM0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
