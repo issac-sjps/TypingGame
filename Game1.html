@@ -271,6 +271,42 @@
       flex-shrink: 0;
     }
 
+    .attack-log {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      border-radius: 15px;
+      min-width: 180px;
+      max-width: 200px;
+      text-align: center;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .log-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #ffd700;
+    }
+
+    .log-content {
+      font-size: 14px;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      padding: 5px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+    }
+
+    .log-entry.crit {
+      background: rgba(255,215,0,0.3);
+      border-left: 3px solid #ffd700;
+    }
+
     .upgrade-panel {
       background: rgba(255,255,255,0.25);
       padding: 25px;
@@ -385,6 +421,42 @@
       color: #333;
     }
 
+    /* 關卡選擇浮動視窗 */
+    .stage-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stage-overlay.active {
+      display: flex;
+    }
+
+    .stage-popup-container {
+      background: rgba(255,255,255,0.95);
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 80%;
+      overflow-y: auto;
+      color: #333;
+    }
+
+    .stage-popup-title {
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #667eea;
+    }
+
     .shop-title {
       font-size: 36px;
       text-align: center;
@@ -408,8 +480,8 @@
 
     .weapon-card {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 20px;
-      border-radius: 15px;
+      padding: 12px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s;
       border: 3px solid transparent;
@@ -428,23 +500,23 @@
     }
 
     .weapon-card .weapon-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
+      font-size: 36px;
+      margin-bottom: 6px;
     }
 
     .weapon-card h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
+      font-size: 15px;
+      margin-bottom: 6px;
     }
 
     .weapon-card p {
-      font-size: 14px;
-      margin-bottom: 15px;
-      min-height: 60px;
+      font-size: 12px;
+      margin-bottom: 8px;
+      min-height: 40px;
     }
 
     .weapon-cost {
-      font-size: 20px;
+      font-size: 16px;
       color: #ffd700;
       font-weight: bold;
     }
@@ -579,20 +651,30 @@
       </div>
       <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
       </div>
-      <div><button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
+      <div style="display: flex; gap: 10px;"><button class="btn btn-secondary" id="openStageSelectButton" style="padding: 10px 20px;">關卡選擇</button> <button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
       </div>
      </div>
      <div class="battle-area">
-      <div class="weapon-display">
-       <div class="weapon-icon" id="currentWeaponIcon">
-        🗡️
+      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+       <div class="weapon-display">
+        <div class="weapon-icon" id="currentWeaponIcon">
+         🗡️
+        </div>
+        <div class="weapon-name" id="currentWeaponName">
+         普通劍
+        </div>
+        <div class="weapon-effect" id="currentWeaponEffect">
+         每次攻擊一次
+        </div>
+       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px;">🛒 武器商店</button>
+      </div>
+      <div class="attack-log" id="playerAttackLog">
+       <div class="log-title">
+        ⚔️ 英雄攻擊紀錄
        </div>
-       <div class="weapon-name" id="currentWeaponName">
-        普通劍
+       <div class="log-content" id="playerLogContent">
+        等待戰鬥開始...
        </div>
-       <div class="weapon-effect" id="currentWeaponEffect">
-        每次攻擊一次
-       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; margin-top: 15px; width: 100%; font-size: 16px;">🛒 武器商店</button>
       </div>
       <div class="character" id="playerCharacter">
        <div class="character-avatar">
@@ -673,6 +755,14 @@
         </div>
        </div>
       </div>
+      <div class="attack-log" id="enemyAttackLog">
+       <div class="log-title">
+        💀 怪物攻擊紀錄
+       </div>
+       <div class="log-content" id="enemyLogContent">
+        等待戰鬥開始...
+       </div>
+      </div>
      </div>
      <div class="typing-area">
       <div class="word-display" id="wordDisplay">
@@ -722,6 +812,16 @@
     </div>
     <div class="weapons-grid" id="weaponsGrid"></div>
     <div style="text-align: center;"><button class="btn btn-secondary" id="closeShopButton">關閉商店</button>
+    </div>
+   </div>
+  </div><!-- 關卡選擇浮動視窗 -->
+  <div class="stage-overlay" id="stageOverlay">
+   <div class="stage-popup-container">
+    <div class="stage-popup-title">
+     🎮 關卡選擇
+    </div>
+    <div class="stages-grid" id="stagesPopupGrid"></div>
+    <div style="text-align: center; margin-top: 20px;"><button class="btn btn-secondary" id="closeStageSelectButton">關閉</button>
     </div>
    </div>
   </div>
@@ -829,8 +929,59 @@
       enemyAttackReduction: 0,
       battleTimer: 5,
       battleInterval: null,
-      timerInterval: null
+      timerInterval: null,
+      playerAttackLog: [],
+      enemyAttackLog: []
     };
+
+    // 添加攻擊紀錄
+    function addAttackLog(isPlayer, damage, isCrit) {
+      const log = {
+        damage: damage,
+        isCrit: isCrit,
+        time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      };
+      
+      if (isPlayer) {
+        gameState.playerAttackLog.push(log);
+        if (gameState.playerAttackLog.length > 20) {
+          gameState.playerAttackLog.shift();
+        }
+      } else {
+        gameState.enemyAttackLog.push(log);
+        if (gameState.enemyAttackLog.length > 20) {
+          gameState.enemyAttackLog.shift();
+        }
+      }
+      
+      updateAttackLogDisplay();
+    }
+
+    // 更新攻擊紀錄顯示
+    function updateAttackLogDisplay() {
+      const playerLogContent = document.getElementById('playerLogContent');
+      const enemyLogContent = document.getElementById('enemyLogContent');
+      
+      if (gameState.playerAttackLog.length === 0) {
+        playerLogContent.innerHTML = '等待戰鬥開始...';
+      } else {
+        playerLogContent.innerHTML = gameState.playerAttackLog.map(log => 
+          `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
+            ${log.isCrit ? '💥 ' : '⚔️ '}傷害: ${log.damage}
+          </div>`
+        ).reverse().join('');
+      }
+      
+      if (gameState.enemyAttackLog.length === 0) {
+        enemyLogContent.innerHTML = '等待戰鬥開始...';
+      } else {
+        enemyLogContent.innerHTML = gameState.enemyAttackLog.map(log => 
+          `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
+            ${log.isCrit ? '💥 ' : '👊 '}傷害: ${log.damage}
+          </div>`
+        ).reverse().join('');
+      }
+    }
 
     // 本地儲存
     function saveGame() {
@@ -923,8 +1074,11 @@
       gameState.enemyDefenseReduction = 0;
       gameState.enemyAttackReduction = 0;
       gameState.battleTimer = 5;
+      gameState.playerAttackLog = [];
+      gameState.enemyAttackLog = [];
       
       updateUI();
+      updateAttackLogDisplay();
       showScreen('gameScreen');
       nextWord();
       startBattleTimer();
@@ -1073,6 +1227,9 @@
         damage = Math.floor(damage * (100 - effectiveDefense) / 100);
         
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
+        
+        // 記錄攻擊
+        addAttackLog(true, damage, isCrit || (gameState.weaponId === 9 && gameState.weaponHitCount % 3 === 0));
       }
       
       // 毒性傷害
@@ -1099,6 +1256,9 @@
       const defenseReduction = Math.floor(damage * (gameState.playerDefense / 2) / 100);
       const finalDamage = Math.max(1, damage - defenseReduction);
       gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
+      
+      // 記錄攻擊
+      addAttackLog(false, finalDamage, isCrit);
       
       updateUI();
     }
@@ -1309,6 +1469,44 @@
       document.getElementById('shopOverlay').classList.remove('active');
     }
 
+    // 開啟關卡選擇浮動視窗
+    function openStageSelectPopup() {
+      renderStageSelectPopup();
+      document.getElementById('stageOverlay').classList.add('active');
+    }
+
+    // 關閉關卡選擇浮動視窗
+    function closeStageSelectPopup() {
+      document.getElementById('stageOverlay').classList.remove('active');
+    }
+
+    // 渲染關卡選擇浮動視窗
+    function renderStageSelectPopup() {
+      const grid = document.getElementById('stagesPopupGrid');
+      grid.innerHTML = '';
+      
+      for (let i = 1; i <= 100; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'stage-btn';
+        btn.textContent = i;
+        
+        if (i > gameState.maxStage) {
+          btn.disabled = true;
+        } else if (i === gameState.currentStage) {
+          btn.classList.add('current');
+        }
+        
+        btn.onclick = () => {
+          if (i <= gameState.maxStage) {
+            closeStageSelectPopup();
+            startStage(i);
+          }
+        };
+        
+        grid.appendChild(btn);
+      }
+    }
+
     // 渲染武器商店
     function renderWeaponsShop() {
       const grid = document.getElementById('weaponsGrid');
@@ -1469,6 +1667,9 @@
     
     document.getElementById('openShopButton').addEventListener('click', openShop);
     document.getElementById('closeShopButton').addEventListener('click', closeShop);
+    
+    document.getElementById('openStageSelectButton').addEventListener('click', openStageSelectPopup);
+    document.getElementById('closeStageSelectButton').addEventListener('click', closeStageSelectPopup);
     
     document.getElementById('upgradeHpButton').addEventListener('click', upgradeHp);
     document.getElementById('upgradeAttackButton').addEventListener('click', upgradeAttack);
@@ -1766,6 +1967,42 @@
       flex-shrink: 0;
     }
 
+    .attack-log {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      border-radius: 15px;
+      min-width: 180px;
+      max-width: 200px;
+      text-align: center;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .log-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #ffd700;
+    }
+
+    .log-content {
+      font-size: 14px;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      margin-bottom: 8px;
+      padding: 5px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+    }
+
+    .log-entry.crit {
+      background: rgba(255,215,0,0.3);
+      border-left: 3px solid #ffd700;
+    }
+
     .upgrade-panel {
       background: rgba(255,255,255,0.25);
       padding: 25px;
@@ -1880,6 +2117,42 @@
       color: #333;
     }
 
+    /* 關卡選擇浮動視窗 */
+    .stage-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stage-overlay.active {
+      display: flex;
+    }
+
+    .stage-popup-container {
+      background: rgba(255,255,255,0.95);
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 80%;
+      overflow-y: auto;
+      color: #333;
+    }
+
+    .stage-popup-title {
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #667eea;
+    }
+
     .shop-title {
       font-size: 36px;
       text-align: center;
@@ -1903,8 +2176,8 @@
 
     .weapon-card {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 20px;
-      border-radius: 15px;
+      padding: 12px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s;
       border: 3px solid transparent;
@@ -1923,23 +2196,23 @@
     }
 
     .weapon-card .weapon-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
+      font-size: 36px;
+      margin-bottom: 6px;
     }
 
     .weapon-card h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
+      font-size: 15px;
+      margin-bottom: 6px;
     }
 
     .weapon-card p {
-      font-size: 14px;
-      margin-bottom: 15px;
-      min-height: 60px;
+      font-size: 12px;
+      margin-bottom: 8px;
+      min-height: 40px;
     }
 
     .weapon-cost {
-      font-size: 20px;
+      font-size: 16px;
       color: #ffd700;
       font-weight: bold;
     }
@@ -2069,20 +2342,30 @@
       </div>
       <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
       </div>
-      <div><button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
+      <div style="display: flex; gap: 10px;"><button class="btn btn-secondary" id="openStageSelectButton" style="padding: 10px 20px;">關卡選擇</button> <button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
       </div>
      </div>
      <div class="battle-area">
-      <div class="weapon-display">
-       <div class="weapon-icon" id="currentWeaponIcon">
-        🗡️
+      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+       <div class="weapon-display">
+        <div class="weapon-icon" id="currentWeaponIcon">
+         🗡️
+        </div>
+        <div class="weapon-name" id="currentWeaponName">
+         普通劍
+        </div>
+        <div class="weapon-effect" id="currentWeaponEffect">
+         每次攻擊一次
+        </div>
+       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px;">🛒 武器商店</button>
+      </div>
+      <div class="attack-log" id="playerAttackLog">
+       <div class="log-title">
+        ⚔️ 英雄攻擊紀錄
        </div>
-       <div class="weapon-name" id="currentWeaponName">
-        普通劍
+       <div class="log-content" id="playerLogContent">
+        等待戰鬥開始...
        </div>
-       <div class="weapon-effect" id="currentWeaponEffect">
-        每次攻擊一次
-       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; margin-top: 15px; width: 100%; font-size: 16px;">🛒 武器商店</button>
       </div>
       <div class="character" id="playerCharacter">
        <div class="character-avatar">
@@ -2204,6 +2487,16 @@
     <div style="text-align: center;"><button class="btn btn-secondary" id="closeShopButton">關閉商店</button>
     </div>
    </div>
+  </div><!-- 關卡選擇浮動視窗 -->
+  <div class="stage-overlay" id="stageOverlay">
+   <div class="stage-popup-container">
+    <div class="stage-popup-title">
+     🎮 關卡選擇
+    </div>
+    <div class="stages-grid" id="stagesPopupGrid"></div>
+    <div style="text-align: center; margin-top: 20px;"><button class="btn btn-secondary" id="closeStageSelectButton">關閉</button>
+    </div>
+   </div>
   </div>
   <script>
     const defaultConfig = {
@@ -2309,8 +2602,59 @@
       enemyAttackReduction: 0,
       battleTimer: 5,
       battleInterval: null,
-      timerInterval: null
+      timerInterval: null,
+      playerAttackLog: [],
+      enemyAttackLog: []
     };
+
+    // 添加攻擊紀錄
+    function addAttackLog(isPlayer, damage, isCrit) {
+      const log = {
+        damage: damage,
+        isCrit: isCrit,
+        time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+      };
+      
+      if (isPlayer) {
+        gameState.playerAttackLog.push(log);
+        if (gameState.playerAttackLog.length > 20) {
+          gameState.playerAttackLog.shift();
+        }
+      } else {
+        gameState.enemyAttackLog.push(log);
+        if (gameState.enemyAttackLog.length > 20) {
+          gameState.enemyAttackLog.shift();
+        }
+      }
+      
+      updateAttackLogDisplay();
+    }
+
+    // 更新攻擊紀錄顯示
+    function updateAttackLogDisplay() {
+      const playerLogContent = document.getElementById('playerLogContent');
+      const enemyLogContent = document.getElementById('enemyLogContent');
+      
+      if (gameState.playerAttackLog.length === 0) {
+        playerLogContent.innerHTML = '等待戰鬥開始...';
+      } else {
+        playerLogContent.innerHTML = gameState.playerAttackLog.map(log => 
+          `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
+            ${log.isCrit ? '💥 ' : '⚔️ '}傷害: ${log.damage}
+          </div>`
+        ).reverse().join('');
+      }
+      
+      if (gameState.enemyAttackLog.length === 0) {
+        enemyLogContent.innerHTML = '等待戰鬥開始...';
+      } else {
+        enemyLogContent.innerHTML = gameState.enemyAttackLog.map(log => 
+          `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
+            ${log.isCrit ? '💥 ' : '👊 '}傷害: ${log.damage}
+          </div>`
+        ).reverse().join('');
+      }
+    }
 
     // 本地儲存
     function saveGame() {
@@ -2403,8 +2747,11 @@
       gameState.enemyDefenseReduction = 0;
       gameState.enemyAttackReduction = 0;
       gameState.battleTimer = 5;
+      gameState.playerAttackLog = [];
+      gameState.enemyAttackLog = [];
       
       updateUI();
+      updateAttackLogDisplay();
       showScreen('gameScreen');
       nextWord();
       startBattleTimer();
@@ -2553,6 +2900,9 @@
         damage = Math.floor(damage * (100 - effectiveDefense) / 100);
         
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
+        
+        // 記錄攻擊
+        addAttackLog(true, damage, isCrit || (gameState.weaponId === 9 && gameState.weaponHitCount % 3 === 0));
       }
       
       // 毒性傷害
@@ -2579,6 +2929,9 @@
       const defenseReduction = Math.floor(damage * (gameState.playerDefense / 2) / 100);
       const finalDamage = Math.max(1, damage - defenseReduction);
       gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
+      
+      // 記錄攻擊
+      addAttackLog(false, finalDamage, isCrit);
       
       updateUI();
     }
@@ -2789,6 +3142,44 @@
       document.getElementById('shopOverlay').classList.remove('active');
     }
 
+    // 開啟關卡選擇浮動視窗
+    function openStageSelectPopup() {
+      renderStageSelectPopup();
+      document.getElementById('stageOverlay').classList.add('active');
+    }
+
+    // 關閉關卡選擇浮動視窗
+    function closeStageSelectPopup() {
+      document.getElementById('stageOverlay').classList.remove('active');
+    }
+
+    // 渲染關卡選擇浮動視窗
+    function renderStageSelectPopup() {
+      const grid = document.getElementById('stagesPopupGrid');
+      grid.innerHTML = '';
+      
+      for (let i = 1; i <= 100; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'stage-btn';
+        btn.textContent = i;
+        
+        if (i > gameState.maxStage) {
+          btn.disabled = true;
+        } else if (i === gameState.currentStage) {
+          btn.classList.add('current');
+        }
+        
+        btn.onclick = () => {
+          if (i <= gameState.maxStage) {
+            closeStageSelectPopup();
+            startStage(i);
+          }
+        };
+        
+        grid.appendChild(btn);
+      }
+    }
+
     // 渲染武器商店
     function renderWeaponsShop() {
       const grid = document.getElementById('weaponsGrid');
@@ -2950,6 +3341,9 @@
     document.getElementById('openShopButton').addEventListener('click', openShop);
     document.getElementById('closeShopButton').addEventListener('click', closeShop);
     
+    document.getElementById('openStageSelectButton').addEventListener('click', openStageSelectPopup);
+    document.getElementById('closeStageSelectButton').addEventListener('click', closeStageSelectPopup);
+    
     document.getElementById('upgradeHpButton').addEventListener('click', upgradeHp);
     document.getElementById('upgradeAttackButton').addEventListener('click', upgradeAttack);
     document.getElementById('upgradeDefenseButton').addEventListener('click', upgradeDefense);
@@ -2973,5 +3367,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b727210660f251',t:'MTc2MjYyNjc0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7317fb166f251',t:'MTc2MjYyNzE2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
