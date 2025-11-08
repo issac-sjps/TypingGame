@@ -951,7 +951,8 @@
       {id: 7, name: "運氣藥水", cost: 30, effect: "3分鐘內答對金幣×2", icon: "🍀"},
       {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"},
       {id: 9, name: "破甲藥水", cost: 60, effect: "接下來5次攻擊無視對手防禦率", icon: "🔓"},
-      {id: 10, name: "變身藥水", cost: 60, effect: "獲得50-100關隨機怪獸數值3分鐘", icon: "🧪"}
+      {id: 10, name: "變身藥水", cost: 60, effect: "獲得50-100關隨機怪獸數值3分鐘", icon: "🧪"},
+      {id: 11, name: "降魔杵", cost: 60, effect: "3分鐘內每次攻擊3%機率即死秒殺", icon: "🔱"}
     ];
 
     // 聖遺物定義
@@ -1006,6 +1007,7 @@
       itemArmorBreakCount: 0,
       itemTransformEndTime: 0,
       itemTransformStats: null,
+      itemInstakillEndTime: 0,
       relicId: 0,
       ownedRelics: [0],
       enemyHp: 100,
@@ -1510,6 +1512,16 @@
         }
       }
       
+      // 道具效果：降魔杵（3%機率即死秒殺）
+      if (gameState.itemInstakillEndTime > Date.now()) {
+        if (Math.random() < 0.03) {
+          gameState.enemyHp = 0;
+          updateUI();
+          handleStageComplete();
+          return;
+        }
+      }
+      
       // 武器特效
       switch(gameState.weaponId) {
         case 1: // 雙刃劍
@@ -1728,20 +1740,34 @@
 
     // 檢查變身藥水是否過期
     function checkTransformPotionExpiry() {
-      if (gameState.itemTransformEndTime > 0 && gameState.itemTransformEndTime <= Date.now() && gameState.itemId === 10) {
+      if (gameState.itemTransformEndTime > 0 && gameState.itemTransformEndTime <= Date.now()) {
         gameState.itemTransformEndTime = 0;
         gameState.itemTransformStats = null;
         // 恢復英雄圖片
-        document.getElementById('playerCharacter').querySelector('.character-avatar').textContent = '🦸';
+        const playerAvatar = document.getElementById('playerCharacter').querySelector('.character-avatar');
+        if (playerAvatar) {
+          playerAvatar.textContent = '🦸';
+        }
+        if (gameState.itemId === 10) {
+          resetItemToNone();
+        }
+      }
+    }
+    
+    // 檢查降魔杵是否過期
+    function checkInstakillPotionExpiry() {
+      if (gameState.itemInstakillEndTime > 0 && gameState.itemInstakillEndTime <= Date.now() && gameState.itemId === 11) {
+        gameState.itemInstakillEndTime = 0;
         resetItemToNone();
       }
     }
 
     // 更新UI
     function updateUI() {
-      // 檢查運氣藥水和變身藥水是否過期
+      // 檢查運氣藥水、變身藥水和降魔杵是否過期
       checkLuckPotionExpiry();
       checkTransformPotionExpiry();
+      checkInstakillPotionExpiry();
       
       // 顯示二周目或自由模式標記
       if (gameState.freeMode) {
@@ -1833,6 +1859,9 @@
       } else if (gameState.itemTransformEndTime > Date.now()) {
         const remainingSeconds = Math.ceil((gameState.itemTransformEndTime - Date.now()) / 1000);
         itemEffect = `變身中 (剩${remainingSeconds}秒)`;
+      } else if (gameState.itemInstakillEndTime > Date.now()) {
+        const remainingSeconds = Math.ceil((gameState.itemInstakillEndTime - Date.now()) / 1000);
+        itemEffect = `即死秒殺 (剩${remainingSeconds}秒)`;
       } else if (gameState.itemBurnActive) {
         itemEffect = `灼燒 (持續中)`;
       } else if (gameState.itemPoisonActive) {
@@ -2405,6 +2434,9 @@
           // 變身成怪獸圖片
           const transformMonsterIndex = (randomStage - 1) % monsters.length;
           document.getElementById('playerCharacter').querySelector('.character-avatar').textContent = monsters[transformMonsterIndex];
+          break;
+        case 11: // 降魔杵
+          gameState.itemInstakillEndTime = Date.now() + 180000; // 3分鐘
           break;
       }
     }
@@ -3544,7 +3576,8 @@
       {id: 7, name: "運氣藥水", cost: 30, effect: "3分鐘內答對金幣×2", icon: "🍀"},
       {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"},
       {id: 9, name: "破甲藥水", cost: 60, effect: "接下來5次攻擊無視對手防禦率", icon: "🔓"},
-      {id: 10, name: "變身藥水", cost: 60, effect: "獲得50-100關隨機怪獸數值3分鐘", icon: "🧪"}
+      {id: 10, name: "變身藥水", cost: 60, effect: "獲得50-100關隨機怪獸數值3分鐘", icon: "🧪"},
+      {id: 11, name: "降魔杵", cost: 60, effect: "3分鐘內每次攻擊3%機率即死秒殺", icon: "🔱"}
     ];
 
     // 聖遺物定義
@@ -4054,6 +4087,16 @@
         gameState.itemCritBoostCount--;
         if (gameState.itemCritBoostCount === 0) {
           resetItemToNone();
+        }
+      }
+      
+      // 道具效果：降魔杵（3%機率即死秒殺）
+      if (gameState.itemInstakillEndTime > Date.now()) {
+        if (Math.random() < 0.03) {
+          gameState.enemyHp = 0;
+          updateUI();
+          handleStageComplete();
+          return;
         }
       }
       
@@ -5115,5 +5158,5 @@
       updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b80d21c33af251',t:'MTc2MjYzNjE2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b817990444f251',t:'MTc2MjYzNjU5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
