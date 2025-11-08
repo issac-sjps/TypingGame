@@ -1105,21 +1105,20 @@
       {word: "星星", pinyin: "ㄒㄧㄥ ㄒㄧㄥ"}, {word: "雲朵", pinyin: "ㄩㄣˊ ㄉㄨㄛˇ"}, {word: "彩虹", pinyin: "ㄘㄞˇ ㄏㄨㄥˊ"}
     ];
 
-    // 12種武器定義
+    // 11種武器定義（按金額排序）
     const weapons = [
       {id: 0, name: "🗡️ 普通劍", cost: 0, effect: "每次攻擊一次", icon: "🗡️"},
-      {id: 1, name: "⚔️ 雙刃劍", cost: 50, effect: "同時砍兩下,但有3秒冷卻", icon: "⚔️"},
-      {id: 2, name: "🔨 重錘", cost: 60, effect: "每三下有一下造成2倍傷害", icon: "🔨"},
-      {id: 3, name: "🏹 神弓", cost: 80, effect: "每三秒攻擊一次,但造成5倍傷害", icon: "🏹"},
-      {id: 4, name: "💎 暴擊劍", cost: 100, effect: "每下必定爆擊,但每3秒才攻擊一次", icon: "💎"},
-      {id: 5, name: "☠️ 毒刃", cost: 70, effect: "附加毒性傷害,每秒額外扣血(累加)", icon: "☠️"},
-      {id: 6, name: "💰 財富劍", cost: 90, effect: "每打五下額外獲得一個金幣", icon: "💰"},
-      {id: 7, name: "🛡️ 破甲劍", cost: 85, effect: "每打三下減少對手5%防禦率", icon: "🛡️"},
-      {id: 8, name: "⚡ 虛弱劍", cost: 85, effect: "每打三下減少對手2點攻擊力", icon: "⚡"},
-      {id: 9, name: "🎲 隨機劍", cost: 75, effect: "每次攻擊隨機觸發不同效果", icon: "🎲"},
-      {id: 10, name: "💀 秒殺劍", cost: 120, effect: "極低機率(3%)直接秒殺怪獸", icon: "💀"},
-      {id: 11, name: "📈 成長劍", cost: 95, effect: "每攻擊5下永久提升1點攻擊力", icon: "📈"},
-      {id: 12, name: "🎰 賭徒劍", cost: 110, effect: "50%機率5倍傷害,50%機率打到自己", icon: "🎰"}
+      {id: 1, name: "⚔️ 雙刃劍", cost: 50, effect: "第三次攻擊同時砍兩下", icon: "⚔️"},
+      {id: 2, name: "🔨 重錘", cost: 60, effect: "每一下攻擊都是1.5倍傷害", icon: "🔨"},
+      {id: 3, name: "☠️ 毒刃", cost: 70, effect: "附加毒性傷害,每秒額外扣血(累加)", icon: "☠️"},
+      {id: 4, name: "🏹 神弓", cost: 80, effect: "第5次攻擊造成5倍傷害", icon: "🏹"},
+      {id: 5, name: "🛡️ 破甲劍", cost: 85, effect: "每打三下減少對手5%防禦率", icon: "🛡️"},
+      {id: 6, name: "⚡ 虛弱劍", cost: 85, effect: "每打三下減少對手2點攻擊力", icon: "⚡"},
+      {id: 7, name: "💰 財富劍", cost: 90, effect: "每打五下額外獲得一個金幣", icon: "💰"},
+      {id: 8, name: "📈 成長劍", cost: 95, effect: "每攻擊5下永久提升1點攻擊力", icon: "📈"},
+      {id: 9, name: "💎 暴擊劍", cost: 100, effect: "第三次攻擊必定爆擊", icon: "💎"},
+      {id: 10, name: "🎰 賭徒劍", cost: 110, effect: "50%機率5倍傷害,50%機率打到自己", icon: "🎰"},
+      {id: 11, name: "💀 秒殺劍", cost: 120, effect: "極低機率(3%)直接秒殺怪獸", icon: "💀"}
     ];
 
     // 100種妖怪
@@ -1401,90 +1400,57 @@
 
       // 武器特效
       switch(gameState.weaponId) {
-        case 1: // 雙刃劍
-          const now = Date.now();
-          if (now - gameState.lastWeaponUseTime >= 3000) {
+        case 1: // 雙刃劍 - 第三次攻擊同時砍兩下
+          if (gameState.weaponHitCount % 3 === 0) {
             attacks = 2;
-            gameState.lastWeaponUseTime = now;
             extraEffects.push("⚔️ 雙重攻擊!");
           }
           break;
-        case 2: // 重錘
-          if (gameState.weaponHitCount % 3 === 0) {
-            damageMultiplier = 2;
-            extraEffects.push("🔨 重擊!2倍傷害!");
-          }
+        case 2: // 重錘 - 每一下都是1.5倍傷害
+          damageMultiplier = 1.5;
+          extraEffects.push("🔨 重擊!");
           break;
-        case 3: // 神弓
-          damageMultiplier = 5;
-          extraEffects.push("🏹 強力射擊!5倍傷害!");
-          break;
-        case 4: // 暴擊劍
-          damageMultiplier = 2;
-          extraEffects.push("💎 必定爆擊!");
-          break;
-        case 5: // 毒刃
+        case 3: // 毒刃
           gameState.poisonStacks++;
           extraEffects.push(`☠️ 中毒!每秒扣${gameState.poisonStacks}血`);
           break;
-        case 6: // 財富劍
+        case 4: // 神弓 - 第5次攻擊造成5倍傷害
           if (gameState.weaponHitCount % 5 === 0) {
-            gameState.coins++;
-            extraEffects.push("💰 額外獲得1金幣!");
+            damageMultiplier = 5;
+            extraEffects.push("🏹 強力射擊!5倍傷害!");
           }
           break;
-        case 7: // 破甲劍
+        case 5: // 破甲劍
           if (gameState.weaponHitCount % 3 === 0) {
             gameState.enemyDefenseReduction += 5;
             extraEffects.push("🛡️ 降低敵人5%防禦!");
           }
           break;
-        case 8: // 虛弱劍
+        case 6: // 虛弱劍
           if (gameState.weaponHitCount % 3 === 0) {
             gameState.enemyAttackReduction += 2;
             extraEffects.push("⚡ 降低敵人2點攻擊!");
           }
           break;
-        case 9: // 隨機劍
-          const randomEffect = Math.floor(Math.random() * 5);
-          switch(randomEffect) {
-            case 0:
-              damageMultiplier = 2;
-              extraEffects.push("🎲 隨機效果:雙倍傷害!");
-              break;
-            case 1:
-              gameState.coins++;
-              extraEffects.push("🎲 隨機效果:獲得1金幣!");
-              break;
-            case 2:
-              gameState.enemyDefenseReduction += 3;
-              extraEffects.push("🎲 隨機效果:降低3%防禦!");
-              break;
-            case 3:
-              gameState.poisonStacks++;
-              extraEffects.push("🎲 隨機效果:中毒!");
-              break;
-            case 4:
-              attacks = 2;
-              extraEffects.push("🎲 隨機效果:雙重攻擊!");
-              break;
+        case 7: // 財富劍
+          if (gameState.weaponHitCount % 5 === 0) {
+            gameState.coins++;
+            extraEffects.push("💰 額外獲得1金幣!");
           }
           break;
-        case 10: // 秒殺劍
-          if (Math.random() < 0.03) {
-            gameState.enemyHp = 0;
-            addBattleLog("💀 秒殺成功!敵人被一擊擊敗!", "player");
-            updateUI();
-            return;
-          }
-          break;
-        case 11: // 成長劍
+        case 8: // 成長劍
           if (gameState.weaponHitCount % 5 === 0) {
             gameState.playerAttack++;
             extraEffects.push("📈 攻擊力永久+1!");
           }
           break;
-        case 12: // 賭徒劍
+        case 9: // 暴擊劍 - 第三次攻擊必定爆擊
+          if (gameState.weaponHitCount % 3 === 0) {
+            damageMultiplier = 2;
+            extraEffects.push("💎 必定爆擊!");
+          }
+          break;
+        case 10: // 賭徒劍
           if (Math.random() < 0.5) {
             damageMultiplier = 5;
             extraEffects.push("🎰 幸運!5倍傷害!");
@@ -1510,6 +1476,25 @@
             return; // 不攻擊敵人
           }
           break;
+        case 11: // 秒殺劍
+          if (Math.random() < 0.03) {
+            gameState.enemyHp = 0;
+            addBattleLog("💀 秒殺成功!敵人被一擊擊敗!", "player");
+            updateUI();
+            
+            // 檢查是否通關
+            if (gameState.battleInterval) {
+              clearInterval(gameState.battleInterval);
+              gameState.battleInterval = null;
+            }
+            if (gameState.countdownInterval) {
+              clearInterval(gameState.countdownInterval);
+              gameState.countdownInterval = null;
+            }
+            handleStageComplete();
+            return;
+          }
+          break;
       }
 
       // 執行攻擊
@@ -1518,7 +1503,7 @@
         
         // 爆擊判定
         const isCrit = Math.random() * 100 < gameState.playerCritRate;
-        if (isCrit && gameState.weaponId !== 4) {
+        if (isCrit && gameState.weaponId !== 9) {
           damage *= 2;
           extraEffects.push("💥 爆擊!");
         }
@@ -1620,8 +1605,13 @@
     // 關卡完成
     function handleStageComplete() {
       // 清除計時器
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+        gameState.battleInterval = null;
+      }
       if (gameState.countdownInterval) {
         clearInterval(gameState.countdownInterval);
+        gameState.countdownInterval = null;
       }
       
       if (!gameState.completedStages.includes(gameState.currentStage)) {
@@ -2089,5 +2079,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6b8e7308cf251',t:'MTc2MjYyMjIyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6c3d0a028f251',t:'MTc2MjYyMjY3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
