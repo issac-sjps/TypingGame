@@ -949,7 +949,8 @@
       {id: 5, name: "爆擊傷害藥水", cost: 30, effect: "接下來5次攻擊爆擊傷害×2", icon: "💥"},
       {id: 6, name: "混亂藥水", cost: 30, effect: "接下來5次攻擊怪物50%機率攻擊自己", icon: "😵"},
       {id: 7, name: "運氣藥水", cost: 30, effect: "3分鐘內答對金幣×2", icon: "🍀"},
-      {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"}
+      {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"},
+      {id: 9, name: "破甲藥水", cost: 60, effect: "接下來5次攻擊無視對手防禦率", icon: "🔓"}
     ];
 
     // 聖遺物定義
@@ -1001,6 +1002,7 @@
       itemConfusionCount: 0,
       itemLuckEndTime: 0,
       itemCritBoostCount: 0,
+      itemArmorBreakCount: 0,
       relicId: 0,
       ownedRelics: [0],
       enemyHp: 100,
@@ -1270,6 +1272,7 @@
       gameState.itemCritDamageBoostCount = 0;
       gameState.itemConfusionCount = 0;
       gameState.itemCritBoostCount = 0;
+      gameState.itemArmorBreakCount = 0;
       
       updateUI();
       updateAttackLogDisplay();
@@ -1337,6 +1340,7 @@
       gameState.itemCritDamageBoostCount = 0;
       gameState.itemConfusionCount = 0;
       gameState.itemCritBoostCount = 0;
+      gameState.itemArmorBreakCount = 0;
       
       // 不清空攻擊紀錄，保留上一次的紀錄
       
@@ -1534,9 +1538,12 @@
           critDamagePercent = gameState.playerCritDamage * relicCritDamageBoost * critDamageBoost;
         }
         
-        // 道具效果：毒藥水（防禦率減半）
+        // 道具效果：破甲藥水（無視防禦率）
         let effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
-        if (gameState.itemPoisonActive) {
+        if (gameState.itemArmorBreakCount > 0) {
+          effectiveDefense = 0;
+        } else if (gameState.itemPoisonActive) {
+          // 道具效果：毒藥水（防禦率減半）
           effectiveDefense = Math.floor(effectiveDefense / 2);
         }
         
@@ -1554,6 +1561,14 @@
         // 記錄攻擊
         const isActualCrit = isCrit || (gameState.weaponId === 9 && gameState.weaponHitCount % 3 === 0);
         addAttackLog(true, damage, isActualCrit, critDamagePercent);
+      }
+      
+      // 破甲藥水次數減少
+      if (gameState.itemArmorBreakCount > 0) {
+        gameState.itemArmorBreakCount--;
+        if (gameState.itemArmorBreakCount === 0) {
+          resetItemToNone();
+        }
       }
       
       // 毒性傷害
@@ -1647,6 +1662,7 @@
       gameState.itemCritDamageBoostCount = 0;
       gameState.itemConfusionCount = 0;
       gameState.itemCritBoostCount = 0;
+      gameState.itemArmorBreakCount = 0;
       // 不重置運氣藥水時間，讓它自然過期
       updateUI();
       saveGame();
@@ -1744,6 +1760,8 @@
         itemEffect = `無敵盾 (剩${gameState.itemShieldCount}次)`;
       } else if (gameState.itemConfusionCount > 0) {
         itemEffect = `混亂 (剩${gameState.itemConfusionCount}次)`;
+      } else if (gameState.itemArmorBreakCount > 0) {
+        itemEffect = `破甲 (剩${gameState.itemArmorBreakCount}次)`;
       } else if (gameState.itemLuckEndTime > Date.now()) {
         const remainingSeconds = Math.ceil((gameState.itemLuckEndTime - Date.now()) / 1000);
         itemEffect = `金幣×2 (剩${remainingSeconds}秒)`;
@@ -1969,6 +1987,7 @@
         itemConfusionCount: 0,
         itemLuckEndTime: 0,
         itemCritBoostCount: 0,
+        itemArmorBreakCount: 0,
         enemyHp: 100,
         enemyMaxHp: 100,
         enemyBaseAttack: 8,
@@ -2264,6 +2283,7 @@
       gameState.itemCritDamageBoostCount = 0;
       gameState.itemConfusionCount = 0;
       gameState.itemCritBoostCount = 0;
+      gameState.itemArmorBreakCount = 0;
       
       // 啟動新道具效果
       switch(itemId) {
@@ -2290,6 +2310,9 @@
           break;
         case 8: // 爆擊藥水
           gameState.itemCritBoostCount = 5;
+          break;
+        case 9: // 破甲藥水
+          gameState.itemArmorBreakCount = 5;
           break;
       }
     }
@@ -2484,5 +2507,5 @@
       updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7cf0e0509f251',t:'MTc2MjYzMzYyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7e95f1397f251',t:'MTc2MjYzNDcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
