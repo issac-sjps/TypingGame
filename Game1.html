@@ -906,7 +906,7 @@
       {word: "警察", pinyin: "ㄐㄧㄥˇ ㄔㄚˊ"}, {word: "消防", pinyin: "ㄒㄧㄠ ㄈㄤˊ"}, {word: "醫生", pinyin: "ㄧ ㄕㄥ"},
       {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"}, {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"},
       {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"}, {word: "工人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "老闆", pinyin: "ㄌㄠˇ ㄅㄢˇ"},
-      {word: "客人", pinyin: "ㄎㄜˋ ㄖㄣˊ"}, {word: "鄰居", pinyin: "ㄌㄧㄣˊ ㄐㄩ"}, {word: "親戚", pinyin: "ㄑㄧㄣ ㄑㄧˋ"},
+      {word: "客人", pinyin: "ㄎㄜˋ ㄖㄣˊ"}, {word: "鄰居", pinyin: "ㄌㄧㄣˊ ㄐㄩ"}, {word: "親戚", pinyin: "ㄑㄧㄣ ㄑㄧ"},
       {word: "同學", pinyin: "ㄊㄨㄥˊ ㄒㄩㄝˊ"}, {word: "同事", pinyin: "ㄊㄨㄥˊ ㄕˋ"}, {word: "客氣", pinyin: "ㄎㄜˋ ㄑㄧˋ"},
       {word: "禮物", pinyin: "ㄌㄧˇ ㄨˋ"}, {word: "蛋糕", pinyin: "ㄉㄢˋ ㄍㄠ"}, {word: "糖果", pinyin: "ㄊㄤˊ ㄍㄨㄛˇ"},
       {word: "餅乾", pinyin: "ㄅㄧㄥˇ ㄍㄢ"}, {word: "麵包", pinyin: "ㄇㄧㄢˋ ㄅㄠ"}, {word: "牛奶", pinyin: "ㄋㄧㄡˊ ㄋㄞˇ"},
@@ -1202,6 +1202,73 @@
       loadGame();
       startPlayTimer();
       startStage(gameState.currentStage);
+    }
+
+    // 開始關卡（不換題目版本）
+    function startStageWithoutNewWord(stage) {
+      stopBattle();
+      
+      gameState.currentStage = stage;
+      
+      // 聖遺物效果：巨人戒指（血量×2）
+      if (gameState.relicId === 1) {
+        gameState.playerHp = gameState.playerMaxHp * 2;
+      } else {
+        gameState.playerHp = gameState.playerMaxHp;
+      }
+      
+      // 計算敵人數值（自由模式不調整難度）
+      if (gameState.freeMode) {
+        gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
+        gameState.enemyHp = gameState.enemyMaxHp;
+        gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
+        gameState.enemyAttack = gameState.enemyBaseAttack;
+        gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
+        gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
+        gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
+      } else if (gameState.newGamePlus === 0) {
+        // 一周目
+        gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
+        gameState.enemyHp = gameState.enemyMaxHp;
+        gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
+        gameState.enemyAttack = gameState.enemyBaseAttack;
+        gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
+        gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
+        gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
+      } else {
+        // 二周目（更難）
+        gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.1, stage - 1));
+        gameState.enemyHp = gameState.enemyMaxHp;
+        gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.1, stage - 1));
+        gameState.enemyAttack = gameState.enemyBaseAttack;
+        gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
+        gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
+        gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
+      }
+      
+      // 重置武器效果
+      gameState.weaponHitCount = 0;
+      gameState.poisonStacks = 0;
+      gameState.enemyDefenseReduction = 0;
+      gameState.enemyAttackReduction = 0;
+      gameState.battleTimer = 5;
+      gameState.attackCount = 0;
+      
+      // 重置道具效果（除了運氣藥水）
+      gameState.itemBurnActive = false;
+      gameState.itemShieldCount = 0;
+      gameState.itemAttackBoostCount = 0;
+      gameState.itemPoisonActive = false;
+      gameState.itemCritDamageBoostCount = 0;
+      gameState.itemConfusionCount = 0;
+      gameState.itemCritBoostCount = 0;
+      
+      updateUI();
+      updateAttackLogDisplay();
+      // 不呼叫 nextWord()，保留當前題目
+      startBattleTimer();
+      
+      document.getElementById('typingInput').focus();
     }
 
     // 開始關卡
@@ -1738,10 +1805,10 @@
       if (gameState.currentStage >= 100) {
         showVictoryScreen();
       } else {
-        // 自動進入下一關
+        // 自動進入下一關（不換題目）
         gameState.currentStage++;
         setTimeout(() => {
-          startStage(gameState.currentStage);
+          startStageWithoutNewWord(gameState.currentStage);
         }, 1000);
       }
     }
@@ -2392,5 +2459,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7b59db4d4f251',t:'MTc2MjYzMjU4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7c08752f7f251',t:'MTc2MjYzMzAyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
