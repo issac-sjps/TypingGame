@@ -609,6 +609,9 @@
      <div class="game-title">
       🎮 中文打字英雄大冒險
      </div>
+     <div id="newGamePlusHomeIndicator" style="display: none; font-size: 32px; color: #ffd700; font-weight: bold; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+      ⭐ 二周目模式 ⭐
+     </div>
      <div class="game-rules">
       <h3>🎯 遊戲目標</h3>
       <p>通過打字擊敗100關的妖怪!</p>
@@ -618,6 +621,11 @@
       <p>每答對一題獲得5金幣，可用來升級血量(+100 HP)、攻擊力(+5)、防禦率(+2%)、爆擊機率(+5%)、爆擊傷害(+5%)(每項5金幣)，或購買特殊武器。</p>
       <h3>⚔️ 戰鬥系統</h3>
       <p>你和妖怪每5秒輪流攻擊。妖怪每關會變強(血量×1.05、攻擊力×1.05、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%))。</p>
+      <div id="newGamePlusRules" style="display: none; background: rgba(255,215,0,0.2); padding: 20px; border-radius: 10px; border: 2px solid #ffd700; margin-top: 15px;">
+       <h3 style="color: #ffd700;">⭐ 二周目超難模式</h3>
+       <p style="color: #ffeb3b;">妖怪成長速度大幅提升！每關變強規則改為：<br>
+         血量×1.1、攻擊力×1.1、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%)<br><span style="font-size: 18px; font-weight: bold;">挑戰極限，證明你的實力！</span></p>
+      </div>
       <h3>🛡️ 數值說明</h3>
       <p>• 血量(HP)：生命值，歸零則失敗<br>
         • 攻擊力：每次攻擊造成的傷害<br>
@@ -1873,6 +1881,7 @@
       document.getElementById('victoryHome').onclick = () => {
         document.body.removeChild(overlay);
         resetPlayTimer();
+        updateHomeScreenNewGamePlus();
         showScreen('homeScreen');
       };
     }
@@ -2420,6 +2429,7 @@
       stopBattle();
       stopPlayTimer();
       saveGame();
+      updateHomeScreenNewGamePlus();
       showScreen('homeScreen');
     });
     document.getElementById('backToHomeFromStageButton').addEventListener('click', () => showScreen('homeScreen'));
@@ -2453,11 +2463,26 @@
       }
     });
 
+    // 更新首頁二周目顯示
+    function updateHomeScreenNewGamePlus() {
+      const indicator = document.getElementById('newGamePlusHomeIndicator');
+      const rules = document.getElementById('newGamePlusRules');
+      
+      if (gameState.newGamePlus > 0) {
+        indicator.style.display = 'block';
+        rules.style.display = 'block';
+      } else {
+        indicator.style.display = 'none';
+        rules.style.display = 'none';
+      }
+    }
+
     // 初始化
     (async function() {
       await initSDK();
       loadGame();
+      updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7c33fd50df251',t:'MTc2MjYzMzEzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7cf0e0509f251',t:'MTc2MjYzMzYyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
