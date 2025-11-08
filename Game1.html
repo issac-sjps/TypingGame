@@ -160,7 +160,8 @@
       background: rgba(255,255,255,0.15);
       padding: 15px;
       border-radius: 15px;
-      min-width: 150px;
+      width: 180px;
+      min-width: 180px;
       max-width: 180px;
       text-align: center;
     }
@@ -950,7 +951,8 @@
       {id: 3, name: "赫拉克勒斯的戰車", cost: 100, effect: "爆擊傷害機率×2", icon: "🏛️"},
       {id: 4, name: "阿瑞斯的長矛", cost: 100, effect: "攻擊力×2", icon: "🔱"},
       {id: 5, name: "奧菲斯的七弦琴", cost: 100, effect: "敵人永久50%機率打到自己", icon: "🎻"},
-      {id: 6, name: "聚寶盆", cost: 100, effect: "每次攻擊後隨機給予1-10金幣", icon: "🏺"}
+      {id: 6, name: "聚寶盆", cost: 100, effect: "每次攻擊後隨機給予1-10金幣", icon: "🏺"},
+      {id: 7, name: "書卷獎", cost: 100, effect: "答題後金幣+10", icon: "📜"}
     ];
 
     // 100種妖怪
@@ -1544,14 +1546,15 @@
       gameState.itemConfusionCount = 0;
       gameState.itemCritBoostCount = 0;
       // 不重置運氣藥水時間，讓它自然過期
+      updateUI();
       saveGame();
     }
 
     // 檢查運氣藥水是否過期
     function checkLuckPotionExpiry() {
       if (gameState.itemLuckEndTime > 0 && gameState.itemLuckEndTime <= Date.now() && gameState.itemId === 7) {
+        gameState.itemLuckEndTime = 0;
         resetItemToNone();
-        updateUI();
       }
     }
 
@@ -1666,11 +1669,18 @@
 
     // 處理正確答案
     function handleCorrectAnswer() {
+      let baseCoins = 5;
+      
+      // 聖遺物效果：書卷獎（答題後金幣+10）
+      if (gameState.relicId === 7) {
+        baseCoins = 10;
+      }
+      
       // 道具效果：運氣藥水（金幣×2）
       if (gameState.itemLuckEndTime > Date.now()) {
-        gameState.coins += 10;
+        gameState.coins += baseCoins * 2;
       } else {
-        gameState.coins += 5;
+        gameState.coins += baseCoins;
       }
       updateUI();
       saveGame();
@@ -2239,5 +2249,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b799fbc644f251',t:'MTc2MjYzMTQ0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7a2a06086f251',t:'MTc2MjYzMTgwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
