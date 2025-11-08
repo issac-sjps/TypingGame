@@ -1878,30 +1878,42 @@
       document.body.appendChild(overlay);
       
       if (gameState.newGamePlus === 0) {
-        document.getElementById('victoryNewGamePlus').onclick = () => {
-          document.body.removeChild(overlay);
-          startNewGamePlus();
-        };
+        const newGamePlusBtn = document.getElementById('victoryNewGamePlus');
+        if (newGamePlusBtn) {
+          newGamePlusBtn.onclick = () => {
+            document.body.removeChild(overlay);
+            startNewGamePlus();
+          };
+        }
       } else {
-        document.getElementById('victoryFreeMode').onclick = () => {
+        const freeModeBtn = document.getElementById('victoryFreeMode');
+        if (freeModeBtn) {
+          freeModeBtn.onclick = () => {
+            document.body.removeChild(overlay);
+            startFreeMode();
+          };
+        }
+      }
+      
+      const restartBtn = document.getElementById('victoryRestart');
+      if (restartBtn) {
+        restartBtn.onclick = () => {
           document.body.removeChild(overlay);
-          startFreeMode();
+          resetGame();
+          resetPlayTimer();
+          startGame();
         };
       }
       
-      document.getElementById('victoryRestart').onclick = () => {
-        document.body.removeChild(overlay);
-        resetGame();
-        resetPlayTimer();
-        startGame();
-      };
-      
-      document.getElementById('victoryHome').onclick = () => {
-        document.body.removeChild(overlay);
-        resetPlayTimer();
-        updateHomeScreenNewGamePlus();
-        showScreen('homeScreen');
-      };
+      const homeBtn = document.getElementById('victoryHome');
+      if (homeBtn) {
+        homeBtn.onclick = () => {
+          document.body.removeChild(overlay);
+          resetPlayTimer();
+          updateHomeScreenNewGamePlus();
+          showScreen('homeScreen');
+        };
+      }
     }
     
     // 開始二周目
@@ -2507,5 +2519,5 @@
       updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7f14ef6a7f251',t:'MTc2MjYzNTAyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7f955818af251',t:'MTc2MjYzNTM1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
