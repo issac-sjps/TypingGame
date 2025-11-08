@@ -628,14 +628,15 @@
       <p>12種特殊武器，各有獨特效果(雙擊、毒性、秒殺等)。</p>
       <h3>💾 進度保存</h3>
       <p>遊戲進度會自動保存在你的電腦上。</p>
-     </div><button class="btn btn-primary" id="startButton">開始遊戲</button> <button class="btn btn-secondary" id="stageSelectButton">關卡選擇</button>
+     </div>
+     <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;"><button class="btn btn-primary" id="startButton">開始遊戲</button> <button class="btn btn-secondary" id="stageSelectButton">關卡選擇</button> <button class="btn" id="clearDataButton" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); padding: 18px 40px; font-size: 20px;">🗑️ 清除遊戲紀錄</button>
+     </div>
     </div>
    </div><!-- 遊戲畫面 -->
    <div class="screen" id="gameScreen">
     <div class="game-screen">
      <div class="game-header">
-      <div class="stage-info">
-       第 <span id="currentStage">1</span> 關
+      <div class="stage-info"><span id="newGamePlusIndicator" style="display: none; color: #ffd700; font-size: 20px; margin-right: 10px;">⭐ 二周目</span> <span id="freeModeIndicator" style="display: none; color: #00ff00; font-size: 20px; margin-right: 10px;">🎮 自由模式</span> 第 <span id="currentStage">1</span> 關
       </div>
       <div style="display: flex; gap: 20px; align-items: center;">
        <div class="timer-display">
@@ -1011,7 +1012,9 @@
       timerInterval: null,
       playerAttackLog: [],
       enemyAttackLog: [],
-      attackCount: 0
+      attackCount: 0,
+      newGamePlus: 0,
+      freeMode: false
     };
 
     // 遊玩時間追蹤
@@ -1135,7 +1138,9 @@
         itemId: gameState.itemId,
         ownedItems: gameState.ownedItems,
         relicId: gameState.relicId,
-        ownedRelics: gameState.ownedRelics
+        ownedRelics: gameState.ownedRelics,
+        newGamePlus: gameState.newGamePlus,
+        freeMode: gameState.freeMode
       }));
     }
 
@@ -1157,6 +1162,8 @@
         gameState.ownedItems = data.ownedItems || [0];
         gameState.relicId = data.relicId || 0;
         gameState.ownedRelics = data.ownedRelics || [0];
+        gameState.newGamePlus = data.newGamePlus || 0;
+        gameState.freeMode = data.freeMode || false;
       }
     }
 
@@ -1210,14 +1217,34 @@
         gameState.playerHp = gameState.playerMaxHp;
       }
       
-      // 計算敵人數值
-      gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
-      gameState.enemyHp = gameState.enemyMaxHp;
-      gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
-      gameState.enemyAttack = gameState.enemyBaseAttack;
-      gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
-      gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
-      gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
+      // 計算敵人數值（自由模式不調整難度）
+      if (gameState.freeMode) {
+        gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
+        gameState.enemyHp = gameState.enemyMaxHp;
+        gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
+        gameState.enemyAttack = gameState.enemyBaseAttack;
+        gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
+        gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
+        gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
+      } else if (gameState.newGamePlus === 0) {
+        // 一周目
+        gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
+        gameState.enemyHp = gameState.enemyMaxHp;
+        gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
+        gameState.enemyAttack = gameState.enemyBaseAttack;
+        gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
+        gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
+        gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
+      } else {
+        // 二周目（更難）
+        gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.1, stage - 1));
+        gameState.enemyHp = gameState.enemyMaxHp;
+        gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.1, stage - 1));
+        gameState.enemyAttack = gameState.enemyBaseAttack;
+        gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
+        gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
+        gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
+      }
       
       // 重置武器效果
       gameState.weaponHitCount = 0;
@@ -1562,6 +1589,19 @@
     function updateUI() {
       // 檢查運氣藥水是否過期
       checkLuckPotionExpiry();
+      
+      // 顯示二周目或自由模式標記
+      if (gameState.freeMode) {
+        document.getElementById('freeModeIndicator').style.display = 'inline';
+        document.getElementById('newGamePlusIndicator').style.display = 'none';
+      } else if (gameState.newGamePlus > 0) {
+        document.getElementById('newGamePlusIndicator').style.display = 'inline';
+        document.getElementById('freeModeIndicator').style.display = 'none';
+      } else {
+        document.getElementById('newGamePlusIndicator').style.display = 'none';
+        document.getElementById('freeModeIndicator').style.display = 'none';
+      }
+      
       document.getElementById('currentStage').textContent = gameState.currentStage;
       document.getElementById('coinsDisplay').textContent = gameState.coins;
       document.getElementById('shopCoinsDisplay').textContent = gameState.coins;
@@ -1714,17 +1754,47 @@
       overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;';
       
       const box = document.createElement('div');
-      box.style.cssText = 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 60px; border-radius: 20px; text-align: center; color: white;';
-      box.innerHTML = `
-        <div style="font-size: 60px; margin-bottom: 30px;">🎊 恭喜通關!</div>
-        <div style="font-size: 28px; margin-bottom: 20px;">你真厲害！完成了全部100關！</div>
-        <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
-        <button id="victoryRestart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
-        <button id="victoryHome" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
-      `;
+      box.style.cssText = 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 60px; border-radius: 20px; text-align: center; color: white; max-width: 800px;';
+      
+      if (gameState.newGamePlus === 0) {
+        // 一周目通關
+        box.innerHTML = `
+          <div style="font-size: 60px; margin-bottom: 30px;">🎊 恭喜通關!</div>
+          <div style="font-size: 28px; margin-bottom: 20px;">你真厲害！完成了全部100關！</div>
+          <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
+          <button id="victoryNewGamePlus" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #ffd700; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">⭐ 二周目</button>
+          <button id="victoryRestart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
+          <button id="victoryHome" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
+        `;
+      } else {
+        // 二周目通關
+        box.innerHTML = `
+          <div style="font-size: 60px; margin-bottom: 30px;">🏆 恭喜你已經無所不能！</div>
+          <div style="font-size: 24px; margin-bottom: 20px; line-height: 1.6;">
+            截圖寄信給 <span style="color: #ffd700;">issac@sjps.kh.edu.tw</span><br>
+            記得報上班級座號姓名給電腦老師加分！
+          </div>
+          <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
+          <button id="victoryFreeMode" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #00ff00; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">🎮 自由模式</button>
+          <button id="victoryRestart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
+          <button id="victoryHome" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
+        `;
+      }
       
       overlay.appendChild(box);
       document.body.appendChild(overlay);
+      
+      if (gameState.newGamePlus === 0) {
+        document.getElementById('victoryNewGamePlus').onclick = () => {
+          document.body.removeChild(overlay);
+          startNewGamePlus();
+        };
+      } else {
+        document.getElementById('victoryFreeMode').onclick = () => {
+          document.body.removeChild(overlay);
+          startFreeMode();
+        };
+      }
       
       document.getElementById('victoryRestart').onclick = () => {
         document.body.removeChild(overlay);
@@ -1738,6 +1808,26 @@
         resetPlayTimer();
         showScreen('homeScreen');
       };
+    }
+    
+    // 開始二周目
+    function startNewGamePlus() {
+      gameState.newGamePlus = 1;
+      gameState.currentStage = 1;
+      gameState.maxStage = 100; // 二周目解鎖所有關卡
+      gameState.freeMode = false;
+      saveGame();
+      resetPlayTimer();
+      startGame();
+    }
+    
+    // 開始自由模式
+    function startFreeMode() {
+      gameState.freeMode = true;
+      gameState.currentStage = 1;
+      saveGame();
+      resetPlayTimer();
+      startGame();
     }
 
     // 戰敗
@@ -1857,14 +1947,21 @@
         btn.className = 'stage-btn';
         btn.textContent = i;
         
-        if (i > gameState.maxStage) {
-          btn.disabled = true;
-        } else if (i === gameState.currentStage) {
-          btn.classList.add('current');
+        // 二周目或自由模式解鎖所有關卡
+        if (gameState.newGamePlus > 0 || gameState.freeMode) {
+          if (i === gameState.currentStage) {
+            btn.classList.add('current');
+          }
+        } else {
+          if (i > gameState.maxStage) {
+            btn.disabled = true;
+          } else if (i === gameState.currentStage) {
+            btn.classList.add('current');
+          }
         }
         
         btn.onclick = () => {
-          if (i <= gameState.maxStage) {
+          if (gameState.newGamePlus > 0 || gameState.freeMode || i <= gameState.maxStage) {
             closeStageSelectPopup();
             startStage(i);
           }
@@ -2137,14 +2234,21 @@
         btn.className = 'stage-btn';
         btn.textContent = i;
         
-        if (i > gameState.maxStage) {
-          btn.disabled = true;
-        } else if (i === gameState.currentStage) {
-          btn.classList.add('current');
+        // 二周目或自由模式解鎖所有關卡
+        if (gameState.newGamePlus > 0 || gameState.freeMode) {
+          if (i === gameState.currentStage) {
+            btn.classList.add('current');
+          }
+        } else {
+          if (i > gameState.maxStage) {
+            btn.disabled = true;
+          } else if (i === gameState.currentStage) {
+            btn.classList.add('current');
+          }
         }
         
         btn.onclick = () => {
-          if (i <= gameState.maxStage) {
+          if (gameState.newGamePlus > 0 || gameState.freeMode || i <= gameState.maxStage) {
             startStage(i);
           }
         };
@@ -2200,12 +2304,51 @@
       }
     }
 
+    // 清除遊戲紀錄
+    function clearGameData() {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+      
+      const box = document.createElement('div');
+      box.style.cssText = 'background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); padding: 40px; border-radius: 20px; text-align: center; color: white;';
+      box.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 20px;">⚠️ 確認清除</div>
+        <div style="font-size: 24px; margin-bottom: 30px;">確定要清除所有遊戲紀錄嗎？<br>此操作無法復原！</div>
+        <button id="confirmClear" style="padding: 15px 30px; font-size: 18px; border: none; border-radius: 10px; background: white; color: #ff6b6b; font-weight: bold; cursor: pointer; margin: 10px;">確定清除</button>
+        <button id="cancelClear" style="padding: 15px 30px; font-size: 18px; border: none; border-radius: 10px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">取消</button>
+      `;
+      
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+      
+      document.getElementById('confirmClear').onclick = () => {
+        localStorage.removeItem('typingGameSave');
+        resetGame();
+        document.body.removeChild(overlay);
+        
+        // 顯示清除成功訊息
+        const successBox = document.createElement('div');
+        successBox.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,200,0,0.9); padding: 30px 50px; border-radius: 15px; color: white; font-size: 24px; z-index: 10001;';
+        successBox.textContent = '✅ 遊戲紀錄已清除！';
+        document.body.appendChild(successBox);
+        
+        setTimeout(() => {
+          document.body.removeChild(successBox);
+        }, 2000);
+      };
+      
+      document.getElementById('cancelClear').onclick = () => {
+        document.body.removeChild(overlay);
+      };
+    }
+    
     // 事件監聽器
     document.getElementById('startButton').addEventListener('click', () => {
       startGame();
     });
     
     document.getElementById('stageSelectButton').addEventListener('click', showStageSelect);
+    document.getElementById('clearDataButton').addEventListener('click', clearGameData);
     document.getElementById('backToHomeButton').addEventListener('click', () => {
       stopBattle();
       stopPlayTimer();
@@ -2249,5 +2392,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7a2a06086f251',t:'MTc2MjYzMTgwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7b59db4d4f251',t:'MTc2MjYzMjU4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
