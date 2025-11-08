@@ -537,7 +537,7 @@
 
     .weapons-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 20px;
       margin-bottom: 30px;
     }
@@ -767,7 +767,7 @@
       <p><strong>🎯 遊戲目標：</strong>通過打字擊敗100關的妖怪!</p>
       <p><strong>⌨️ 遊戲方式：</strong>看到中文字和注音後,正確輸入中文字並按Enter確認。答對後可獲得金幣並對妖怪造成傷害。</p>
       <p><strong>💰 金幣系統：</strong>每答對一題獲得金幣,可用來升級血量、攻擊力、防禦率、爆擊率,或購買特殊武器。</p>
-      <p><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、攻擊力×1.2、防禦率+1%、爆擊率+0.5%)。</p>
+      <p><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、攻擊力×1.2、防禦率+1%、爆擊率起始2%每關+0.5%)。</p>
       <p><strong>🛡️ 數值說明：</strong></p>
       <p>• 血量(HP)：生命值,歸零則失敗</p>
       <p>• 攻擊力：每次攻擊造成的傷害</p>
@@ -1105,7 +1105,7 @@
       {word: "星星", pinyin: "ㄒㄧㄥ ㄒㄧㄥ"}, {word: "雲朵", pinyin: "ㄩㄣˊ ㄉㄨㄛˇ"}, {word: "彩虹", pinyin: "ㄘㄞˇ ㄏㄨㄥˊ"}
     ];
 
-    // 10種武器定義
+    // 12種武器定義
     const weapons = [
       {id: 0, name: "🗡️ 普通劍", cost: 0, effect: "每次攻擊一次", icon: "🗡️"},
       {id: 1, name: "⚔️ 雙刃劍", cost: 50, effect: "同時砍兩下,但有3秒冷卻", icon: "⚔️"},
@@ -1117,7 +1117,9 @@
       {id: 7, name: "🛡️ 破甲劍", cost: 85, effect: "每打三下減少對手5%防禦率", icon: "🛡️"},
       {id: 8, name: "⚡ 虛弱劍", cost: 85, effect: "每打三下減少對手2點攻擊力", icon: "⚡"},
       {id: 9, name: "🎲 隨機劍", cost: 75, effect: "每次攻擊隨機觸發不同效果", icon: "🎲"},
-      {id: 10, name: "💀 秒殺劍", cost: 120, effect: "極低機率(3%)直接秒殺怪獸", icon: "💀"}
+      {id: 10, name: "💀 秒殺劍", cost: 120, effect: "極低機率(3%)直接秒殺怪獸", icon: "💀"},
+      {id: 11, name: "📈 成長劍", cost: 95, effect: "每攻擊5下永久提升1點攻擊力", icon: "📈"},
+      {id: 12, name: "🎰 賭徒劍", cost: 110, effect: "50%機率5倍傷害,50%機率打到自己", icon: "🎰"}
     ];
 
     // 100種妖怪
@@ -1141,7 +1143,7 @@
       playerMaxHp: 100,
       playerAttack: 10,
       playerDefense: 0,
-      playerCritRate: 5,
+      playerCritRate: 2,
       coins: 0,
       weaponId: 0,
       completedStages: [],
@@ -1149,7 +1151,7 @@
       enemyMaxHp: 100,
       enemyAttack: 8,
       enemyDefense: 0,
-      enemyCritRate: 0,
+      enemyCritRate: 2,
       currentWord: null,
       weaponHitCount: 0,
       poisonStacks: 0,
@@ -1256,7 +1258,7 @@
       gameState.playerMaxHp = 100;
       gameState.playerAttack = 10;
       gameState.playerDefense = 0;
-      gameState.playerCritRate = 5;
+      gameState.playerCritRate = 2;
       gameState.coins = 0;
       gameState.weaponId = 0;
       gameState.completedStages = [];
@@ -1278,7 +1280,7 @@
       gameState.enemyHp = gameState.enemyMaxHp;
       gameState.enemyAttack = Math.floor(8 * Math.pow(1.2, stage - 1));
       gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
-      gameState.enemyCritRate = Math.min((stage - 1) * 0.5, 50);
+      gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
       gameState.weaponHitCount = 0;
       gameState.poisonStacks = 0;
       gameState.enemyDefenseReduction = 0;
@@ -1334,8 +1336,8 @@
       
       document.getElementById('playerHp').textContent = `${gameState.playerHp}/${gameState.playerMaxHp}`;
       document.getElementById('playerAttack').textContent = gameState.playerAttack;
-      document.getElementById('playerDefense').textContent = `${gameState.playerDefense}%`;
-      document.getElementById('playerCrit').textContent = `${gameState.playerCritRate}%`;
+      document.getElementById('playerDefense').textContent = `${gameState.playerDefense}%${gameState.playerDefense >= 90 ? ' MAX' : ''}`;
+      document.getElementById('playerCrit').textContent = `${gameState.playerCritRate}%${gameState.playerCritRate >= 100 ? ' MAX' : ''}`;
       
       const playerHpPercent = (gameState.playerHp / gameState.playerMaxHp) * 100;
       document.getElementById('playerHpBar').style.width = `${playerHpPercent}%`;
@@ -1476,6 +1478,38 @@
             return;
           }
           break;
+        case 11: // 成長劍
+          if (gameState.weaponHitCount % 5 === 0) {
+            gameState.playerAttack++;
+            extraEffects.push("📈 攻擊力永久+1!");
+          }
+          break;
+        case 12: // 賭徒劍
+          if (Math.random() < 0.5) {
+            damageMultiplier = 5;
+            extraEffects.push("🎰 幸運!5倍傷害!");
+          } else {
+            // 打到自己
+            const selfDamage = Math.floor(gameState.playerAttack * 0.5);
+            gameState.playerHp = Math.max(0, gameState.playerHp - selfDamage);
+            addBattleLog(`🎰 失手!打到自己造成${selfDamage}點傷害!`, "enemy");
+            updateUI();
+            
+            // 檢查玩家是否死亡
+            if (gameState.playerHp <= 0) {
+              if (gameState.battleInterval) {
+                clearInterval(gameState.battleInterval);
+                gameState.battleInterval = null;
+              }
+              if (gameState.countdownInterval) {
+                clearInterval(gameState.countdownInterval);
+                gameState.countdownInterval = null;
+              }
+              showScreen('defeatScreen');
+            }
+            return; // 不攻擊敵人
+          }
+          break;
       }
 
       // 執行攻擊
@@ -1601,11 +1635,57 @@
       } else {
         updateUpgradeScreenCoins();
         showScreen('upgradeScreen');
+        startAutoNextStageTimer();
+      }
+    }
+
+    // 自動進入下一關倒數計時
+    let autoNextStageTimer = null;
+    let autoNextStageCountdown = 5;
+
+    function startAutoNextStageTimer() {
+      autoNextStageCountdown = 5;
+      updateAutoNextStageDisplay();
+      
+      if (autoNextStageTimer) {
+        clearInterval(autoNextStageTimer);
+      }
+      
+      autoNextStageTimer = setInterval(() => {
+        autoNextStageCountdown--;
+        updateAutoNextStageDisplay();
+        
+        if (autoNextStageCountdown <= 0) {
+          clearInterval(autoNextStageTimer);
+          autoNextStageTimer = null;
+          continueBattle();
+        }
+      }, 1000);
+    }
+
+    function stopAutoNextStageTimer() {
+      if (autoNextStageTimer) {
+        clearInterval(autoNextStageTimer);
+        autoNextStageTimer = null;
+      }
+      autoNextStageCountdown = 5;
+      updateAutoNextStageDisplay();
+    }
+
+    function updateAutoNextStageDisplay() {
+      const btn = document.getElementById('continueBattleBtn');
+      if (btn) {
+        if (autoNextStageCountdown > 0) {
+          btn.textContent = `繼續戰鬥 (${autoNextStageCountdown}秒後自動進入)`;
+        } else {
+          btn.textContent = '繼續戰鬥';
+        }
       }
     }
 
     // 升級功能
     function upgradeHealth() {
+      stopAutoNextStageTimer();
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
         gameState.playerMaxHp += 20;
@@ -1619,6 +1699,7 @@
     }
 
     function upgradeAttack() {
+      stopAutoNextStageTimer();
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
         gameState.playerAttack += 5;
@@ -1631,6 +1712,7 @@
     }
 
     function upgradeDefense() {
+      stopAutoNextStageTimer();
       if (gameState.playerDefense >= 90) {
         showInlineMessage("防禦力已達上限90%!");
         return;
@@ -1647,6 +1729,11 @@
     }
 
     function upgradeCrit() {
+      stopAutoNextStageTimer();
+      if (gameState.playerCritRate >= 100) {
+        showInlineMessage("爆擊率已達上限100%!");
+        return;
+      }
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
         gameState.playerCritRate = Math.min(gameState.playerCritRate + 2, 100);
@@ -1674,8 +1761,14 @@
       if (hpEl) hpEl.textContent = gameState.playerHp;
       if (maxHpEl) maxHpEl.textContent = gameState.playerMaxHp;
       if (attackEl) attackEl.textContent = gameState.playerAttack;
-      if (defenseEl) defenseEl.textContent = gameState.playerDefense;
-      if (critEl) critEl.textContent = gameState.playerCritRate;
+      if (defenseEl) {
+        defenseEl.textContent = gameState.playerDefense;
+        defenseEl.parentElement.querySelector('div:first-child').textContent = `🛡️ 防禦率${gameState.playerDefense >= 90 ? ' MAX' : ''}`;
+      }
+      if (critEl) {
+        critEl.textContent = gameState.playerCritRate;
+        critEl.parentElement.querySelector('div:first-child').textContent = `💥 爆擊率${gameState.playerCritRate >= 100 ? ' MAX' : ''}`;
+      }
     }
 
     // 遊戲內即時升級
@@ -1723,12 +1816,14 @@
 
     // 繼續戰鬥
     function continueBattle() {
+      stopAutoNextStageTimer();
       gameState.currentStage++;
       startStage(gameState.currentStage);
     }
 
     // 商店
     function openShop() {
+      stopAutoNextStageTimer();
       renderWeaponsShop();
       showScreen('shopScreen');
     }
@@ -1994,5 +2089,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5afdd561df251',t:'MTc2MjYxMTM3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6b8e7308cf251',t:'MTc2MjYyMjIyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
