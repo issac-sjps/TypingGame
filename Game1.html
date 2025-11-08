@@ -211,6 +211,11 @@
       100% { transform: translateX(0); }
     }
 
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+
     .character-name {
       font-size: 24px;
       font-weight: bold;
@@ -573,44 +578,7 @@
       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     }
 
-    /* 失敗浮動視窗 */
-    .defeat-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-    }
 
-    .defeat-overlay.active {
-      display: flex;
-    }
-
-    .defeat-container {
-      background: rgba(255,255,255,0.95);
-      padding: 60px;
-      border-radius: 20px;
-      max-width: 600px;
-      width: 90%;
-      text-align: center;
-      color: #333;
-    }
-
-    .defeat-title {
-      font-size: 60px;
-      margin-bottom: 30px;
-    }
-
-    .defeat-message {
-      font-size: 28px;
-      margin-bottom: 40px;
-      color: #666;
-    }
 
     @media (max-width: 1200px) {
       .weapons-grid {
@@ -667,8 +635,16 @@
       <div class="stage-info">
        第 <span id="currentStage">1</span> 關
       </div>
-      <div class="timer-display">
-       下次攻擊: <span id="timerDisplay">5</span>秒
+      <div style="display: flex; gap: 20px; align-items: center;">
+       <div class="timer-display">
+        下次攻擊: <span id="timerDisplay">5</span>秒
+       </div>
+       <div class="timer-display">
+        已攻擊: <span id="attackCountDisplay">0</span>次
+       </div>
+      </div>
+      <div id="defeatNotice" style="display: none; font-size: 24px; font-weight: bold; color: #ff6b6b; animation: pulse 1s ease-in-out infinite;">
+       💀 挑戰失敗！<span id="retryCountdown">5</span>秒後重新挑戰...
       </div>
       <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
       </div>
@@ -785,18 +761,18 @@
        </div>
       </div>
      </div>
+     <div class="upgrade-panel">
+      <div class="upgrade-title">
+       💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
+      </div>
+      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 血量 (+20 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 攻擊 (+5 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 防禦 (+2%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 爆擊機率 (+5%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 爆擊傷害 (+5%) - 5💰</button>
+      </div>
+     </div>
      <div class="typing-area">
       <div class="word-display" id="wordDisplay">
        準備開始...
       </div>
       <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
-     </div>
-     <div class="upgrade-panel">
-      <div class="upgrade-title">
-       💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
-      </div>
-      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 升級血量 (+20 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 升級攻擊 (+5 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 升級防禦 (+2%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 升級爆擊機率 (+5%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 升級爆擊傷害 (+5%) - 5💰</button>
-      </div>
      </div>
     </div>
    </div><!-- 關卡選擇畫面 -->
@@ -832,18 +808,6 @@
     <div class="stages-grid" id="stagesPopupGrid"></div>
     <div style="text-align: center; margin-top: 20px;"><button class="btn btn-secondary" id="closeStageSelectButton">關閉</button>
     </div>
-   </div>
-  </div><!-- 失敗浮動視窗 -->
-  <div class="defeat-overlay" id="defeatOverlay">
-   <div class="defeat-container">
-    <div class="defeat-title">
-     💀 戰敗了!
-    </div>
-    <div class="defeat-message">
-     別灰心，再試一次！
-    </div>
-    <div class="defeat-message" style="font-size: 20px; color: #ffd700;"><span id="autoRetryCountdown">5</span> 秒後自動重新挑戰...
-    </div><button class="btn btn-primary" id="retryButton">立即重新挑戰</button> <button class="btn btn-secondary" id="backToHomeFromDefeatButton">返回首頁</button>
    </div>
   </div>
   <script>
@@ -952,25 +916,27 @@
       battleInterval: null,
       timerInterval: null,
       playerAttackLog: [],
-      enemyAttackLog: []
+      enemyAttackLog: [],
+      attackCount: 0
     };
 
     // 添加攻擊紀錄
-    function addAttackLog(isPlayer, damage, isCrit) {
+    function addAttackLog(isPlayer, damage, isCrit, critDamagePercent) {
       const log = {
         damage: damage,
         isCrit: isCrit,
+        critDamagePercent: critDamagePercent || 0,
         time: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
       };
       
       if (isPlayer) {
         gameState.playerAttackLog.push(log);
-        if (gameState.playerAttackLog.length > 20) {
+        if (gameState.playerAttackLog.length > 5) {
           gameState.playerAttackLog.shift();
         }
       } else {
         gameState.enemyAttackLog.push(log);
-        if (gameState.enemyAttackLog.length > 20) {
+        if (gameState.enemyAttackLog.length > 5) {
           gameState.enemyAttackLog.shift();
         }
       }
@@ -986,21 +952,31 @@
       if (gameState.playerAttackLog.length === 0) {
         playerLogContent.innerHTML = '等待戰鬥開始...';
       } else {
-        playerLogContent.innerHTML = gameState.playerAttackLog.map(log => 
-          `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
+        playerLogContent.innerHTML = gameState.playerAttackLog.map(log => {
+          let critText = '';
+          if (log.isCrit && log.critDamagePercent > 0) {
+            critText = `<div style="font-size: 11px; color: #ffd700;">爆擊傷害: ${log.critDamagePercent}%</div>`;
+          }
+          return `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
             ${log.isCrit ? '💥 ' : '⚔️ '}傷害: ${log.damage}
-          </div>`
-        ).reverse().join('');
+            ${critText}
+          </div>`;
+        }).reverse().join('');
       }
       
       if (gameState.enemyAttackLog.length === 0) {
         enemyLogContent.innerHTML = '等待戰鬥開始...';
       } else {
-        enemyLogContent.innerHTML = gameState.enemyAttackLog.map(log => 
-          `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
+        enemyLogContent.innerHTML = gameState.enemyAttackLog.map(log => {
+          let critText = '';
+          if (log.isCrit && log.critDamagePercent > 0) {
+            critText = `<div style="font-size: 11px; color: #ffd700;">爆擊傷害: ${log.critDamagePercent}%</div>`;
+          }
+          return `<div class="log-entry ${log.isCrit ? 'crit' : ''}">
             ${log.isCrit ? '💥 ' : '👊 '}傷害: ${log.damage}
-          </div>`
-        ).reverse().join('');
+            ${critText}
+          </div>`;
+        }).reverse().join('');
       }
     }
 
@@ -1095,6 +1071,7 @@
       gameState.enemyDefenseReduction = 0;
       gameState.enemyAttackReduction = 0;
       gameState.battleTimer = 5;
+      gameState.attackCount = 0;
       
       // 不清空攻擊紀錄，保留上一次的紀錄
       
@@ -1138,6 +1115,10 @@
       if (gameState.enemyHp <= 0 || gameState.playerHp <= 0) {
         return;
       }
+      
+      // 增加攻擊次數
+      gameState.attackCount++;
+      document.getElementById('attackCountDisplay').textContent = gameState.attackCount;
       
       // 玩家攻擊
       playerAttack();
@@ -1240,8 +1221,10 @@
         let damage = gameState.playerAttack * damageMultiplier;
         
         const isCrit = Math.random() * 100 < gameState.playerCritRate;
+        let critDamagePercent = 0;
         if (isCrit && gameState.weaponId !== 9) {
           damage = Math.floor(damage * (100 + gameState.playerCritDamage) / 100);
+          critDamagePercent = gameState.playerCritDamage;
         }
         
         const effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
@@ -1250,7 +1233,8 @@
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
         
         // 記錄攻擊
-        addAttackLog(true, damage, isCrit || (gameState.weaponId === 9 && gameState.weaponHitCount % 3 === 0));
+        const isActualCrit = isCrit || (gameState.weaponId === 9 && gameState.weaponHitCount % 3 === 0);
+        addAttackLog(true, damage, isActualCrit, critDamagePercent);
       }
       
       // 毒性傷害
@@ -1270,8 +1254,10 @@
       let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
       
       const isCrit = Math.random() * 100 < gameState.enemyCritRate;
+      let critDamagePercent = 0;
       if (isCrit) {
         damage = Math.floor(damage * (100 + gameState.enemyCritDamage) / 100);
+        critDamagePercent = gameState.enemyCritDamage;
       }
       
       const defenseReduction = Math.floor(damage * (gameState.playerDefense / 2) / 100);
@@ -1279,7 +1265,7 @@
       gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
       
       // 記錄攻擊
-      addAttackLog(false, finalDamage, isCrit);
+      addAttackLog(false, finalDamage, isCrit, critDamagePercent);
       
       updateUI();
     }
@@ -1290,6 +1276,7 @@
       document.getElementById('coinsDisplay').textContent = gameState.coins;
       document.getElementById('shopCoinsDisplay').textContent = gameState.coins;
       document.getElementById('upgradeCoins').textContent = gameState.coins;
+      document.getElementById('attackCountDisplay').textContent = gameState.attackCount;
       
       // 玩家數值
       document.getElementById('playerHp').textContent = `${gameState.playerHp}/${gameState.playerMaxHp}`;
@@ -1412,7 +1399,7 @@
     // 戰敗
     function handleDefeat() {
       stopBattle();
-      document.getElementById('defeatOverlay').classList.add('active');
+      document.getElementById('defeatNotice').style.display = 'block';
       startAutoRetryCountdown();
     }
 
@@ -1420,7 +1407,7 @@
     let autoRetryTimer = null;
     function startAutoRetryCountdown() {
       let countdown = 5;
-      const countdownElement = document.getElementById('autoRetryCountdown');
+      const countdownElement = document.getElementById('retryCountdown');
       countdownElement.textContent = countdown;
       
       if (autoRetryTimer) {
@@ -1434,7 +1421,7 @@
         if (countdown <= 0) {
           clearInterval(autoRetryTimer);
           autoRetryTimer = null;
-          document.getElementById('defeatOverlay').classList.remove('active');
+          document.getElementById('defeatNotice').style.display = 'none';
           startStage(gameState.currentStage);
         }
       }, 1000);
@@ -1445,6 +1432,7 @@
         clearInterval(autoRetryTimer);
         autoRetryTimer = null;
       }
+      document.getElementById('defeatNotice').style.display = 'none';
     }
 
     // 重置遊戲
@@ -1477,7 +1465,8 @@
         battleInterval: null,
         timerInterval: null,
         playerAttackLog: [],
-        enemyAttackLog: []
+        enemyAttackLog: [],
+        attackCount: 0
       };
       saveGame();
     }
@@ -1680,16 +1669,6 @@
       showScreen('homeScreen');
     });
     document.getElementById('backToHomeFromStageButton').addEventListener('click', () => showScreen('homeScreen'));
-    document.getElementById('backToHomeFromDefeatButton').addEventListener('click', () => {
-      stopAutoRetryCountdown();
-      document.getElementById('defeatOverlay').classList.remove('active');
-      showScreen('homeScreen');
-    });
-    document.getElementById('retryButton').addEventListener('click', () => {
-      stopAutoRetryCountdown();
-      document.getElementById('defeatOverlay').classList.remove('active');
-      startStage(gameState.currentStage);
-    });
     
     document.getElementById('openShopButton').addEventListener('click', openShop);
     document.getElementById('closeShopButton').addEventListener('click', closeShop);
@@ -1720,5 +1699,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b73c4845b9f251',t:'MTc2MjYyNzYxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b74920e67ff251',t:'MTc2MjYyODEzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
