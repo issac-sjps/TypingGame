@@ -471,6 +471,70 @@
       margin-bottom: 30px;
     }
 
+    /* 浮動商店視窗 */
+    .shop-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .shop-modal.active {
+      display: flex;
+    }
+
+    .shop-modal-content {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .shop-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .shop-modal-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .shop-close-btn {
+      background: rgba(255,255,255,0.3);
+      border: none;
+      color: #ffffff;
+      font-size: 28px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shop-close-btn:hover {
+      background: rgba(255,255,255,0.5);
+      transform: scale(1.1);
+    }
+
     .weapons-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -946,6 +1010,16 @@
       🛒 武器商店
      </div>
      <div class="weapons-grid" id="weaponsGrid"></div><button class="btn btn-secondary" onclick="closeShop()">返回</button>
+    </div>
+   </div><!-- 浮動商店視窗 -->
+   <div class="shop-modal" id="shopModal">
+    <div class="shop-modal-content">
+     <div class="shop-modal-header">
+      <div class="shop-modal-title">
+       🛒 武器商店
+      </div><button class="shop-close-btn" onclick="closeShopModal()">✕</button>
+     </div>
+     <div class="weapons-grid" id="weaponsGridModal"></div>
     </div>
    </div><!-- 關卡選擇畫面 -->
    <div class="screen" id="stageSelectScreen">
@@ -1557,9 +1631,13 @@
     }
 
     function upgradeDefense() {
+      if (gameState.playerDefense >= 90) {
+        showInlineMessage("防禦力已達上限90%!");
+        return;
+      }
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
-        gameState.playerDefense = Math.min(gameState.playerDefense + 3, 75);
+        gameState.playerDefense = Math.min(gameState.playerDefense + 3, 90);
         saveProgress();
         updateUI();
         updateUpgradeScreenCoins();
@@ -1618,15 +1696,20 @@
     }
 
     function openShopInGame() {
-      // 暫停戰鬥
-      if (gameState.battleInterval) {
-        clearInterval(gameState.battleInterval);
-      }
-      if (gameState.countdownInterval) {
-        clearInterval(gameState.countdownInterval);
-      }
-      openShop();
+      // 不暫停戰鬥，直接開啟浮動視窗
+      openShopModal();
     }
+
+    function openShopModal() {
+      renderWeaponsShopModal();
+      document.getElementById('shopModal').classList.add('active');
+    }
+
+    function closeShopModal() {
+      document.getElementById('shopModal').classList.remove('active');
+    }
+
+    window.closeShopModal = closeShopModal;
 
     function showInlineMessage(message) {
       addBattleLog(`⚠️ ${message}`, "enemy");
@@ -1712,6 +1795,30 @@
       });
     }
 
+    function renderWeaponsShopModal() {
+      const grid = document.getElementById('weaponsGridModal');
+      grid.innerHTML = '';
+      
+      weapons.forEach(weapon => {
+        const equipped = gameState.weaponId === weapon.id;
+        
+        const card = document.createElement('div');
+        card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
+        card.innerHTML = `
+          <div class="weapon-icon">${weapon.icon}</div>
+          <h3>${weapon.name}</h3>
+          <p>${weapon.effect}</p>
+          <div class="upgrade-cost">${equipped ? '✅ 已裝備' : `💰 ${weapon.cost} 金幣`}</div>
+        `;
+        
+        if (!equipped) {
+          card.onclick = () => buyWeaponModal(weapon.id);
+        }
+        
+        grid.appendChild(card);
+      });
+    }
+
     function buyWeapon(weaponId) {
       const weapon = weapons[weaponId];
       if (gameState.coins >= weapon.cost) {
@@ -1720,6 +1827,20 @@
         saveProgress();
         updateUI();
         renderWeaponsShop();
+      }
+    }
+
+    function buyWeaponModal(weaponId) {
+      const weapon = weapons[weaponId];
+      if (gameState.coins >= weapon.cost) {
+        gameState.coins -= weapon.cost;
+        gameState.weaponId = weaponId;
+        saveProgress();
+        updateUI();
+        renderWeaponsShopModal();
+        addBattleLog(`✅ 購買並裝備了 ${weapon.name}!`, "player");
+      } else {
+        addBattleLog("💰 金幣不足!", "enemy");
       }
     }
 
@@ -1893,5 +2014,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5772f6717f251',t:'MTc2MjYwOTA1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5a0c8c54af251',t:'MTc2MjYxMDc1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
