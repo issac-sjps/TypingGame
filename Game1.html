@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>中文打字英雄大冒險</title>
   <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
   <style>
     body {
       box-sizing: border-box;
@@ -43,68 +42,46 @@
       flex-direction: column;
     }
 
-    /* 登入/註冊畫面 */
-    .auth-screen {
+    /* 首頁畫面 */
+    .home-screen {
       align-items: center;
       justify-content: center;
     }
 
-    .auth-container {
+    .home-container {
       background: rgba(255,255,255,0.2);
-      padding: 40px;
-      border-radius: 15px;
-      max-width: 400px;
+      padding: 50px;
+      border-radius: 20px;
+      max-width: 600px;
       width: 100%;
       backdrop-filter: blur(10px);
+      text-align: center;
     }
 
     .game-title {
-      font-size: 36px;
+      font-size: 48px;
       font-weight: bold;
       margin-bottom: 30px;
-      text-align: center;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
     }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 16px;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 8px;
-      background: rgba(255,255,255,0.9);
-      color: #333;
-      box-sizing: border-box;
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: #ffd700;
-      box-shadow: 0 0 10px rgba(255,215,0,0.3);
+    .game-description {
+      font-size: 20px;
+      margin-bottom: 40px;
+      line-height: 1.6;
     }
 
     .btn {
       width: 100%;
-      padding: 15px;
-      font-size: 18px;
+      padding: 18px;
+      font-size: 20px;
       font-weight: bold;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.3s;
       color: #ffffff;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .btn-primary {
@@ -113,7 +90,7 @@
 
     .btn-primary:hover {
       transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.4);
     }
 
     .btn-secondary {
@@ -122,7 +99,7 @@
 
     .btn-secondary:hover {
       transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.4);
     }
 
     .btn-success {
@@ -141,44 +118,6 @@
       transform: scale(1.05);
     }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .link-button {
-      background: none;
-      border: none;
-      color: #ffd700;
-      cursor: pointer;
-      text-decoration: underline;
-      font-size: 14px;
-      padding: 5px;
-      margin-top: 10px;
-    }
-
-    .link-button:hover {
-      color: #ffed4e;
-    }
-
-    .message {
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .message-error {
-      background: rgba(245,87,108,0.3);
-      border: 2px solid #f5576c;
-    }
-
-    .message-success {
-      background: rgba(67,233,123,0.3);
-      border: 2px solid #43e97b;
-    }
-
     /* 主選單畫面 */
     .menu-screen {
       align-items: center;
@@ -192,12 +131,6 @@
       max-width: 500px;
       width: 100%;
       backdrop-filter: blur(10px);
-    }
-
-    .welcome-text {
-      font-size: 24px;
-      text-align: center;
-      margin-bottom: 30px;
     }
 
     .menu-buttons {
@@ -454,54 +387,6 @@
       font-weight: bold;
     }
 
-    /* 登入紀錄畫面 */
-    .records-screen {
-      align-items: center;
-      justify-content: flex-start;
-    }
-
-    .records-container {
-      background: rgba(255,255,255,0.2);
-      padding: 30px;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .records-title {
-      font-size: 32px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .records-list {
-      background: rgba(0,0,0,0.3);
-      padding: 20px;
-      border-radius: 10px;
-      max-height: 400px;
-      overflow-y: auto;
-      margin-bottom: 20px;
-    }
-
-    .record-item {
-      background: rgba(255,255,255,0.2);
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .record-time {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .record-ip {
-      font-size: 14px;
-      color: #ffd700;
-    }
-
     /* 失敗畫面 */
     .defeat-screen {
       align-items: center;
@@ -550,69 +435,32 @@
       50% { transform: scale(1.1); }
     }
 
-    .loading-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .loading-overlay.active {
-      display: flex;
-    }
-
-    .loading-spinner {
-      font-size: 48px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+    .progress-info {
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      font-size: 18px;
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body>
-  <div class="game-container"><!-- 登入畫面 -->
-   <div class="screen active" id="loginScreen">
-    <div class="auth-screen">
-     <div class="auth-container">
-      <div class="game-title" id="gameTitle">
-       中文打字英雄大冒險
-      </div>
-      <div id="loginMessage"></div>
-      <form id="loginForm" onsubmit="return false;">
-       <div class="form-group"><label class="form-label" for="loginUsername">帳號</label> <input type="text" class="form-input" id="loginUsername" required>
-       </div>
-       <div class="form-group"><label class="form-label" for="loginPassword">密碼</label> <input type="password" class="form-input" id="loginPassword" required>
-       </div><button type="submit" class="btn btn-primary" id="loginButton">登入</button> <button type="button" class="link-button" onclick="showRegisterScreen()">還沒有帳號？點此註冊</button>
-      </form>
-     </div>
-    </div>
-   </div><!-- 註冊畫面 -->
-   <div class="screen" id="registerScreen">
-    <div class="auth-screen">
-     <div class="auth-container">
+  <div class="game-container"><!-- 首頁畫面 -->
+   <div class="screen active" id="homeScreen">
+    <div class="home-screen">
+     <div class="home-container">
       <div class="game-title">
-       註冊新帳號
+       🎮 中文打字英雄大冒險
       </div>
-      <div id="registerMessage"></div>
-      <form id="registerForm" onsubmit="return false;">
-       <div class="form-group"><label class="form-label" for="registerUsername">帳號</label> <input type="text" class="form-input" id="registerUsername" required>
-       </div>
-       <div class="form-group"><label class="form-label" for="registerPassword">密碼</label> <input type="password" class="form-input" id="registerPassword" required>
-       </div>
-       <div class="form-group"><label class="form-label" for="registerPasswordConfirm">確認密碼</label> <input type="password" class="form-input" id="registerPasswordConfirm" required>
-       </div><button type="submit" class="btn btn-primary" id="registerButton">註冊</button> <button type="button" class="link-button" onclick="showLoginScreen()">已有帳號？返回登入</button>
-      </form>
+      <div class="game-description">
+       歡迎來到打字英雄的世界！<br>
+        在這裡，你將透過打字來擊敗妖怪，<br>
+        挑戰100個關卡，收集金幣購買強力武器！<br><br>
+        準備好開始你的冒險了嗎？
+      </div><button class="btn btn-primary" id="newGameButton">🆕 開始新遊戲</button> <button class="btn btn-secondary" id="continueGameButton">▶️ 繼續遊戲</button>
      </div>
     </div>
    </div><!-- 主選單畫面 -->
@@ -622,10 +470,21 @@
       <div class="game-title">
        中文打字英雄大冒險
       </div>
-      <div class="welcome-text">
-       歡迎回來，<span id="welcomeUsername"></span>！
+      <div class="progress-info">
+       <div style="margin-bottom: 10px;">
+        📊 目前進度
+       </div>
+       <div>
+        關卡: 第 <span id="menuStage">1</span> 關
+       </div>
+       <div>
+        金幣: <span id="menuCoins">0</span> 💰
+       </div>
+       <div>
+        攻擊力: <span id="menuAttack">10</span> ⚔️
+       </div>
       </div>
-      <div class="menu-buttons"><button class="btn btn-success" onclick="startGame()">開始遊戲</button> <button class="btn btn-secondary" onclick="showRecordsScreen()">查看登入紀錄</button> <button class="btn btn-danger" onclick="resetProgress()">重置遊戲進度</button> <button class="btn btn-secondary" onclick="logout()">登出</button>
+      <div class="menu-buttons"><button class="btn btn-success" id="startGameButton">開始遊戲</button> <button class="btn btn-danger" id="resetProgressButton">重置遊戲進度</button> <button class="btn btn-secondary" id="backToHomeButton">返回首頁</button>
       </div>
      </div>
     </div>
@@ -636,7 +495,7 @@
       第 <span id="currentStage">1</span> 關
      </div>
      <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
-     </div><button class="btn btn-secondary" onclick="openShop()" style="padding: 10px 20px; width: auto;">🛒 武器商店</button> <button class="btn btn-secondary" onclick="backToMenu()" style="padding: 10px 20px; width: auto;">返回選單</button>
+     </div><button class="btn btn-secondary" id="openShopButton" style="padding: 10px 20px; width: auto;">🛒 武器商店</button> <button class="btn btn-secondary" id="backToMenuFromGameButton" style="padding: 10px 20px; width: auto;">返回選單</button>
     </div>
     <div class="battle-area">
      <div class="weapon-info">
@@ -708,15 +567,7 @@
      </div>
      <div class="coins-info" style="justify-content: center; margin-bottom: 20px; font-size: 24px;"><span>💰 剩餘金幣:</span> <span id="shopCoinsDisplay">0</span>
      </div>
-     <div class="weapons-grid" id="weaponsGrid"></div><button class="btn btn-secondary" onclick="closeShop()">返回遊戲</button>
-    </div>
-   </div><!-- 登入紀錄畫面 -->
-   <div class="screen" id="recordsScreen">
-    <div class="records-container">
-     <div class="records-title">
-      📋 登入紀錄
-     </div>
-     <div class="records-list" id="recordsList"></div><button class="btn btn-secondary" onclick="backToMenu()">返回選單</button>
+     <div class="weapons-grid" id="weaponsGrid"></div><button class="btn btn-secondary" id="closeShopButton">返回遊戲</button>
     </div>
    </div><!-- 失敗畫面 -->
    <div class="screen" id="defeatScreen">
@@ -728,7 +579,7 @@
       <div class="result-message">
        別灰心，再試一次！
       </div>
-      <div class="button-group"><button class="btn btn-primary" onclick="retryStage()">重新挑戰</button> <button class="btn btn-secondary" onclick="backToMenu()">返回選單</button>
+      <div class="button-group"><button class="btn btn-primary" id="retryStageButton">重新挑戰</button> <button class="btn btn-secondary" id="backToMenuFromDefeatButton">返回選單</button>
       </div>
      </div>
     </div>
@@ -742,22 +593,17 @@
       <div class="result-message">
        你真厲害！完成了全部100關！
       </div>
-      <div class="button-group"><button class="btn btn-primary" onclick="resetProgress()">重新開始</button> <button class="btn btn-secondary" onclick="backToMenu()">返回選單</button>
+      <div class="button-group"><button class="btn btn-primary" id="resetFromVictoryButton">重新開始</button> <button class="btn btn-secondary" id="backToMenuFromVictoryButton">返回選單</button>
       </div>
      </div>
     </div>
-   </div>
-  </div><!-- 載入中覆蓋層 -->
-  <div class="loading-overlay" id="loadingOverlay">
-   <div class="loading-spinner">
-    ⏳
    </div>
   </div>
   <script>
     const defaultConfig = {
       game_title: "中文打字英雄大冒險",
-      login_button_text: "登入",
-      register_button_text: "註冊"
+      start_button_text: "開始新遊戲",
+      continue_button_text: "繼續遊戲"
     };
 
     const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
@@ -816,8 +662,6 @@
     ];
 
     // 全局變數
-    let allData = [];
-    let currentUser = null;
     let gameState = {
       currentStage: 1,
       playerHp: 100,
@@ -840,39 +684,49 @@
       battleInterval: null
     };
 
-    // Data SDK Handler
-    const dataHandler = {
-      onDataChanged(data) {
-        allData = data;
+    // 本地儲存輔助函數
+    function loadGameProgress() {
+      const saved = localStorage.getItem('typingGameProgress');
+      if (saved) {
+        const progress = JSON.parse(saved);
+        gameState.currentStage = progress.currentStage || 1;
+        gameState.playerMaxHp = progress.playerMaxHp || 100;
+        gameState.playerAttack = progress.playerAttack || 10;
+        gameState.playerDefense = progress.playerDefense || 0;
+        gameState.playerCritRate = progress.playerCritRate || 5;
+        gameState.coins = progress.coins || 0;
+        gameState.weaponId = progress.weaponId || 0;
+        return true;
       }
-    };
+      return false;
+    }
+
+    function saveGameProgress() {
+      const progress = {
+        currentStage: gameState.currentStage,
+        playerMaxHp: gameState.playerMaxHp,
+        playerAttack: gameState.playerAttack,
+        playerDefense: gameState.playerDefense,
+        playerCritRate: gameState.playerCritRate,
+        coins: gameState.coins,
+        weaponId: gameState.weaponId
+      };
+      localStorage.setItem('typingGameProgress', JSON.stringify(progress));
+    }
+
+    function hasSavedProgress() {
+      return localStorage.getItem('typingGameProgress') !== null;
+    }
 
     // 初始化 SDK
     async function initSDKs() {
-      showLoading();
-      
-      if (window.dataSdk) {
-        const initResult = await window.dataSdk.init(dataHandler);
-        if (!initResult.isOk) {
-          console.error("Failed to initialize data SDK");
-        }
-      }
-
       if (window.elementSdk) {
         await window.elementSdk.init({
           defaultConfig,
           onConfigChange: async (config) => {
-            const titleEl = document.getElementById('gameTitle');
+            const titleEl = document.querySelector('.game-title');
             if (titleEl) {
               titleEl.textContent = config.game_title || defaultConfig.game_title;
-            }
-            const loginBtn = document.getElementById('loginButton');
-            if (loginBtn) {
-              loginBtn.textContent = config.login_button_text || defaultConfig.login_button_text;
-            }
-            const registerBtn = document.getElementById('registerButton');
-            if (registerBtn) {
-              registerBtn.textContent = config.register_button_text || defaultConfig.register_button_text;
             }
           },
           mapToCapabilities: (config) => ({
@@ -882,23 +736,10 @@
             fontSizeable: undefined
           }),
           mapToEditPanelValues: (config) => new Map([
-            ["game_title", config.game_title || defaultConfig.game_title],
-            ["login_button_text", config.login_button_text || defaultConfig.login_button_text],
-            ["register_button_text", config.register_button_text || defaultConfig.register_button_text]
+            ["game_title", config.game_title || defaultConfig.game_title]
           ])
         });
       }
-
-      hideLoading();
-    }
-
-    // 顯示/隱藏載入中
-    function showLoading() {
-      document.getElementById('loadingOverlay').classList.add('active');
-    }
-
-    function hideLoading() {
-      document.getElementById('loadingOverlay').classList.remove('active');
     }
 
     // 切換畫面
@@ -907,169 +748,8 @@
       document.getElementById(screenId).classList.add('active');
     }
 
-    // 顯示訊息
-    function showMessage(elementId, message, isError = false) {
-      const messageEl = document.getElementById(elementId);
-      messageEl.innerHTML = `<div class="message ${isError ? 'message-error' : 'message-success'}">${message}</div>`;
-      setTimeout(() => {
-        messageEl.innerHTML = '';
-      }, 3000);
-    }
-
-    // 註冊
-    async function handleRegister(e) {
-      e.preventDefault();
-      
-      const username = document.getElementById('registerUsername').value.trim();
-      const password = document.getElementById('registerPassword').value;
-      const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
-
-      if (!username || !password) {
-        showMessage('registerMessage', '請填寫所有欄位', true);
-        return;
-      }
-
-      if (password !== passwordConfirm) {
-        showMessage('registerMessage', '兩次密碼輸入不一致', true);
-        return;
-      }
-
-      // 檢查帳號是否已存在
-      const existingUser = allData.find(d => d.type === 'user' && d.username === username);
-      if (existingUser) {
-        showMessage('registerMessage', '此帳號已被註冊', true);
-        return;
-      }
-
-      showLoading();
-
-      // 創建新用戶
-      const result = await window.dataSdk.create({
-        type: 'user',
-        username: username,
-        password: password,
-        currentStage: 1,
-        playerMaxHp: 100,
-        playerAttack: 10,
-        playerDefense: 0,
-        playerCritRate: 5,
-        coins: 0,
-        weaponId: 0,
-        completedStages: '[]',
-        loginTime: '',
-        loginIp: ''
-      });
-
-      hideLoading();
-
-      if (result.isOk) {
-        showMessage('registerMessage', '註冊成功！請登入', false);
-        setTimeout(() => {
-          showLoginScreen();
-        }, 1500);
-      } else {
-        showMessage('registerMessage', '註冊失敗，請稍後再試', true);
-      }
-    }
-
-    // 登入
-    async function handleLogin(e) {
-      e.preventDefault();
-      
-      const username = document.getElementById('loginUsername').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      if (!username || !password) {
-        showMessage('loginMessage', '請填寫所有欄位', true);
-        return;
-      }
-
-      // 查找用戶
-      const user = allData.find(d => d.type === 'user' && d.username === username && d.password === password);
-      
-      if (!user) {
-        showMessage('loginMessage', '帳號或密碼錯誤', true);
-        return;
-      }
-
-      showLoading();
-
-      // 記錄登入時間和IP
-      const loginTime = new Date().toISOString();
-      const loginIp = 'Local'; // 在瀏覽器環境無法獲取真實IP
-
-      // 創建登入紀錄
-      await window.dataSdk.create({
-        type: 'login_record',
-        username: username,
-        loginTime: loginTime,
-        loginIp: loginIp,
-        currentStage: user.currentStage || 1,
-        playerMaxHp: user.playerMaxHp || 100,
-        playerAttack: user.playerAttack || 10,
-        playerDefense: user.playerDefense || 0,
-        playerCritRate: user.playerCritRate || 5,
-        coins: user.coins || 0,
-        weaponId: user.weaponId || 0,
-        completedStages: user.completedStages || '[]',
-        password: ''
-      });
-
-      hideLoading();
-
-      // 設置當前用戶
-      currentUser = user;
-      
-      // 載入遊戲進度
-      loadGameProgress();
-      
-      // 顯示主選單
-      document.getElementById('welcomeUsername').textContent = username;
-      showScreen('menuScreen');
-    }
-
-    // 載入遊戲進度
-    function loadGameProgress() {
-      if (!currentUser) return;
-
-      gameState.currentStage = currentUser.currentStage || 1;
-      gameState.playerMaxHp = currentUser.playerMaxHp || 100;
-      gameState.playerAttack = currentUser.playerAttack || 10;
-      gameState.playerDefense = currentUser.playerDefense || 0;
-      gameState.playerCritRate = currentUser.playerCritRate || 5;
-      gameState.coins = currentUser.coins || 0;
-      gameState.weaponId = currentUser.weaponId || 0;
-    }
-
-    // 保存遊戲進度
-    async function saveGameProgress() {
-      if (!currentUser) return;
-
-      showLoading();
-
-      const updatedUser = {
-        ...currentUser,
-        currentStage: gameState.currentStage,
-        playerMaxHp: gameState.playerMaxHp,
-        playerAttack: gameState.playerAttack,
-        playerDefense: gameState.playerDefense,
-        playerCritRate: gameState.playerCritRate,
-        coins: gameState.coins,
-        weaponId: gameState.weaponId
-      };
-
-      const result = await window.dataSdk.update(updatedUser);
-      
-      if (result.isOk) {
-        currentUser = updatedUser;
-      }
-
-      hideLoading();
-    }
-
-    // 登出
-    function logout() {
-      currentUser = null;
+    // 開始新遊戲
+    function startNewGame() {
       gameState = {
         currentStage: 1,
         playerHp: 100,
@@ -1091,38 +771,32 @@
         enemyAttackReduction: 0,
         battleInterval: null
       };
-      
-      if (gameState.battleInterval) {
-        clearInterval(gameState.battleInterval);
+      saveGameProgress();
+      updateMenuInfo();
+      showScreen('menuScreen');
+    }
+
+    // 繼續遊戲
+    function continueGame() {
+      if (loadGameProgress()) {
+        updateMenuInfo();
+        showScreen('menuScreen');
+      } else {
+        startNewGame();
       }
-      
-      showLoginScreen();
     }
 
-    // 顯示登入畫面
-    function showLoginScreen() {
-      document.getElementById('loginUsername').value = '';
-      document.getElementById('loginPassword').value = '';
-      showScreen('loginScreen');
+    // 更新選單資訊
+    function updateMenuInfo() {
+      document.getElementById('menuStage').textContent = gameState.currentStage;
+      document.getElementById('menuCoins').textContent = gameState.coins;
+      document.getElementById('menuAttack').textContent = gameState.playerAttack;
     }
-
-    // 顯示註冊畫面
-    function showRegisterScreen() {
-      document.getElementById('registerUsername').value = '';
-      document.getElementById('registerPassword').value = '';
-      document.getElementById('registerPasswordConfirm').value = '';
-      showScreen('registerScreen');
-    }
-
-    window.showLoginScreen = showLoginScreen;
-    window.showRegisterScreen = showRegisterScreen;
 
     // 開始遊戲
     function startGame() {
       startStage(gameState.currentStage);
     }
-
-    window.startGame = startGame;
 
     // 開始關卡
     function startStage(stage) {
@@ -1194,24 +868,6 @@
       document.getElementById('pinyinDisplay').textContent = gameState.currentWord.pinyin;
       document.getElementById('typingInput').value = '';
     }
-
-    // 處理輸入
-    document.addEventListener('DOMContentLoaded', function() {
-      const typingInput = document.getElementById('typingInput');
-      if (typingInput) {
-        typingInput.addEventListener('keypress', function(e) {
-          if (e.key === 'Enter') {
-            const input = this.value.trim();
-            if (input === gameState.currentWord.word) {
-              handleCorrectAnswer();
-            } else {
-              addBattleLog("❌ 答錯了!再試一次!", "enemy");
-              this.value = '';
-            }
-          }
-        });
-      }
-    });
 
     // 處理正確答案
     function handleCorrectAnswer() {
@@ -1418,8 +1074,6 @@
       startStage(gameState.currentStage);
     }
 
-    window.retryStage = retryStage;
-
     // 返回選單
     function backToMenu() {
       if (gameState.battleInterval) {
@@ -1428,10 +1082,20 @@
       }
 
       saveGameProgress();
+      updateMenuInfo();
       showScreen('menuScreen');
     }
 
-    window.backToMenu = backToMenu;
+    // 返回首頁
+    function backToHome() {
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+        gameState.battleInterval = null;
+      }
+
+      saveGameProgress();
+      showScreen('homeScreen');
+    }
 
     // 開啟商店
     function openShop() {
@@ -1439,14 +1103,10 @@
       showScreen('shopScreen');
     }
 
-    window.openShop = openShop;
-
     // 關閉商店
     function closeShop() {
       showScreen('gameScreen');
     }
-
-    window.closeShop = closeShop;
 
     // 渲染武器商店
     function renderWeaponsShop() {
@@ -1474,86 +1134,74 @@
     }
 
     // 購買武器
-    async function buyWeapon(weaponId) {
+    function buyWeapon(weaponId) {
       const weapon = weapons[weaponId];
       if (gameState.coins >= weapon.cost) {
         gameState.coins -= weapon.cost;
         gameState.weaponId = weaponId;
         updateUI();
         renderWeaponsShop();
-        await saveGameProgress();
+        saveGameProgress();
         addBattleLog(`✅ 購買並裝備了 ${weapon.name}!`, "player");
       } else {
         addBattleLog("💰 金幣不足!", "enemy");
       }
     }
 
-    // 查看登入紀錄
-    function showRecordsScreen() {
-      const recordsList = document.getElementById('recordsList');
-      recordsList.innerHTML = '';
-
-      const userRecords = allData.filter(d => d.type === 'login_record' && d.username === currentUser.username);
-
-      if (userRecords.length === 0) {
-        recordsList.innerHTML = '<div style="text-align: center; padding: 20px;">目前沒有登入紀錄</div>';
-      } else {
-        userRecords.sort((a, b) => new Date(b.loginTime) - new Date(a.loginTime));
-
-        userRecords.forEach(record => {
-          const recordItem = document.createElement('div');
-          recordItem.className = 'record-item';
-          
-          const loginDate = new Date(record.loginTime);
-          const formattedDate = loginDate.toLocaleString('zh-TW', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-          });
-
-          recordItem.innerHTML = `
-            <div class="record-time">🕐 ${formattedDate}</div>
-            <div class="record-ip">📍 IP: ${record.loginIp}</div>
-          `;
-
-          recordsList.appendChild(recordItem);
-        });
-      }
-
-      showScreen('recordsScreen');
-    }
-
-    window.showRecordsScreen = showRecordsScreen;
-
     // 重置遊戲進度
-    async function resetProgress() {
-      if (!currentUser) return;
+    function resetProgress() {
+      // 使用自訂確認對話框
+      const confirmOverlay = document.createElement('div');
+      confirmOverlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+      
+      const confirmBox = document.createElement('div');
+      confirmBox.style.cssText = 'background: rgba(255,255,255,0.95); padding: 30px; border-radius: 15px; max-width: 400px; text-align: center;';
+      confirmBox.innerHTML = `
+        <div style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #333;">確認重置</div>
+        <div style="font-size: 16px; margin-bottom: 30px; color: #666;">確定要重置遊戲進度嗎？這將清除所有進度並從第一關開始！</div>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+          <button id="confirmYes" style="padding: 12px 30px; font-size: 16px; border: none; border-radius: 8px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; cursor: pointer; font-weight: bold;">確定</button>
+          <button id="confirmNo" style="padding: 12px 30px; font-size: 16px; border: none; border-radius: 8px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; cursor: pointer; font-weight: bold;">取消</button>
+        </div>
+      `;
+      
+      confirmOverlay.appendChild(confirmBox);
+      document.body.appendChild(confirmOverlay);
 
-      const confirmReset = confirm('確定要重置遊戲進度嗎？這將清除所有進度並從第一關開始！');
-      if (!confirmReset) return;
+      document.getElementById('confirmYes').onclick = () => {
+        document.body.removeChild(confirmOverlay);
 
-      showLoading();
+        gameState.currentStage = 1;
+        gameState.playerMaxHp = 100;
+        gameState.playerAttack = 10;
+        gameState.playerDefense = 0;
+        gameState.playerCritRate = 5;
+        gameState.coins = 0;
+        gameState.weaponId = 0;
 
-      gameState.currentStage = 1;
-      gameState.playerMaxHp = 100;
-      gameState.playerAttack = 10;
-      gameState.playerDefense = 0;
-      gameState.playerCritRate = 5;
-      gameState.coins = 0;
-      gameState.weaponId = 0;
+        saveGameProgress();
+        updateMenuInfo();
 
-      await saveGameProgress();
+        // 顯示成功訊息
+        const successOverlay = document.createElement('div');
+        successOverlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+        
+        const successBox = document.createElement('div');
+        successBox.style.cssText = 'background: rgba(67,233,123,0.95); padding: 30px; border-radius: 15px; text-align: center; color: white;';
+        successBox.innerHTML = '<div style="font-size: 24px; font-weight: bold;">遊戲進度已重置！</div>';
+        
+        successOverlay.appendChild(successBox);
+        document.body.appendChild(successOverlay);
 
-      hideLoading();
+        setTimeout(() => {
+          document.body.removeChild(successOverlay);
+        }, 2000);
+      };
 
-      alert('遊戲進度已重置！');
-      showScreen('menuScreen');
+      document.getElementById('confirmNo').onclick = () => {
+        document.body.removeChild(confirmOverlay);
+      };
     }
-
-    window.resetProgress = resetProgress;
 
     // 戰鬥日誌
     function addBattleLog(message, type) {
@@ -1569,21 +1217,55 @@
       }
     }
 
+    // 初始化事件監聽器
+    function initEventListeners() {
+      // 首頁按鈕
+      document.getElementById('newGameButton').addEventListener('click', startNewGame);
+      document.getElementById('continueGameButton').addEventListener('click', continueGame);
+
+      // 選單按鈕
+      document.getElementById('startGameButton').addEventListener('click', startGame);
+      document.getElementById('resetProgressButton').addEventListener('click', resetProgress);
+      document.getElementById('backToHomeButton').addEventListener('click', backToHome);
+
+      // 遊戲按鈕
+      document.getElementById('openShopButton').addEventListener('click', openShop);
+      document.getElementById('closeShopButton').addEventListener('click', closeShop);
+      document.getElementById('backToMenuFromGameButton').addEventListener('click', backToMenu);
+
+      // 失敗畫面按鈕
+      document.getElementById('retryStageButton').addEventListener('click', retryStage);
+      document.getElementById('backToMenuFromDefeatButton').addEventListener('click', backToMenu);
+
+      // 通關畫面按鈕
+      document.getElementById('resetFromVictoryButton').addEventListener('click', resetProgress);
+      document.getElementById('backToMenuFromVictoryButton').addEventListener('click', backToMenu);
+
+      // 打字輸入
+      document.getElementById('typingInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          const input = this.value.trim();
+          if (input === gameState.currentWord.word) {
+            handleCorrectAnswer();
+          } else {
+            addBattleLog("❌ 答錯了!再試一次!", "enemy");
+            this.value = '';
+          }
+        }
+      });
+
+      // 檢查是否有存檔，更新繼續遊戲按鈕狀態
+      if (!hasSavedProgress()) {
+        document.getElementById('continueGameButton').disabled = true;
+        document.getElementById('continueGameButton').style.opacity = '0.5';
+      }
+    }
+
     // 初始化
     window.addEventListener('load', function() {
-      const loginForm = document.getElementById('loginForm');
-      const registerForm = document.getElementById('registerForm');
-
-      if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-      }
-
-      if (registerForm) {
-        registerForm.addEventListener('submit', handleRegister);
-      }
-
+      initEventListeners();
       initSDKs();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6daeb9250f251',t:'MTc2MjYyMzYyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6f4a3006df251',t:'MTc2MjYyNDY3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
