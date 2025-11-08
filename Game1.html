@@ -1114,7 +1114,7 @@
       {id: 4, name: "🏹 神弓", cost: 80, effect: "第5次攻擊造成5倍傷害", icon: "🏹"},
       {id: 5, name: "🛡️ 破甲劍", cost: 85, effect: "每打三下減少對手5%防禦率", icon: "🛡️"},
       {id: 6, name: "⚡ 虛弱劍", cost: 85, effect: "每打三下減少對手2點攻擊力", icon: "⚡"},
-      {id: 7, name: "💰 財富劍", cost: 90, effect: "每打五下額外獲得一個金幣", icon: "💰"},
+      {id: 7, name: "💰 財富劍", cost: 90, effect: "每打一下額外獲得一個金幣", icon: "💰"},
       {id: 8, name: "📈 成長劍", cost: 95, effect: "每攻擊5下永久提升1點攻擊力", icon: "📈"},
       {id: 9, name: "💎 暴擊劍", cost: 100, effect: "第三次攻擊必定爆擊", icon: "💎"},
       {id: 10, name: "🎰 賭徒劍", cost: 110, effect: "50%機率5倍傷害,50%機率打到自己", icon: "🎰"},
@@ -1433,10 +1433,8 @@
           }
           break;
         case 7: // 財富劍
-          if (gameState.weaponHitCount % 5 === 0) {
-            gameState.coins++;
-            extraEffects.push("💰 額外獲得1金幣!");
-          }
+          gameState.coins++;
+          extraEffects.push("💰 額外獲得1金幣!");
           break;
         case 8: // 成長劍
           if (gameState.weaponHitCount % 5 === 0) {
@@ -1620,13 +1618,17 @@
       
       saveProgress();
       
-      if (gameState.currentStage >= 100) {
-        showScreen('victoryScreen');
-      } else {
-        updateUpgradeScreenCoins();
-        showScreen('upgradeScreen');
-        startAutoNextStageTimer();
-      }
+      // 使用延遲確保畫面切換
+      setTimeout(() => {
+        // 檢查是否通關100關
+        if (gameState.currentStage >= 100) {
+          showScreen('victoryScreen');
+        } else {
+          updateUpgradeScreenCoins();
+          showScreen('upgradeScreen');
+          startAutoNextStageTimer();
+        }
+      }, 500);
     }
 
     // 自動進入下一關倒數計時
@@ -2079,5 +2081,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6c3d0a028f251',t:'MTc2MjYyMjY3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6ce90b2f8f251',t:'MTc2MjYyMzExNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
