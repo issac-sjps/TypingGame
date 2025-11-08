@@ -657,17 +657,17 @@
      </div>
      <div class="battle-area">
       <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
-       <div class="weapon-display">
-        <div class="weapon-icon" id="currentWeaponIcon">
-         🗡️
+       <div class="weapon-display" style="background: rgba(255,215,0,0.15);">
+        <div class="weapon-icon" id="currentRelicIcon">
+         📦
         </div>
-        <div class="weapon-name" id="currentWeaponName">
-         普通劍
+        <div class="weapon-name" id="currentRelicName">
+         無
         </div>
-        <div class="weapon-effect" id="currentWeaponEffect">
-         每次攻擊一次
+        <div class="weapon-effect" id="currentRelicEffect">
+         未裝備聖遺物
         </div>
-       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px;">🛒 武器商店</button>
+       </div><button class="btn btn-secondary" id="openRelicShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffd700 0%, #ffA500 100%);">✨ 聖遺物商店</button>
       </div>
       <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
        <div class="weapon-display" style="background: rgba(255,200,100,0.15);">
@@ -681,6 +681,19 @@
          未使用道具
         </div>
        </div><button class="btn btn-secondary" id="openItemShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffa500 0%, #ff6347 100%);">🧪 道具商店</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+       <div class="weapon-display">
+        <div class="weapon-icon" id="currentWeaponIcon">
+         🗡️
+        </div>
+        <div class="weapon-name" id="currentWeaponName">
+         普通劍
+        </div>
+        <div class="weapon-effect" id="currentWeaponEffect">
+         每次攻擊一次
+        </div>
+       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px;">🛒 武器商店</button>
       </div>
       <div class="attack-log" id="playerAttackLog">
        <div class="log-title">
@@ -776,19 +789,6 @@
        <div class="log-content" id="enemyLogContent">
         等待戰鬥開始...
        </div>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
-       <div class="weapon-display" style="background: rgba(255,215,0,0.15);">
-        <div class="weapon-icon" id="currentRelicIcon">
-         ⭐
-        </div>
-        <div class="weapon-name" id="currentRelicName">
-         無
-        </div>
-        <div class="weapon-effect" id="currentRelicEffect">
-         未裝備聖遺物
-        </div>
-       </div><button class="btn btn-secondary" id="openRelicShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffd700 0%, #ffA500 100%);">✨ 聖遺物商店</button>
       </div>
      </div>
      <div class="upgrade-panel">
@@ -944,7 +944,7 @@
 
     // 聖遺物定義
     const relics = [
-      {id: 0, name: "無", cost: 0, effect: "未裝備聖遺物", icon: "⭐"},
+      {id: 0, name: "無", cost: 0, effect: "未裝備聖遺物", icon: "📦"},
       {id: 1, name: "巨人戒指", cost: 100, effect: "血量×2", icon: "💍"},
       {id: 2, name: "天使的光環", cost: 100, effect: "50%機率攻擊無效", icon: "😇"},
       {id: 3, name: "赫拉克勒斯的戰車", cost: 100, effect: "爆擊傷害機率×2", icon: "🏛️"},
@@ -2239,5 +2239,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7936b25eaf251',t:'MTc2MjYzMTE4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b799fbc644f251',t:'MTc2MjYzMTQ0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
