@@ -620,7 +620,7 @@
       <h3>🛡️ 數值說明</h3>
       <p>• 血量(HP)：生命值，歸零則失敗<br>
         • 攻擊力：每次攻擊造成的傷害<br>
-        • 防禦率：減少受到的傷害 = 對方攻擊力×我方防禦率 (最高100%)<br>
+        • 防禦率：減少受到的傷害 = 對方攻擊力×我方防禦率 (最高90%)<br>
         • 爆擊機率：觸發爆擊的機率(最高100%，100%時必定爆擊)<br>
         • 爆擊傷害：爆擊時的額外傷害加成(無上限)</p>
       <h3>🗡️ 武器系統</h3>
@@ -637,6 +637,9 @@
        第 <span id="currentStage">1</span> 關
       </div>
       <div style="display: flex; gap: 20px; align-items: center;">
+       <div class="timer-display">
+        ⏱️ 遊玩時間: <span id="playTimeDisplay">00:00:00</span>
+       </div>
        <div class="timer-display">
         下次攻擊: <span id="timerDisplay">5</span>秒
        </div>
@@ -903,14 +906,14 @@
     // 道具定義
     const items = [
       {id: 0, name: "無裝備", cost: 0, effect: "未使用道具", icon: "📦"},
-      {id: 1, name: "灼燒藥水", cost: 40, effect: "每次攻擊額外造成自身攻擊10%傷害", icon: "🔥"},
-      {id: 2, name: "無敵盾牌", cost: 60, effect: "不受到傷害五次後失效", icon: "🛡️"},
-      {id: 3, name: "攻擊加倍藥水", cost: 50, effect: "接下來5次攻擊基礎攻擊力×2", icon: "💪"},
-      {id: 4, name: "毒藥水", cost: 55, effect: "對手防禦率減半", icon: "☠️"},
-      {id: 5, name: "爆擊傷害藥水", cost: 65, effect: "接下來5次攻擊爆擊傷害×2", icon: "💥"},
-      {id: 6, name: "混亂藥水", cost: 70, effect: "接下來5次攻擊怪物50%機率攻擊自己", icon: "😵"},
-      {id: 7, name: "運氣藥水", cost: 80, effect: "3分鐘內答對金幣×2", icon: "🍀"},
-      {id: 8, name: "爆擊藥水", cost: 75, effect: "接下來5次攻擊必定爆擊", icon: "💎"}
+      {id: 1, name: "灼燒藥水", cost: 30, effect: "每次攻擊額外造成自身攻擊10%傷害", icon: "🔥"},
+      {id: 2, name: "無敵盾牌", cost: 30, effect: "不受到傷害五次後失效", icon: "🛡️"},
+      {id: 3, name: "攻擊加倍藥水", cost: 30, effect: "接下來5次攻擊基礎攻擊力×2", icon: "💪"},
+      {id: 4, name: "毒藥水", cost: 30, effect: "對手防禦率減半", icon: "☠️"},
+      {id: 5, name: "爆擊傷害藥水", cost: 30, effect: "接下來5次攻擊爆擊傷害×2", icon: "💥"},
+      {id: 6, name: "混亂藥水", cost: 30, effect: "接下來5次攻擊怪物50%機率攻擊自己", icon: "😵"},
+      {id: 7, name: "運氣藥水", cost: 30, effect: "3分鐘內答對金幣×2", icon: "🍀"},
+      {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"}
     ];
 
     // 100種妖怪
@@ -969,6 +972,51 @@
       enemyAttackLog: [],
       attackCount: 0
     };
+
+    // 遊玩時間追蹤
+    let playTimeStarted = 0;
+    let playTimeElapsed = 0;
+    let playTimeInterval = null;
+
+    // 格式化時間顯示 (秒數轉換為 HH:MM:SS)
+    function formatPlayTime(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // 開始計時
+    function startPlayTimer() {
+      if (!playTimeStarted) {
+        playTimeStarted = Date.now();
+      }
+      
+      if (playTimeInterval) {
+        clearInterval(playTimeInterval);
+      }
+      
+      playTimeInterval = setInterval(() => {
+        playTimeElapsed = Math.floor((Date.now() - playTimeStarted) / 1000);
+        document.getElementById('playTimeDisplay').textContent = formatPlayTime(playTimeElapsed);
+      }, 1000);
+    }
+
+    // 停止計時
+    function stopPlayTimer() {
+      if (playTimeInterval) {
+        clearInterval(playTimeInterval);
+        playTimeInterval = null;
+      }
+    }
+
+    // 重置計時
+    function resetPlayTimer() {
+      stopPlayTimer();
+      playTimeStarted = 0;
+      playTimeElapsed = 0;
+      document.getElementById('playTimeDisplay').textContent = '00:00:00';
+    }
 
     // 添加攻擊紀錄
     function addAttackLog(isPlayer, damage, isCrit, critDamagePercent) {
@@ -1100,6 +1148,7 @@
     // 開始遊戲
     function startGame() {
       loadGame();
+      startPlayTimer();
       startStage(gameState.currentStage);
     }
 
@@ -1397,7 +1446,7 @@
       document.getElementById('playerAttack').textContent = gameState.playerAttack;
       
       let defenseText = `${gameState.playerDefense}%`;
-      if (gameState.playerDefense >= 100) defenseText += ' MAX';
+      if (gameState.playerDefense >= 90) defenseText += ' MAX';
       document.getElementById('playerDefense').textContent = defenseText;
       
       let critText = `${gameState.playerCritRate}%`;
@@ -1467,7 +1516,7 @@
       // 升級按鈕狀態
       document.getElementById('upgradeHpButton').disabled = gameState.coins < 5;
       document.getElementById('upgradeAttackButton').disabled = gameState.coins < 5;
-      document.getElementById('upgradeDefenseButton').disabled = gameState.coins < 5 || gameState.playerDefense >= 100;
+      document.getElementById('upgradeDefenseButton').disabled = gameState.coins < 5 || gameState.playerDefense >= 90;
       document.getElementById('upgradeCritButton').disabled = gameState.coins < 5 || gameState.playerCritRate >= 100;
       document.getElementById('upgradeCritDamageButton').disabled = gameState.coins < 5;
     }
@@ -1516,6 +1565,8 @@
 
     // 顯示通關畫面
     function showVictoryScreen() {
+      stopPlayTimer();
+      
       const overlay = document.createElement('div');
       overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;';
       
@@ -1523,7 +1574,8 @@
       box.style.cssText = 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 60px; border-radius: 20px; text-align: center; color: white;';
       box.innerHTML = `
         <div style="font-size: 60px; margin-bottom: 30px;">🎊 恭喜通關!</div>
-        <div style="font-size: 28px; margin-bottom: 40px;">你真厲害！完成了全部100關！</div>
+        <div style="font-size: 28px; margin-bottom: 20px;">你真厲害！完成了全部100關！</div>
+        <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
         <button id="victoryRestart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
         <button id="victoryHome" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
       `;
@@ -1534,11 +1586,13 @@
       document.getElementById('victoryRestart').onclick = () => {
         document.body.removeChild(overlay);
         resetGame();
+        resetPlayTimer();
         startGame();
       };
       
       document.getElementById('victoryHome').onclick = () => {
         document.body.removeChild(overlay);
+        resetPlayTimer();
         showScreen('homeScreen');
       };
     }
@@ -1901,9 +1955,9 @@
     }
 
     function upgradeDefense() {
-      if (gameState.coins >= 5 && gameState.playerDefense < 100) {
+      if (gameState.coins >= 5 && gameState.playerDefense < 90) {
         gameState.coins -= 5;
-        gameState.playerDefense = Math.min(100, gameState.playerDefense + 2);
+        gameState.playerDefense = Math.min(90, gameState.playerDefense + 2);
         updateUI();
         saveGame();
       }
@@ -1935,6 +1989,7 @@
     document.getElementById('stageSelectButton').addEventListener('click', showStageSelect);
     document.getElementById('backToHomeButton').addEventListener('click', () => {
       stopBattle();
+      stopPlayTimer();
       saveGame();
       showScreen('homeScreen');
     });
@@ -1972,5 +2027,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b76dde730ff251',t:'MTc2MjYyOTY0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b773619378f251',t:'MTc2MjYyOTg2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
