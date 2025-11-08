@@ -32,7 +32,7 @@
       display: none;
       width: 100%;
       height: 100%;
-      padding: 20px;
+      padding: 0;
       box-sizing: border-box;
       overflow-y: auto;
     }
@@ -40,7 +40,7 @@
     .screen.active {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
     }
 
@@ -48,11 +48,11 @@
     .home-container {
       background: rgba(255,255,255,0.2);
       padding: 50px;
-      border-radius: 20px;
-      max-width: 800px;
+      border-radius: 0;
       width: 100%;
       backdrop-filter: blur(10px);
       text-align: center;
+      margin: 0;
     }
 
     .game-title {
@@ -110,9 +110,10 @@
 
     /* 遊戲畫面 */
     .game-screen {
-      max-width: 1400px;
       width: 100%;
-      margin: 0 auto;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     .game-header {
@@ -290,7 +291,7 @@
     }
 
     .upgrade-btn {
-      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 12px 20px;
       border: none;
       border-radius: 10px;
@@ -447,10 +448,10 @@
     .stage-select-container {
       background: rgba(255,255,255,0.2);
       padding: 40px;
-      border-radius: 20px;
-      max-width: 1000px;
-      width: 90%;
+      border-radius: 0;
+      width: 100%;
       backdrop-filter: blur(10px);
+      margin: 0;
     }
 
     .stage-select-title {
@@ -496,9 +497,11 @@
     .defeat-container {
       background: rgba(255,255,255,0.2);
       padding: 60px;
-      border-radius: 20px;
+      border-radius: 0;
+      width: 100%;
       text-align: center;
       backdrop-filter: blur(10px);
+      margin: 0;
     }
 
     .defeat-title {
@@ -676,7 +679,7 @@
       <div class="upgrade-title">
        💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
       </div>
-      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 升級血量 (+10 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 升級攻擊 (+1 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 升級防禦 (+2%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 升級爆擊機率 (+5%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 升級爆擊傷害 (+5%) - 5💰</button>
+      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 升級血量 (+20 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 升級攻擊 (+5 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 升級防禦 (+2%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 升級爆擊機率 (+5%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 升級爆擊傷害 (+5%) - 5💰</button>
       </div>
      </div>
     </div>
@@ -698,7 +701,9 @@
      </div>
      <div class="defeat-message">
       別灰心，再試一次！
-     </div><button class="btn btn-primary" id="retryButton">重新挑戰</button> <button class="btn btn-secondary" id="backToHomeFromDefeatButton">返回首頁</button>
+     </div>
+     <div class="defeat-message" style="font-size: 20px; color: #ffd700;"><span id="autoRetryCountdown">5</span> 秒後自動重新挑戰...
+     </div><button class="btn btn-primary" id="retryButton">立即重新挑戰</button> <button class="btn btn-secondary" id="backToHomeFromDefeatButton">返回首頁</button>
     </div>
    </div>
   </div><!-- 商店浮動視窗 -->
@@ -1219,6 +1224,37 @@
     function handleDefeat() {
       stopBattle();
       showScreen('defeatScreen');
+      startAutoRetryCountdown();
+    }
+
+    // 自動重試倒數
+    let autoRetryTimer = null;
+    function startAutoRetryCountdown() {
+      let countdown = 5;
+      const countdownElement = document.getElementById('autoRetryCountdown');
+      countdownElement.textContent = countdown;
+      
+      if (autoRetryTimer) {
+        clearInterval(autoRetryTimer);
+      }
+      
+      autoRetryTimer = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+        
+        if (countdown <= 0) {
+          clearInterval(autoRetryTimer);
+          autoRetryTimer = null;
+          startStage(gameState.currentStage);
+        }
+      }, 1000);
+    }
+
+    function stopAutoRetryCountdown() {
+      if (autoRetryTimer) {
+        clearInterval(autoRetryTimer);
+        autoRetryTimer = null;
+      }
     }
 
     // 重置遊戲
@@ -1337,8 +1373,8 @@
     function upgradeHp() {
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
-        gameState.playerMaxHp += 10;
-        gameState.playerHp += 10;
+        gameState.playerMaxHp += 20;
+        gameState.playerHp += 20;
         updateUI();
         saveGame();
       }
@@ -1347,7 +1383,7 @@
     function upgradeAttack() {
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
-        gameState.playerAttack += 1;
+        gameState.playerAttack += 5;
         updateUI();
         saveGame();
       }
@@ -1392,8 +1428,14 @@
       showScreen('homeScreen');
     });
     document.getElementById('backToHomeFromStageButton').addEventListener('click', () => showScreen('homeScreen'));
-    document.getElementById('backToHomeFromDefeatButton').addEventListener('click', () => showScreen('homeScreen'));
-    document.getElementById('retryButton').addEventListener('click', () => startStage(gameState.currentStage));
+    document.getElementById('backToHomeFromDefeatButton').addEventListener('click', () => {
+      stopAutoRetryCountdown();
+      showScreen('homeScreen');
+    });
+    document.getElementById('retryButton').addEventListener('click', () => {
+      stopAutoRetryCountdown();
+      startStage(gameState.currentStage);
+    });
     
     document.getElementById('openShopButton').addEventListener('click', openShop);
     document.getElementById('closeShopButton').addEventListener('click', closeShop);
@@ -1452,7 +1494,7 @@
       display: none;
       width: 100%;
       height: 100%;
-      padding: 20px;
+      padding: 0;
       box-sizing: border-box;
       overflow-y: auto;
     }
@@ -1460,7 +1502,7 @@
     .screen.active {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
     }
 
@@ -1468,11 +1510,11 @@
     .home-container {
       background: rgba(255,255,255,0.2);
       padding: 50px;
-      border-radius: 20px;
-      max-width: 800px;
+      border-radius: 0;
       width: 100%;
       backdrop-filter: blur(10px);
       text-align: center;
+      margin: 0;
     }
 
     .game-title {
@@ -1530,9 +1572,10 @@
 
     /* 遊戲畫面 */
     .game-screen {
-      max-width: 1400px;
       width: 100%;
-      margin: 0 auto;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     .game-header {
@@ -1710,7 +1753,7 @@
     }
 
     .upgrade-btn {
-      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 12px 20px;
       border: none;
       border-radius: 10px;
@@ -1867,10 +1910,10 @@
     .stage-select-container {
       background: rgba(255,255,255,0.2);
       padding: 40px;
-      border-radius: 20px;
-      max-width: 1000px;
-      width: 90%;
+      border-radius: 0;
+      width: 100%;
       backdrop-filter: blur(10px);
+      margin: 0;
     }
 
     .stage-select-title {
@@ -1916,9 +1959,11 @@
     .defeat-container {
       background: rgba(255,255,255,0.2);
       padding: 60px;
-      border-radius: 20px;
+      border-radius: 0;
+      width: 100%;
       text-align: center;
       backdrop-filter: blur(10px);
+      margin: 0;
     }
 
     .defeat-title {
@@ -2081,7 +2126,7 @@
       <div class="upgrade-title">
        💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
       </div>
-      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 升級血量 (+10 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 升級攻擊 (+1 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 升級防禦 (+2%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 升級爆擊機率 (+5%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 升級爆擊傷害 (+5%) - 5💰</button>
+      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 升級血量 (+20 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 升級攻擊 (+5 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 升級防禦 (+2%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 升級爆擊機率 (+5%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 升級爆擊傷害 (+5%) - 5💰</button>
       </div>
      </div>
     </div>
@@ -2103,7 +2148,9 @@
      </div>
      <div class="defeat-message">
       別灰心，再試一次！
-     </div><button class="btn btn-primary" id="retryButton">重新挑戰</button> <button class="btn btn-secondary" id="backToHomeFromDefeatButton">返回首頁</button>
+     </div>
+     <div class="defeat-message" style="font-size: 20px; color: #ffd700;"><span id="autoRetryCountdown">5</span> 秒後自動重新挑戰...
+     </div><button class="btn btn-primary" id="retryButton">立即重新挑戰</button> <button class="btn btn-secondary" id="backToHomeFromDefeatButton">返回首頁</button>
     </div>
    </div>
   </div><!-- 商店浮動視窗 -->
@@ -2624,6 +2671,37 @@
     function handleDefeat() {
       stopBattle();
       showScreen('defeatScreen');
+      startAutoRetryCountdown();
+    }
+
+    // 自動重試倒數
+    let autoRetryTimer = null;
+    function startAutoRetryCountdown() {
+      let countdown = 5;
+      const countdownElement = document.getElementById('autoRetryCountdown');
+      countdownElement.textContent = countdown;
+      
+      if (autoRetryTimer) {
+        clearInterval(autoRetryTimer);
+      }
+      
+      autoRetryTimer = setInterval(() => {
+        countdown--;
+        countdownElement.textContent = countdown;
+        
+        if (countdown <= 0) {
+          clearInterval(autoRetryTimer);
+          autoRetryTimer = null;
+          startStage(gameState.currentStage);
+        }
+      }, 1000);
+    }
+
+    function stopAutoRetryCountdown() {
+      if (autoRetryTimer) {
+        clearInterval(autoRetryTimer);
+        autoRetryTimer = null;
+      }
     }
 
     // 重置遊戲
@@ -2742,8 +2820,8 @@
     function upgradeHp() {
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
-        gameState.playerMaxHp += 10;
-        gameState.playerHp += 10;
+        gameState.playerMaxHp += 20;
+        gameState.playerHp += 20;
         updateUI();
         saveGame();
       }
@@ -2752,7 +2830,7 @@
     function upgradeAttack() {
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
-        gameState.playerAttack += 1;
+        gameState.playerAttack += 5;
         updateUI();
         saveGame();
       }
@@ -2797,8 +2875,14 @@
       showScreen('homeScreen');
     });
     document.getElementById('backToHomeFromStageButton').addEventListener('click', () => showScreen('homeScreen'));
-    document.getElementById('backToHomeFromDefeatButton').addEventListener('click', () => showScreen('homeScreen'));
-    document.getElementById('retryButton').addEventListener('click', () => startStage(gameState.currentStage));
+    document.getElementById('backToHomeFromDefeatButton').addEventListener('click', () => {
+      stopAutoRetryCountdown();
+      showScreen('homeScreen');
+    });
+    document.getElementById('retryButton').addEventListener('click', () => {
+      stopAutoRetryCountdown();
+      startStage(gameState.currentStage);
+    });
     
     document.getElementById('openShopButton').addEventListener('click', openShop);
     document.getElementById('closeShopButton').addEventListener('click', closeShop);
@@ -2826,5 +2910,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b717d4f40ff251',t:'MTc2MjYyNjExOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b71dea8170f251',t:'MTc2MjYyNjM2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
