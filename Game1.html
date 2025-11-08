@@ -1846,45 +1846,25 @@
 
     // 關卡選擇
     function openStageSelect() {
-      // 暫停戰鬥
-      if (gameState.battleInterval) {
-        clearInterval(gameState.battleInterval);
-      }
-      if (gameState.countdownInterval) {
-        clearInterval(gameState.countdownInterval);
-      }
+      // 不暫停戰鬥，直接顯示關卡選擇畫面
       renderStageSelect();
+      
+      // 創建浮動視窗效果
+      const stageSelectScreen = document.getElementById('stageSelectScreen');
+      stageSelectScreen.style.position = 'fixed';
+      stageSelectScreen.style.top = '0';
+      stageSelectScreen.style.left = '0';
+      stageSelectScreen.style.width = '100%';
+      stageSelectScreen.style.height = '100%';
+      stageSelectScreen.style.background = 'rgba(0,0,0,0.7)';
+      stageSelectScreen.style.zIndex = '1000';
+      
       showScreen('stageSelectScreen');
     }
 
     function closeStageSelect() {
-      const wasInGame = gameState.enemyHp > 0 && gameState.playerHp > 0 && gameState.currentStage > 0;
-      
-      if (wasInGame) {
-        showScreen('gameScreen');
-        // 恢復戰鬥
-        gameState.countdown = 5;
-        updateCountdown();
-        
-        if (!gameState.countdownInterval) {
-          gameState.countdownInterval = setInterval(() => {
-            gameState.countdown--;
-            updateCountdown();
-            
-            if (gameState.countdown <= 0) {
-              gameState.countdown = 5;
-            }
-          }, 1000);
-        }
-        
-        if (!gameState.battleInterval) {
-          gameState.battleInterval = setInterval(() => {
-            autoBattle();
-          }, 5000);
-        }
-      } else {
-        showScreen('homeScreen');
-      }
+      // 直接返回遊戲畫面，戰鬥繼續
+      showScreen('gameScreen');
     }
 
     function backToHomeFromStageSelect() {
@@ -2014,5 +1994,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5a0c8c54af251',t:'MTc2MjYxMDc1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5afdd561df251',t:'MTc2MjYxMTM3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
