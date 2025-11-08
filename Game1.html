@@ -61,13 +61,15 @@
       padding: 30px;
       border-radius: 15px;
       max-width: 800px;
-      margin-bottom: 30px;
+      margin: 0 auto 30px auto;
       backdrop-filter: blur(10px);
+      text-align: center;
     }
 
     .game-description h2 {
       font-size: 28px;
       margin-bottom: 20px;
+      text-align: center;
     }
 
     .game-description p {
@@ -159,6 +161,7 @@
       align-items: center;
       margin-bottom: 20px;
       min-height: 250px;
+      position: relative;
     }
 
     .character {
@@ -168,6 +171,7 @@
       border-radius: 15px;
       min-width: 280px;
       transition: transform 0.5s;
+      position: relative;
     }
 
     .character.attacking {
@@ -297,20 +301,25 @@
     }
 
     .weapon-info {
-      background: rgba(255,255,255,0.15);
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
       padding: 15px;
       border-radius: 10px;
-      margin-bottom: 20px;
+      max-width: 150px;
+      backdrop-filter: blur(10px);
     }
 
     .weapon-name {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .weapon-effect {
-      font-size: 16px;
+      font-size: 14px;
       color: #ffd700;
     }
 
@@ -348,9 +357,9 @@
 
     .upgrade-options {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
     }
 
     .upgrade-card {
@@ -380,6 +389,55 @@
       font-size: 18px;
       color: #ffd700;
       font-weight: bold;
+    }
+
+    /* 武器商店特殊卡片 */
+    .shop-card-special {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      padding: 25px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .shop-card-special:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    }
+
+    .shop-icon {
+      font-size: 60px;
+      margin-right: 20px;
+    }
+
+    .shop-content {
+      flex: 1;
+      text-align: left;
+    }
+
+    .shop-content h3 {
+      font-size: 32px;
+      margin-bottom: 8px;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .shop-content p {
+      font-size: 18px;
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .shop-arrow {
+      font-size: 48px;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
     /* 商店畫面 */
@@ -606,7 +664,7 @@
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s;
-      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: #ffffff;
     }
 
@@ -631,18 +689,18 @@
       中文打字英雄大冒險
      </div>
      <div class="game-description">
-      <h2 style="text-align: center;">遊戲說明</h2>
-      <p style="text-align: center;"><strong>🎯 遊戲目標：</strong>通過打字擊敗100關的妖怪!</p>
-      <p style="text-align: center;"><strong>⌨️ 遊戲方式：</strong>看到中文字和注音後,正確輸入中文字並按Enter確認。答對後可獲得金幣並對妖怪造成傷害。</p>
-      <p style="text-align: center;"><strong>💰 金幣系統：</strong>每答對一題獲得金幣,可用來升級血量、攻擊力、防禦率、爆擊率,或購買特殊武器。</p>
-      <p style="text-align: center;"><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、爆擊率+0.5%)。</p>
-      <p style="text-align: center;"><strong>🛡️ 數值說明：</strong></p>
-      <p style="text-align: center;">• 血量(HP)：生命值,歸零則失敗</p>
-      <p style="text-align: center;">• 攻擊力：每次攻擊造成的傷害</p>
-      <p style="text-align: center;">• 防禦率：減少受到的傷害百分比</p>
-      <p style="text-align: center;">• 爆擊率：造成雙倍傷害的機率</p>
-      <p style="text-align: center;"><strong>🗡️ 武器系統：</strong>10種特殊武器,各有獨特效果(雙擊、毒性、秒殺等)。</p>
-      <p style="text-align: center;"><strong>💾 進度保存：</strong>遊戲進度會自動保存在你的電腦上。</p>
+      <h2>遊戲說明</h2>
+      <p><strong>🎯 遊戲目標：</strong>通過打字擊敗100關的妖怪!</p>
+      <p><strong>⌨️ 遊戲方式：</strong>看到中文字和注音後,正確輸入中文字並按Enter確認。答對後可獲得金幣並對妖怪造成傷害。</p>
+      <p><strong>💰 金幣系統：</strong>每答對一題獲得金幣,可用來升級血量、攻擊力、防禦率、爆擊率,或購買特殊武器。</p>
+      <p><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、爆擊率+0.5%)。</p>
+      <p><strong>🛡️ 數值說明：</strong></p>
+      <p>• 血量(HP)：生命值,歸零則失敗</p>
+      <p>• 攻擊力：每次攻擊造成的傷害</p>
+      <p>• 防禦率：減少受到的傷害百分比</p>
+      <p>• 爆擊率：造成雙倍傷害的機率</p>
+      <p><strong>🗡️ 武器系統：</strong>10種特殊武器,各有獨特效果(雙擊、毒性、秒殺等)。</p>
+      <p><strong>💾 進度保存：</strong>遊戲進度會自動保存在你的電腦上。</p>
      </div>
      <div class="button-group"><button class="btn btn-primary" id="startNewGameBtn">開始新遊戲</button> <button class="btn btn-secondary" id="continueGameBtn" style="display:none;">繼續遊戲</button>
      </div>
@@ -657,6 +715,14 @@
      </div><button class="btn btn-secondary" id="stageSelectBtn">關卡選擇</button>
     </div>
     <div class="battle-area">
+     <div class="weapon-info">
+      <div class="weapon-name" id="currentWeaponName">
+       🗡️ 普通劍
+      </div>
+      <div class="weapon-effect" id="currentWeaponEffect">
+       每秒攻擊一次
+      </div>
+     </div>
      <div class="character">
       <div class="character-avatar">
        🦸
@@ -727,21 +793,6 @@
       </div>
      </div>
     </div>
-    <div class="weapon-info">
-     <div class="weapon-name" id="currentWeaponName">
-      🗡️ 普通劍
-     </div>
-     <div class="weapon-effect" id="currentWeaponEffect">
-      每秒攻擊一次
-     </div>
-    </div>
-    <div class="typing-area">
-     <div class="word-display" id="wordDisplay">
-      準備開始...
-     </div>
-     <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
-    </div>
-    <div class="battle-log" id="battleLog"></div>
     <div class="upgrade-panel">
      <div class="upgrade-panel-title">
       💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
@@ -779,6 +830,13 @@
        </div></button>
      </div>
     </div>
+    <div class="typing-area">
+     <div class="word-display" id="wordDisplay">
+      準備開始...
+     </div>
+     <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
+    </div>
+    <div class="battle-log" id="battleLog"></div>
    </div><!-- 升級選擇畫面 -->
    <div class="screen" id="upgradeScreen">
     <div class="upgrade-container">
@@ -787,6 +845,43 @@
      </div>
      <div class="coins-display-large">
       💰 剩餘金幣: <span id="upgradeScreenCoins">0</span>
+     </div>
+     <div class="hero-stats-display">
+      <h3 style="margin-bottom: 15px; font-size: 22px;">🦸 目前英雄數值</h3>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+       <div style="text-align: center;">
+        <div style="font-size: 18px; margin-bottom: 5px;">
+         ❤️ 血量
+        </div>
+        <div style="font-size: 24px; font-weight: bold; color: #f5576c;">
+         <span id="upgradeScreenHp">100</span>/<span id="upgradeScreenMaxHp">100</span>
+        </div>
+       </div>
+       <div style="text-align: center;">
+        <div style="font-size: 18px; margin-bottom: 5px;">
+         ⚔️ 攻擊力
+        </div>
+        <div style="font-size: 24px; font-weight: bold; color: #ffd700;">
+         <span id="upgradeScreenAttack">10</span>
+        </div>
+       </div>
+       <div style="text-align: center;">
+        <div style="font-size: 18px; margin-bottom: 5px;">
+         🛡️ 防禦率
+        </div>
+        <div style="font-size: 24px; font-weight: bold; color: #4facfe;">
+         <span id="upgradeScreenDefense">0</span>%
+        </div>
+       </div>
+       <div style="text-align: center;">
+        <div style="font-size: 18px; margin-bottom: 5px;">
+         💥 爆擊率
+        </div>
+        <div style="font-size: 24px; font-weight: bold; color: #f093fb;">
+         <span id="upgradeScreenCrit">5</span>%
+        </div>
+       </div>
+      </div>
      </div>
      <div class="upgrade-options">
       <div class="upgrade-card" id="upgradeHealthCard">
@@ -818,12 +913,17 @@
         💰 5 金幣
        </div>
       </div>
-      <div class="upgrade-card" id="openShopCard">
-       <h3>🛒 武器商店</h3>
-       <p>購買特殊武器</p>
-       <div class="upgrade-cost">
-        查看商店
-       </div>
+     </div>
+     <div class="shop-card-special" id="openShopCard">
+      <div class="shop-icon">
+       🛒
+      </div>
+      <div class="shop-content">
+       <h3>武器商店</h3>
+       <p>購買特殊武器，提升戰鬥能力！</p>
+      </div>
+      <div class="shop-arrow">
+       →
       </div>
      </div><button class="btn btn-success" id="continueBattleBtn">繼續戰鬥</button>
     </div>
@@ -872,7 +972,7 @@
   <script>
     const defaultConfig = {
       game_title: "中文打字英雄大冒險",
-      start_button_text: "開始遊戲",
+      start_button_text: "開始新遊戲",
       continue_button_text: "繼續遊戲"
     };
 
@@ -1516,6 +1616,19 @@
       if (upgradeScreenCoinsEl) {
         upgradeScreenCoinsEl.textContent = gameState.coins;
       }
+      
+      // 更新英雄數值顯示
+      const hpEl = document.getElementById('upgradeScreenHp');
+      const maxHpEl = document.getElementById('upgradeScreenMaxHp');
+      const attackEl = document.getElementById('upgradeScreenAttack');
+      const defenseEl = document.getElementById('upgradeScreenDefense');
+      const critEl = document.getElementById('upgradeScreenCrit');
+      
+      if (hpEl) hpEl.textContent = gameState.playerHp;
+      if (maxHpEl) maxHpEl.textContent = gameState.playerMaxHp;
+      if (attackEl) attackEl.textContent = gameState.playerAttack;
+      if (defenseEl) defenseEl.textContent = gameState.playerDefense;
+      if (critEl) critEl.textContent = gameState.playerCritRate;
     }
 
     // 遊戲內即時升級
@@ -1566,13 +1679,7 @@
     }
 
     function closeShop() {
-      showScreen('gameScreen');
-      // 恢復戰鬥
-      if (!gameState.battleInterval) {
-        gameState.battleInterval = setInterval(() => {
-          autoBattle();
-        }, 5000);
-      }
+      showScreen('upgradeScreen');
     }
     
     window.upgradeHealth = upgradeHealth;
@@ -1615,8 +1722,6 @@
         saveProgress();
         updateUI();
         renderWeaponsShop();
-      } else {
-        alert("金幣不足!");
       }
     }
 
@@ -1740,5 +1845,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b41a846189f251',t:'MTc2MjU5NDc3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b42c21b58af251',t:'MTc2MjU5NTQ5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
