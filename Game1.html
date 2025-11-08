@@ -616,7 +616,7 @@
       <h3>💰 金幣系統</h3>
       <p>每答對一題獲得5金幣，可用來升級血量(+100 HP)、攻擊力(+5)、防禦率(+2%)、爆擊機率(+5%)、爆擊傷害(+5%)(每項5金幣)，或購買特殊武器。</p>
       <h3>⚔️ 戰鬥系統</h3>
-      <p>你和妖怪每5秒輪流攻擊。妖怪每關會變強(血量×1.1、攻擊力×1.1、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%))。</p>
+      <p>你和妖怪每5秒輪流攻擊。妖怪每關會變強(血量×1.05、攻擊力×1.1、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%))。</p>
       <h3>🛡️ 數值說明</h3>
       <p>• 血量(HP)：生命值，歸零則失敗<br>
         • 攻擊力：每次攻擊造成的傷害<br>
@@ -668,6 +668,19 @@
          未使用道具
         </div>
        </div><button class="btn btn-secondary" id="openItemShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffa500 0%, #ff6347 100%);">🧪 道具商店</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+       <div class="weapon-display" style="background: rgba(255,215,0,0.15);">
+        <div class="weapon-icon" id="currentRelicIcon">
+         ⭐
+        </div>
+        <div class="weapon-name" id="currentRelicName">
+         無
+        </div>
+        <div class="weapon-effect" id="currentRelicEffect">
+         未裝備聖遺物
+        </div>
+       </div><button class="btn btn-secondary" id="openRelicShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffd700 0%, #ffA500 100%);">✨ 聖遺物商店</button>
       </div>
       <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
        <div class="weapon-display">
@@ -839,6 +852,19 @@
     <div style="text-align: center;"><button class="btn btn-secondary" id="closeItemShopButton">關閉商店</button>
     </div>
    </div>
+  </div><!-- 聖遺物商店浮動視窗 -->
+  <div class="shop-overlay" id="relicShopOverlay">
+   <div class="shop-container">
+    <div class="shop-title">
+     ✨ 聖遺物商店
+    </div>
+    <div class="shop-coins">
+     💰 剩餘金幣: <span id="relicShopCoinsDisplay">0</span>
+    </div>
+    <div class="weapons-grid" id="relicsGrid"></div>
+    <div style="text-align: center;"><button class="btn btn-secondary" id="closeRelicShopButton">關閉商店</button>
+    </div>
+   </div>
   </div>
   <script>
     const defaultConfig = {
@@ -916,6 +942,17 @@
       {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"}
     ];
 
+    // 聖遺物定義
+    const relics = [
+      {id: 0, name: "無", cost: 0, effect: "未裝備聖遺物", icon: "⭐"},
+      {id: 1, name: "巨人戒指", cost: 100, effect: "血量×2", icon: "💍"},
+      {id: 2, name: "天使的光環", cost: 100, effect: "50%機率攻擊無效", icon: "😇"},
+      {id: 3, name: "赫拉克勒斯的戰車", cost: 100, effect: "爆擊傷害機率×2", icon: "🏛️"},
+      {id: 4, name: "阿瑞斯的長矛", cost: 100, effect: "攻擊力×2", icon: "🔱"},
+      {id: 5, name: "奧菲斯的七弦琴", cost: 100, effect: "敵人永久50%機率打到自己", icon: "🎻"},
+      {id: 6, name: "聚寶盆", cost: 100, effect: "每次攻擊後隨機給予1-10金幣", icon: "🏺"}
+    ];
+
     // 100種妖怪
     const monsters = [
       "👹", "👺", "👻", "👽", "👾", "🤖", "😈", "💀", "☠️", "👿",
@@ -953,6 +990,8 @@
       itemConfusionCount: 0,
       itemLuckEndTime: 0,
       itemCritBoostCount: 0,
+      relicId: 0,
+      ownedRelics: [0],
       enemyHp: 100,
       enemyMaxHp: 100,
       enemyBaseAttack: 8,
@@ -1092,7 +1131,9 @@
         weaponId: gameState.weaponId,
         ownedWeapons: gameState.ownedWeapons,
         itemId: gameState.itemId,
-        ownedItems: gameState.ownedItems
+        ownedItems: gameState.ownedItems,
+        relicId: gameState.relicId,
+        ownedRelics: gameState.ownedRelics
       }));
     }
 
@@ -1112,6 +1153,8 @@
         gameState.ownedWeapons = data.ownedWeapons || [0];
         gameState.itemId = data.itemId || 0;
         gameState.ownedItems = data.ownedItems || [0];
+        gameState.relicId = data.relicId || 0;
+        gameState.ownedRelics = data.ownedRelics || [0];
       }
     }
 
@@ -1157,10 +1200,16 @@
       stopBattle();
       
       gameState.currentStage = stage;
-      gameState.playerHp = gameState.playerMaxHp;
+      
+      // 聖遺物效果：巨人戒指（血量×2）
+      if (gameState.relicId === 1) {
+        gameState.playerHp = gameState.playerMaxHp * 2;
+      } else {
+        gameState.playerHp = gameState.playerMaxHp;
+      }
       
       // 計算敵人數值
-      gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.1, stage - 1));
+      gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
       gameState.enemyHp = gameState.enemyMaxHp;
       gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.1, stage - 1));
       gameState.enemyAttack = gameState.enemyBaseAttack;
@@ -1264,11 +1313,23 @@
       
       gameState.weaponHitCount++;
       
+      // 聖遺物效果：阿瑞斯的長矛（攻擊力×2）
+      let relicAttackBoost = 1;
+      if (gameState.relicId === 4) {
+        relicAttackBoost = 2;
+      }
+      
       // 道具效果：攻擊加倍藥水
       let attackBoost = 1;
       if (gameState.itemAttackBoostCount > 0) {
         attackBoost = 2;
         gameState.itemAttackBoostCount--;
+      }
+      
+      // 聖遺物效果：赫拉克勒斯的戰車（爆擊傷害×2）
+      let relicCritDamageBoost = 1;
+      if (gameState.relicId === 3) {
+        relicCritDamageBoost = 2;
       }
       
       // 道具效果：爆擊傷害藥水
@@ -1351,13 +1412,13 @@
       
       // 執行攻擊
       for (let i = 0; i < attacks; i++) {
-        let damage = gameState.playerAttack * attackBoost * damageMultiplier;
+        let damage = gameState.playerAttack * relicAttackBoost * attackBoost * damageMultiplier;
         
         const isCrit = forceCrit || Math.random() * 100 < gameState.playerCritRate;
         let critDamagePercent = 0;
         if (isCrit && gameState.weaponId !== 9) {
-          damage = Math.floor(damage * (100 + gameState.playerCritDamage * critDamageBoost) / 100);
-          critDamagePercent = gameState.playerCritDamage * critDamageBoost;
+          damage = Math.floor(damage * (100 + gameState.playerCritDamage * relicCritDamageBoost * critDamageBoost) / 100);
+          critDamagePercent = gameState.playerCritDamage * relicCritDamageBoost * critDamageBoost;
         }
         
         // 道具效果：毒藥水（防禦率減半）
@@ -1387,6 +1448,12 @@
         gameState.enemyHp = Math.max(0, gameState.enemyHp - gameState.poisonStacks);
       }
       
+      // 聖遺物效果：聚寶盆（每次攻擊後隨機給予1-10金幣）
+      if (gameState.relicId === 6) {
+        const bonusCoins = Math.floor(Math.random() * 10) + 1;
+        gameState.coins += bonusCoins;
+      }
+      
       updateUI();
     }
 
@@ -1396,12 +1463,30 @@
       enemyChar.classList.add('attacking');
       setTimeout(() => enemyChar.classList.remove('attacking'), 500);
       
+      // 聖遺物效果：奧菲斯的七弦琴（敵人永久50%機率打到自己）
+      if (gameState.relicId === 5) {
+        if (Math.random() < 0.5) {
+          let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
+          gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
+          updateUI();
+          return;
+        }
+      }
+      
       // 道具效果：混亂藥水（50%機率攻擊自己）
       if (gameState.itemConfusionCount > 0) {
         gameState.itemConfusionCount--;
         if (Math.random() < 0.5) {
           let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
           gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
+          updateUI();
+          return;
+        }
+      }
+      
+      // 聖遺物效果：天使的光環（50%機率攻擊無效）
+      if (gameState.relicId === 2) {
+        if (Math.random() < 0.5) {
           updateUI();
           return;
         }
@@ -1442,7 +1527,8 @@
       document.getElementById('attackCountDisplay').textContent = gameState.attackCount;
       
       // 玩家數值
-      document.getElementById('playerHp').textContent = `${gameState.playerHp}/${gameState.playerMaxHp}`;
+      const displayMaxHp = gameState.relicId === 1 ? gameState.playerMaxHp * 2 : gameState.playerMaxHp;
+      document.getElementById('playerHp').textContent = `${gameState.playerHp}/${displayMaxHp}`;
       document.getElementById('playerAttack').textContent = gameState.playerAttack;
       
       let defenseText = `${gameState.playerDefense}%`;
@@ -1455,7 +1541,8 @@
       
       document.getElementById('playerCritDamage').textContent = `${gameState.playerCritDamage}%`;
       
-      const playerHpPercent = (gameState.playerHp / gameState.playerMaxHp) * 100;
+      const actualMaxHp = gameState.relicId === 1 ? gameState.playerMaxHp * 2 : gameState.playerMaxHp;
+      const playerHpPercent = (gameState.playerHp / actualMaxHp) * 100;
       document.getElementById('playerHpBar').style.width = `${playerHpPercent}%`;
       
       // 敵人數值
@@ -1512,6 +1599,13 @@
       document.getElementById('currentItemIcon').textContent = item.icon;
       document.getElementById('currentItemName').textContent = item.name;
       document.getElementById('currentItemEffect').textContent = itemEffect;
+      
+      // 聖遺物顯示
+      const relic = relics[gameState.relicId];
+      document.getElementById('currentRelicIcon').textContent = relic.icon;
+      document.getElementById('currentRelicName').textContent = relic.name;
+      document.getElementById('currentRelicEffect').textContent = relic.effect;
+      document.getElementById('relicShopCoinsDisplay').textContent = gameState.coins;
       
       // 升級按鈕狀態
       document.getElementById('upgradeHpButton').disabled = gameState.coins < 5;
@@ -1862,6 +1956,84 @@
       }
     }
 
+    // 開啟聖遺物商店
+    function openRelicShop() {
+      renderRelicsShop();
+      document.getElementById('relicShopOverlay').classList.add('active');
+    }
+
+    // 關閉聖遺物商店
+    function closeRelicShop() {
+      document.getElementById('relicShopOverlay').classList.remove('active');
+    }
+
+    // 渲染聖遺物商店
+    function renderRelicsShop() {
+      const grid = document.getElementById('relicsGrid');
+      grid.innerHTML = '';
+      
+      document.getElementById('relicShopCoinsDisplay').textContent = gameState.coins;
+      
+      relics.forEach(relic => {
+        const equipped = gameState.relicId === relic.id;
+        const owned = gameState.ownedRelics.includes(relic.id);
+        
+        const card = document.createElement('div');
+        card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
+        
+        let statusText = '';
+        if (equipped) {
+          statusText = '✅ 已裝備';
+        } else if (owned) {
+          statusText = '🔄 點擊裝備';
+        } else {
+          statusText = `💰 ${relic.cost} 金幣`;
+        }
+        
+        card.innerHTML = `
+          <div class="weapon-icon">${relic.icon}</div>
+          <h3>${relic.name}</h3>
+          <p>${relic.effect}</p>
+          <div class="weapon-cost">${statusText}</div>
+        `;
+        
+        if (!equipped) {
+          card.onclick = () => buyRelic(relic.id);
+        }
+        
+        grid.appendChild(card);
+      });
+    }
+
+    // 購買聖遺物
+    function buyRelic(relicId) {
+      const relic = relics[relicId];
+      const owned = gameState.ownedRelics.includes(relicId);
+      
+      if (owned) {
+        // 已擁有，直接裝備
+        gameState.relicId = relicId;
+        applyRelicEffects();
+        updateUI();
+        renderRelicsShop();
+        saveGame();
+      } else if (gameState.coins >= relic.cost) {
+        // 購買並裝備
+        gameState.coins -= relic.cost;
+        gameState.relicId = relicId;
+        gameState.ownedRelics.push(relicId);
+        applyRelicEffects();
+        updateUI();
+        renderRelicsShop();
+        saveGame();
+      }
+    }
+
+    // 應用聖遺物效果
+    function applyRelicEffects() {
+      // 聖遺物效果在戰鬥中動態應用，這裡不需要做什麼
+    }
+
     // 啟動道具效果
     function activateItem(itemId) {
       // 重置所有道具效果
@@ -2001,6 +2173,9 @@
     document.getElementById('openItemShopButton').addEventListener('click', openItemShop);
     document.getElementById('closeItemShopButton').addEventListener('click', closeItemShop);
     
+    document.getElementById('openRelicShopButton').addEventListener('click', openRelicShop);
+    document.getElementById('closeRelicShopButton').addEventListener('click', closeRelicShop);
+    
     document.getElementById('openStageSelectButton').addEventListener('click', openStageSelectPopup);
     document.getElementById('closeStageSelectButton').addEventListener('click', closeStageSelectPopup);
     
@@ -2027,5 +2202,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b773619378f251',t:'MTc2MjYyOTg2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b78857c638f251',t:'MTc2MjYzMDcyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
