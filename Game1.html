@@ -654,6 +654,19 @@
      </div>
      <div class="battle-area">
       <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+       <div class="weapon-display" style="background: rgba(255,200,100,0.15);">
+        <div class="weapon-icon" id="currentItemIcon">
+         📦
+        </div>
+        <div class="weapon-name" id="currentItemName">
+         無裝備
+        </div>
+        <div class="weapon-effect" id="currentItemEffect">
+         未使用道具
+        </div>
+       </div><button class="btn btn-secondary" id="openItemShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffa500 0%, #ff6347 100%);">🧪 道具商店</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
        <div class="weapon-display">
         <div class="weapon-icon" id="currentWeaponIcon">
          🗡️
@@ -810,6 +823,19 @@
     <div style="text-align: center; margin-top: 20px;"><button class="btn btn-secondary" id="closeStageSelectButton">關閉</button>
     </div>
    </div>
+  </div><!-- 道具商店浮動視窗 -->
+  <div class="shop-overlay" id="itemShopOverlay">
+   <div class="shop-container">
+    <div class="shop-title">
+     🧪 道具商店
+    </div>
+    <div class="shop-coins">
+     💰 剩餘金幣: <span id="itemShopCoinsDisplay">0</span>
+    </div>
+    <div class="weapons-grid" id="itemsGrid"></div>
+    <div style="text-align: center;"><button class="btn btn-secondary" id="closeItemShopButton">關閉商店</button>
+    </div>
+   </div>
   </div>
   <script>
     const defaultConfig = {
@@ -874,6 +900,19 @@
       {id: 11, name: "秒殺劍", cost: 120, effect: "極低機率(3%)直接秒殺怪獸", icon: "💀"}
     ];
 
+    // 道具定義
+    const items = [
+      {id: 0, name: "無裝備", cost: 0, effect: "未使用道具", icon: "📦"},
+      {id: 1, name: "灼燒藥水", cost: 40, effect: "每次攻擊額外造成自身攻擊10%傷害", icon: "🔥"},
+      {id: 2, name: "無敵盾牌", cost: 60, effect: "不受到傷害五次後失效", icon: "🛡️"},
+      {id: 3, name: "攻擊加倍藥水", cost: 50, effect: "接下來5次攻擊基礎攻擊力×2", icon: "💪"},
+      {id: 4, name: "毒藥水", cost: 55, effect: "對手防禦率減半", icon: "☠️"},
+      {id: 5, name: "爆擊傷害藥水", cost: 65, effect: "接下來5次攻擊爆擊傷害×2", icon: "💥"},
+      {id: 6, name: "混亂藥水", cost: 70, effect: "接下來5次攻擊怪物50%機率攻擊自己", icon: "😵"},
+      {id: 7, name: "運氣藥水", cost: 80, effect: "3分鐘內答對金幣×2", icon: "🍀"},
+      {id: 8, name: "爆擊藥水", cost: 75, effect: "接下來5次攻擊必定爆擊", icon: "💎"}
+    ];
+
     // 100種妖怪
     const monsters = [
       "👹", "👺", "👻", "👽", "👾", "🤖", "😈", "💀", "☠️", "👿",
@@ -901,6 +940,16 @@
       coins: 0,
       weaponId: 0,
       ownedWeapons: [0],
+      itemId: 0,
+      ownedItems: [0],
+      itemBurnActive: false,
+      itemShieldCount: 0,
+      itemAttackBoostCount: 0,
+      itemPoisonActive: false,
+      itemCritDamageBoostCount: 0,
+      itemConfusionCount: 0,
+      itemLuckEndTime: 0,
+      itemCritBoostCount: 0,
       enemyHp: 100,
       enemyMaxHp: 100,
       enemyBaseAttack: 8,
@@ -993,7 +1042,9 @@
         playerCritDamage: gameState.playerCritDamage,
         coins: gameState.coins,
         weaponId: gameState.weaponId,
-        ownedWeapons: gameState.ownedWeapons
+        ownedWeapons: gameState.ownedWeapons,
+        itemId: gameState.itemId,
+        ownedItems: gameState.ownedItems
       }));
     }
 
@@ -1011,6 +1062,8 @@
         gameState.coins = data.coins || 0;
         gameState.weaponId = data.weaponId || 0;
         gameState.ownedWeapons = data.ownedWeapons || [0];
+        gameState.itemId = data.itemId || 0;
+        gameState.ownedItems = data.ownedItems || [0];
       }
     }
 
@@ -1073,6 +1126,15 @@
       gameState.enemyAttackReduction = 0;
       gameState.battleTimer = 5;
       gameState.attackCount = 0;
+      
+      // 重置道具效果（除了運氣藥水）
+      gameState.itemBurnActive = false;
+      gameState.itemShieldCount = 0;
+      gameState.itemAttackBoostCount = 0;
+      gameState.itemPoisonActive = false;
+      gameState.itemCritDamageBoostCount = 0;
+      gameState.itemConfusionCount = 0;
+      gameState.itemCritBoostCount = 0;
       
       // 不清空攻擊紀錄，保留上一次的紀錄
       
@@ -1153,6 +1215,27 @@
       
       gameState.weaponHitCount++;
       
+      // 道具效果：攻擊加倍藥水
+      let attackBoost = 1;
+      if (gameState.itemAttackBoostCount > 0) {
+        attackBoost = 2;
+        gameState.itemAttackBoostCount--;
+      }
+      
+      // 道具效果：爆擊傷害藥水
+      let critDamageBoost = 1;
+      if (gameState.itemCritDamageBoostCount > 0) {
+        critDamageBoost = 2;
+        gameState.itemCritDamageBoostCount--;
+      }
+      
+      // 道具效果：爆擊藥水
+      let forceCrit = false;
+      if (gameState.itemCritBoostCount > 0) {
+        forceCrit = true;
+        gameState.itemCritBoostCount--;
+      }
+      
       // 武器特效
       switch(gameState.weaponId) {
         case 1: // 雙刃劍
@@ -1219,20 +1302,31 @@
       
       // 執行攻擊
       for (let i = 0; i < attacks; i++) {
-        let damage = gameState.playerAttack * damageMultiplier;
+        let damage = gameState.playerAttack * attackBoost * damageMultiplier;
         
-        const isCrit = Math.random() * 100 < gameState.playerCritRate;
+        const isCrit = forceCrit || Math.random() * 100 < gameState.playerCritRate;
         let critDamagePercent = 0;
         if (isCrit && gameState.weaponId !== 9) {
-          damage = Math.floor(damage * (100 + gameState.playerCritDamage) / 100);
-          critDamagePercent = gameState.playerCritDamage;
+          damage = Math.floor(damage * (100 + gameState.playerCritDamage * critDamageBoost) / 100);
+          critDamagePercent = gameState.playerCritDamage * critDamageBoost;
         }
         
-        const effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
+        // 道具效果：毒藥水（防禦率減半）
+        let effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
+        if (gameState.itemPoisonActive) {
+          effectiveDefense = Math.floor(effectiveDefense / 2);
+        }
+        
         const defenseReduction = Math.floor(damage * effectiveDefense / 100);
         damage = Math.max(1, damage - defenseReduction);
         
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
+        
+        // 道具效果：灼燒藥水（額外10%傷害）
+        if (gameState.itemBurnActive) {
+          const burnDamage = Math.floor(gameState.playerAttack * 0.1);
+          gameState.enemyHp = Math.max(0, gameState.enemyHp - burnDamage);
+        }
         
         // 記錄攻擊
         const isActualCrit = isCrit || (gameState.weaponId === 9 && gameState.weaponHitCount % 3 === 0);
@@ -1252,6 +1346,24 @@
       const enemyChar = document.getElementById('enemyCharacter');
       enemyChar.classList.add('attacking');
       setTimeout(() => enemyChar.classList.remove('attacking'), 500);
+      
+      // 道具效果：混亂藥水（50%機率攻擊自己）
+      if (gameState.itemConfusionCount > 0) {
+        gameState.itemConfusionCount--;
+        if (Math.random() < 0.5) {
+          let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
+          gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
+          updateUI();
+          return;
+        }
+      }
+      
+      // 道具效果：無敵盾牌（不受傷害）
+      if (gameState.itemShieldCount > 0) {
+        gameState.itemShieldCount--;
+        updateUI();
+        return;
+      }
       
       let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
       
@@ -1324,6 +1436,34 @@
       document.getElementById('currentWeaponName').textContent = weapon.name;
       document.getElementById('currentWeaponEffect').textContent = weapon.effect;
       
+      // 道具顯示
+      const item = items[gameState.itemId];
+      let itemEffect = item.effect;
+      
+      // 顯示剩餘次數
+      if (gameState.itemAttackBoostCount > 0) {
+        itemEffect = `攻擊×2 (剩${gameState.itemAttackBoostCount}次)`;
+      } else if (gameState.itemCritDamageBoostCount > 0) {
+        itemEffect = `爆傷×2 (剩${gameState.itemCritDamageBoostCount}次)`;
+      } else if (gameState.itemCritBoostCount > 0) {
+        itemEffect = `必爆擊 (剩${gameState.itemCritBoostCount}次)`;
+      } else if (gameState.itemShieldCount > 0) {
+        itemEffect = `無敵盾 (剩${gameState.itemShieldCount}次)`;
+      } else if (gameState.itemConfusionCount > 0) {
+        itemEffect = `混亂 (剩${gameState.itemConfusionCount}次)`;
+      } else if (gameState.itemLuckEndTime > Date.now()) {
+        const remainingSeconds = Math.ceil((gameState.itemLuckEndTime - Date.now()) / 1000);
+        itemEffect = `金幣×2 (剩${remainingSeconds}秒)`;
+      } else if (gameState.itemBurnActive) {
+        itemEffect = `灼燒 (持續中)`;
+      } else if (gameState.itemPoisonActive) {
+        itemEffect = `毒性 (持續中)`;
+      }
+      
+      document.getElementById('currentItemIcon').textContent = item.icon;
+      document.getElementById('currentItemName').textContent = item.name;
+      document.getElementById('currentItemEffect').textContent = itemEffect;
+      
       // 升級按鈕狀態
       document.getElementById('upgradeHpButton').disabled = gameState.coins < 5;
       document.getElementById('upgradeAttackButton').disabled = gameState.coins < 5;
@@ -1344,7 +1484,12 @@
 
     // 處理正確答案
     function handleCorrectAnswer() {
-      gameState.coins += 5;
+      // 道具效果：運氣藥水（金幣×2）
+      if (gameState.itemLuckEndTime > Date.now()) {
+        gameState.coins += 10;
+      } else {
+        gameState.coins += 5;
+      }
       updateUI();
       saveGame();
       nextWord();
@@ -1451,6 +1596,16 @@
         coins: 0,
         weaponId: 0,
         ownedWeapons: [0],
+        itemId: 0,
+        ownedItems: [0],
+        itemBurnActive: false,
+        itemShieldCount: 0,
+        itemAttackBoostCount: 0,
+        itemPoisonActive: false,
+        itemCritDamageBoostCount: 0,
+        itemConfusionCount: 0,
+        itemLuckEndTime: 0,
+        itemCritBoostCount: 0,
         enemyHp: 100,
         enemyMaxHp: 100,
         enemyBaseAttack: 8,
@@ -1580,6 +1735,119 @@
       }
     }
 
+    // 開啟道具商店
+    function openItemShop() {
+      renderItemsShop();
+      document.getElementById('itemShopOverlay').classList.add('active');
+    }
+
+    // 關閉道具商店
+    function closeItemShop() {
+      document.getElementById('itemShopOverlay').classList.remove('active');
+    }
+
+    // 渲染道具商店
+    function renderItemsShop() {
+      const grid = document.getElementById('itemsGrid');
+      grid.innerHTML = '';
+      
+      document.getElementById('itemShopCoinsDisplay').textContent = gameState.coins;
+      
+      items.forEach(item => {
+        const equipped = gameState.itemId === item.id;
+        const owned = gameState.ownedItems.includes(item.id);
+        
+        const card = document.createElement('div');
+        card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
+        
+        let statusText = '';
+        if (equipped) {
+          statusText = '✅ 已裝備';
+        } else if (owned) {
+          statusText = '🔄 點擊裝備';
+        } else {
+          statusText = `💰 ${item.cost} 金幣`;
+        }
+        
+        card.innerHTML = `
+          <div class="weapon-icon">${item.icon}</div>
+          <h3>${item.name}</h3>
+          <p>${item.effect}</p>
+          <div class="weapon-cost">${statusText}</div>
+        `;
+        
+        if (!equipped) {
+          card.onclick = () => buyItem(item.id);
+        }
+        
+        grid.appendChild(card);
+      });
+    }
+
+    // 購買道具
+    function buyItem(itemId) {
+      const item = items[itemId];
+      const owned = gameState.ownedItems.includes(itemId);
+      
+      if (owned) {
+        // 已擁有，直接裝備並啟動效果
+        gameState.itemId = itemId;
+        activateItem(itemId);
+        updateUI();
+        renderItemsShop();
+        saveGame();
+      } else if (gameState.coins >= item.cost) {
+        // 購買並裝備
+        gameState.coins -= item.cost;
+        gameState.itemId = itemId;
+        gameState.ownedItems.push(itemId);
+        activateItem(itemId);
+        updateUI();
+        renderItemsShop();
+        saveGame();
+      }
+    }
+
+    // 啟動道具效果
+    function activateItem(itemId) {
+      // 重置所有道具效果
+      gameState.itemBurnActive = false;
+      gameState.itemShieldCount = 0;
+      gameState.itemAttackBoostCount = 0;
+      gameState.itemPoisonActive = false;
+      gameState.itemCritDamageBoostCount = 0;
+      gameState.itemConfusionCount = 0;
+      gameState.itemCritBoostCount = 0;
+      
+      // 啟動新道具效果
+      switch(itemId) {
+        case 1: // 灼燒藥水
+          gameState.itemBurnActive = true;
+          break;
+        case 2: // 無敵盾牌
+          gameState.itemShieldCount = 5;
+          break;
+        case 3: // 攻擊加倍藥水
+          gameState.itemAttackBoostCount = 5;
+          break;
+        case 4: // 毒藥水
+          gameState.itemPoisonActive = true;
+          break;
+        case 5: // 爆擊傷害藥水
+          gameState.itemCritDamageBoostCount = 5;
+          break;
+        case 6: // 混亂藥水
+          gameState.itemConfusionCount = 5;
+          break;
+        case 7: // 運氣藥水
+          gameState.itemLuckEndTime = Date.now() + 180000; // 3分鐘
+          break;
+        case 8: // 爆擊藥水
+          gameState.itemCritBoostCount = 5;
+          break;
+      }
+    }
+
     // 關卡選擇
     function showStageSelect() {
       loadGame();
@@ -1675,6 +1943,9 @@
     document.getElementById('openShopButton').addEventListener('click', openShop);
     document.getElementById('closeShopButton').addEventListener('click', closeShop);
     
+    document.getElementById('openItemShopButton').addEventListener('click', openItemShop);
+    document.getElementById('closeItemShopButton').addEventListener('click', closeItemShop);
+    
     document.getElementById('openStageSelectButton').addEventListener('click', openStageSelectPopup);
     document.getElementById('closeStageSelectButton').addEventListener('click', closeStageSelectPopup);
     
@@ -1701,5 +1972,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b7541b823ef251',t:'MTc2MjYyODU4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b76dde730ff251',t:'MTc2MjYyOTY0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
