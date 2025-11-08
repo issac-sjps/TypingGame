@@ -573,19 +573,6 @@
       <div><button class="btn btn-secondary" id="openShopButton" style="padding: 10px 20px;">🛒 武器商店</button> <button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
       </div>
      </div>
-     <div class="upgrade-panel">
-      <div class="upgrade-title">
-       💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
-      </div>
-      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 升級血量 (+10 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 升級攻擊 (+1 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 升級防禦 (+1%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 升級爆擊 (+1%) - 5💰</button>
-      </div>
-     </div>
-     <div class="typing-area">
-      <div class="word-display" id="wordDisplay">
-       準備開始...
-      </div>
-      <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
-     </div>
      <div class="battle-area">
       <div class="weapon-display">
        <div class="weapon-icon" id="currentWeaponIcon">
@@ -666,6 +653,19 @@
          </div>
         </div>
        </div>
+      </div>
+     </div>
+     <div class="typing-area">
+      <div class="word-display" id="wordDisplay">
+       準備開始...
+      </div>
+      <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
+     </div>
+     <div class="upgrade-panel">
+      <div class="upgrade-title">
+       💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
+      </div>
+      <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 升級血量 (+10 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 升級攻擊 (+1 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 升級防禦 (+1%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 升級爆擊 (+1%) - 5💰</button>
       </div>
      </div>
     </div>
@@ -1348,7 +1348,10 @@
     }
 
     // 事件監聽器
-    document.getElementById('startButton').addEventListener('click', startGame);
+    document.getElementById('startButton').addEventListener('click', () => {
+      startGame();
+    });
+    
     document.getElementById('stageSelectButton').addEventListener('click', showStageSelect);
     document.getElementById('backToHomeButton').addEventListener('click', () => {
       stopBattle();
@@ -1379,10 +1382,10 @@
     });
 
     // 初始化
-    window.addEventListener('load', () => {
-      initSDK();
+    (async function() {
+      await initSDK();
       loadGame();
-    });
+    })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b701f105c2f251',t:'MTc2MjYyNTIyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b70993b400f251',t:'MTc2MjYyNTUzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
