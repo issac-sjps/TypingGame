@@ -326,11 +326,24 @@
       border-radius: 15px;
       text-align: center;
       max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
     }
 
     .upgrade-title {
       font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .coins-display-large {
+      font-size: 28px;
+      color: #ffd700;
+      font-weight: bold;
       margin-bottom: 30px;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 10px;
+      display: inline-block;
     }
 
     .upgrade-options {
@@ -738,25 +751,25 @@
         ❤️ 升級血量
        </div>
        <div class="small-text">
-        +20 HP (10💰)
+        +20 HP (5💰)
        </div></button> <button class="btn-upgrade" onclick="upgradeAttackInGame()">
        <div>
         ⚔️ 升級攻擊
        </div>
        <div class="small-text">
-        +5 攻擊 (15💰)
+        +5 攻擊 (5💰)
        </div></button> <button class="btn-upgrade" onclick="upgradeDefenseInGame()">
        <div>
         🛡️ 升級防禦
        </div>
        <div class="small-text">
-        +3% 防禦 (12💰)
+        +3% 防禦 (5💰)
        </div></button> <button class="btn-upgrade" onclick="upgradeCritInGame()">
        <div>
         💥 升級爆擊
        </div>
        <div class="small-text">
-        +2% 爆擊 (18💰)
+        +2% 爆擊 (5💰)
        </div></button> <button class="btn-upgrade" onclick="openShopInGame()">
        <div>
         🛒 武器商店
@@ -770,7 +783,10 @@
    <div class="screen" id="upgradeScreen">
     <div class="upgrade-container">
      <div class="upgrade-title">
-      🎉 答對了!獲得金幣!
+      🎉 過關了!
+     </div>
+     <div class="coins-display-large">
+      💰 剩餘金幣: <span id="upgradeScreenCoins">0</span>
      </div>
      <div class="upgrade-options">
       <div class="upgrade-card" id="upgradeHealthCard">
@@ -778,28 +794,28 @@
        <p>最大血量 +20<br>
         並恢復 20 HP</p>
        <div class="upgrade-cost">
-        💰 10 金幣
+        💰 5 金幣
        </div>
       </div>
       <div class="upgrade-card" id="upgradeAttackCard">
        <h3>⚔️ 升級攻擊</h3>
        <p>攻擊力 +5</p>
        <div class="upgrade-cost">
-        💰 15 金幣
+        💰 5 金幣
        </div>
       </div>
       <div class="upgrade-card" id="upgradeDefenseCard">
        <h3>🛡️ 升級防禦</h3>
        <p>防禦率 +3%</p>
        <div class="upgrade-cost">
-        💰 12 金幣
+        💰 5 金幣
        </div>
       </div>
       <div class="upgrade-card" id="upgradeCritCard">
        <h3>💥 升級爆擊</h3>
        <p>爆擊率 +2%</p>
        <div class="upgrade-cost">
-        💰 18 金幣
+        💰 5 金幣
        </div>
       </div>
       <div class="upgrade-card" id="openShopCard">
@@ -965,7 +981,7 @@
       {word: "唱", pinyin: "ㄔㄤˋ"}, {word: "跳舞", pinyin: "ㄊㄧㄠˋ ㄨˇ"}, {word: "玩", pinyin: "ㄨㄢˊ"},
       {word: "工作", pinyin: "ㄍㄨㄥ ㄗㄨㄛˋ"}, {word: "休息", pinyin: "ㄒㄧㄡ ㄒㄧˊ"}, {word: "打掃", pinyin: "ㄉㄚˇ ㄙㄠˇ"},
       {word: "洗澡", pinyin: "ㄒㄧˇ ㄗㄠˇ"}, {word: "刷牙", pinyin: "ㄕㄨㄚ ㄧㄚˊ"}, {word: "洗臉", pinyin: "ㄒㄧˇ ㄌㄧㄢˇ"},
-      {word: "穿衣服", pinyin: "ㄔㄨㄢ ㄧ ㄈㄨˊ"}, {word: "脫衣服", pinyin: "ㄊㄨㄛ ㄧ ㄈㄨˊ"}, {word: "戴帽子", pinyin: "ㄉㄞˋ ㄇㄠˋ ㄗˇ"},
+      {word: "穿外套", pinyin: "ㄔㄨㄢ ㄨㄞˋ ㄊㄠˋ"}, {word: "整理", pinyin: "ㄓㄥˇ ㄌㄧˇ"}, {word: "戴帽子", pinyin: "ㄉㄞˋ ㄇㄠˋ ㄗˇ"},
       {word: "穿鞋子", pinyin: "ㄔㄨㄢ ㄒㄧㄝˊ ㄗˇ"}, {word: "背書包", pinyin: "ㄅㄟ ㄕㄨ ㄅㄠ"}, {word: "拿", pinyin: "ㄋㄚˊ"},
       {word: "放", pinyin: "ㄈㄤˋ"}, {word: "開", pinyin: "ㄎㄞ"}, {word: "關", pinyin: "ㄍㄨㄢ"},
       {word: "推", pinyin: "ㄊㄨㄟ"}, {word: "拉", pinyin: "ㄌㄚ"}, {word: "打", pinyin: "ㄉㄚˇ"},
@@ -1178,10 +1194,10 @@
       showScreen('gameScreen');
       nextWord();
       
-      // 開始自動戰鬥
+      // 開始自動戰鬥（每5秒一次）
       gameState.battleInterval = setInterval(() => {
         autoBattle();
-      }, 1000);
+      }, 5000);
       
       document.getElementById('typingInput').focus();
     }
@@ -1440,53 +1456,65 @@
       if (gameState.currentStage >= 100) {
         showScreen('victoryScreen');
       } else {
+        updateUpgradeScreenCoins();
         showScreen('upgradeScreen');
       }
     }
 
     // 升級功能
     function upgradeHealth() {
-      if (gameState.coins >= 10) {
-        gameState.coins -= 10;
+      if (gameState.coins >= 5) {
+        gameState.coins -= 5;
         gameState.playerMaxHp += 20;
         gameState.playerHp = Math.min(gameState.playerHp + 20, gameState.playerMaxHp);
         saveProgress();
         updateUI();
+        updateUpgradeScreenCoins();
       } else {
         showInlineMessage("金幣不足!");
       }
     }
 
     function upgradeAttack() {
-      if (gameState.coins >= 15) {
-        gameState.coins -= 15;
+      if (gameState.coins >= 5) {
+        gameState.coins -= 5;
         gameState.playerAttack += 5;
         saveProgress();
         updateUI();
+        updateUpgradeScreenCoins();
       } else {
         showInlineMessage("金幣不足!");
       }
     }
 
     function upgradeDefense() {
-      if (gameState.coins >= 12) {
-        gameState.coins -= 12;
+      if (gameState.coins >= 5) {
+        gameState.coins -= 5;
         gameState.playerDefense = Math.min(gameState.playerDefense + 3, 75);
         saveProgress();
         updateUI();
+        updateUpgradeScreenCoins();
       } else {
         showInlineMessage("金幣不足!");
       }
     }
 
     function upgradeCrit() {
-      if (gameState.coins >= 18) {
-        gameState.coins -= 18;
+      if (gameState.coins >= 5) {
+        gameState.coins -= 5;
         gameState.playerCritRate = Math.min(gameState.playerCritRate + 2, 100);
         saveProgress();
         updateUI();
+        updateUpgradeScreenCoins();
       } else {
         showInlineMessage("金幣不足!");
+      }
+    }
+
+    function updateUpgradeScreenCoins() {
+      const upgradeScreenCoinsEl = document.getElementById('upgradeScreenCoins');
+      if (upgradeScreenCoinsEl) {
+        upgradeScreenCoinsEl.textContent = gameState.coins;
       }
     }
 
@@ -1543,7 +1571,7 @@
       if (!gameState.battleInterval) {
         gameState.battleInterval = setInterval(() => {
           autoBattle();
-        }, 1000);
+        }, 5000);
       }
     }
     
@@ -1712,5 +1740,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b41277e2d2f251',t:'MTc2MjU5NDQ0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b41a846189f251',t:'MTc2MjU5NDc3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
