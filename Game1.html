@@ -1,0 +1,1494 @@
+<!doctype html>
+<html lang="zh-TW">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中文打字英雄大冒險</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100%;
+      overflow: hidden;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    .game-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      color: #ffffff;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 首頁樣式 */
+    .home-screen {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .game-title {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .game-description {
+      background: rgba(255,255,255,0.2);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 800px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .game-description h2 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .game-description p {
+      font-size: 18px;
+      line-height: 1.8;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 15px 40px;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #ffffff;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .btn-secondary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .btn-success:hover {
+      transform: scale(1.05);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 遊戲畫面樣式 */
+    .game-screen {
+      padding: 15px;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .stage-info {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .coins-info {
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .battle-area {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+      min-height: 250px;
+    }
+
+    .character {
+      text-align: center;
+      background: rgba(255,255,255,0.15);
+      padding: 20px;
+      border-radius: 15px;
+      min-width: 280px;
+    }
+
+    .character-avatar {
+      font-size: 80px;
+      margin-bottom: 10px;
+    }
+
+    .character-name {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .stats {
+      text-align: left;
+      font-size: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 5px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+      cursor: help;
+      position: relative;
+    }
+
+    .stat-row:hover .tooltip {
+      display: block;
+    }
+
+    .tooltip {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      white-space: nowrap;
+      z-index: 1000;
+      margin-bottom: 5px;
+    }
+
+    .hp-bar {
+      width: 100%;
+      height: 20px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+      transition: width 0.3s;
+    }
+
+    .vs-text {
+      font-size: 48px;
+      font-weight: bold;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+    }
+
+    .typing-area {
+      background: rgba(255,255,255,0.2);
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .word-display {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      min-height: 60px;
+    }
+
+    .pinyin-display {
+      font-size: 24px;
+      color: #ffd700;
+      margin-bottom: 20px;
+      min-height: 30px;
+    }
+
+    .typing-input {
+      padding: 15px;
+      font-size: 24px;
+      border: 3px solid #ffffff;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+      background: rgba(255,255,255,0.9);
+      color: #000000;
+    }
+
+    .typing-input:focus {
+      outline: none;
+      border-color: #ffd700;
+      box-shadow: 0 0 15px rgba(255,215,0,0.5);
+    }
+
+    .weapon-info {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .weapon-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .weapon-effect {
+      font-size: 16px;
+      color: #ffd700;
+    }
+
+    /* 升級選擇畫面 */
+    .upgrade-screen {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upgrade-container {
+      background: rgba(255,255,255,0.2);
+      padding: 40px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 900px;
+    }
+
+    .upgrade-title {
+      font-size: 36px;
+      margin-bottom: 30px;
+    }
+
+    .upgrade-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .upgrade-card {
+      background: rgba(255,255,255,0.3);
+      padding: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .upgrade-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255,255,255,0.4);
+    }
+
+    .upgrade-card h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .upgrade-card p {
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .upgrade-cost {
+      font-size: 18px;
+      color: #ffd700;
+      font-weight: bold;
+    }
+
+    /* 商店畫面 */
+    .shop-screen {
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 30px;
+    }
+
+    .shop-container {
+      background: rgba(255,255,255,0.2);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .shop-title {
+      font-size: 36px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .weapons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .weapon-card {
+      background: rgba(255,255,255,0.3);
+      padding: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 3px solid transparent;
+    }
+
+    .weapon-card:hover {
+      transform: translateY(-5px);
+      border-color: #ffd700;
+    }
+
+    .weapon-card.owned {
+      border-color: #43e97b;
+    }
+
+    .weapon-card.equipped {
+      border-color: #f5576c;
+      background: rgba(245,87,108,0.3);
+    }
+
+    .weapon-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .weapon-card h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .weapon-card p {
+      font-size: 14px;
+      margin-bottom: 10px;
+      min-height: 60px;
+    }
+
+    /* 關卡選擇畫面 */
+    .stage-select-screen {
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 30px;
+    }
+
+    .stage-select-container {
+      background: rgba(255,255,255,0.2);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .stages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stage-card {
+      background: rgba(255,255,255,0.3);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .stage-card:hover:not(.locked) {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.5);
+    }
+
+    .stage-card.completed {
+      background: rgba(67,233,123,0.5);
+    }
+
+    .stage-card.current {
+      background: rgba(245,87,108,0.5);
+      border: 3px solid #ffd700;
+    }
+
+    .stage-card.locked {
+      background: rgba(0,0,0,0.3);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    /* 勝利/失敗畫面 */
+    .result-screen {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .result-container {
+      background: rgba(255,255,255,0.2);
+      padding: 50px;
+      border-radius: 15px;
+    }
+
+    .result-title {
+      font-size: 48px;
+      margin-bottom: 30px;
+    }
+
+    .result-message {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    /* 通關畫面 */
+    .victory-screen {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .victory-container {
+      background: rgba(255,255,255,0.2);
+      padding: 50px;
+      border-radius: 15px;
+    }
+
+    .victory-title {
+      font-size: 60px;
+      margin-bottom: 30px;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .battle-log {
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .battle-log-entry {
+      margin-bottom: 5px;
+      padding: 5px;
+      border-radius: 3px;
+    }
+
+    .battle-log-entry.player {
+      background: rgba(67,233,123,0.3);
+    }
+
+    .battle-log-entry.enemy {
+      background: rgba(245,87,108,0.3);
+    }
+
+    .small-text {
+      font-size: 12px;
+      color: #cccccc;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="game-container"><!-- 首頁 -->
+   <div class="screen active" id="homeScreen">
+    <div class="home-screen">
+     <div class="game-title" id="gameTitle">
+      中文打字英雄大冒險
+     </div>
+     <div class="game-description">
+      <h2>遊戲說明</h2>
+      <p style="text-align: center;"><strong>🎯 遊戲目標：</strong>通過打字擊敗100關的妖怪!</p>
+      <p style="text-align: center;"><strong>⌨️ 遊戲方式：</strong>看到中文字和注音後,正確輸入中文字並按Enter確認。答對後可獲得金幣並對妖怪造成傷害。</p>
+      <p style="text-align: center;"><strong>💰 金幣系統：</strong>每答對一題獲得金幣,可用來升級血量、攻擊力、防禦率、爆擊率,或購買特殊武器。</p>
+      <p style="text-align: center;"><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、爆擊率+0.5%)。</p>
+      <p style="text-align: center;"><strong>🛡️ 數值說明：</strong></p>
+      <p style="text-align: center;">• 血量(HP)：生命值,歸零則失敗</p>
+      <p style="text-align: center;">• 攻擊力：每次攻擊造成的傷害</p>
+      <p style="text-align: center;">• 防禦率：減少受到的傷害百分比</p>
+      <p style="text-align: center;">• 爆擊率：造成雙倍傷害的機率</p>
+      <p style="text-align: center;"><strong>🗡️ 武器系統：</strong>10種特殊武器,各有獨特效果(雙擊、毒性、秒殺等)。</p>
+      <p style="text-align: center;"><strong>💾 進度保存：</strong>遊戲進度會自動保存在你的電腦上。</p>
+     </div>
+     <div class="button-group"><button class="btn btn-primary" id="startNewGameBtn">開始新遊戲</button> <button class="btn btn-secondary" id="continueGameBtn" style="display:none;">繼續遊戲</button>
+     </div>
+    </div>
+   </div><!-- 遊戲畫面 -->
+   <div class="screen" id="gameScreen">
+    <div class="game-header">
+     <div class="stage-info">
+      第 <span id="currentStage">1</span> 關
+     </div>
+     <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
+     </div><button class="btn btn-secondary" id="stageSelectBtn">關卡選擇</button>
+    </div>
+    <div class="battle-area">
+     <div class="character">
+      <div class="character-avatar">
+       🦸
+      </div>
+      <div class="character-name">
+       英雄
+      </div>
+      <div class="stats">
+       <div class="stat-row"><span>❤️ 血量:</span> <span id="playerHp">100/100</span>
+        <div class="tooltip">
+         當前生命值 / 最大生命值
+        </div>
+       </div>
+       <div class="hp-bar">
+        <div class="hp-fill" id="playerHpBar" style="width: 100%;"></div>
+       </div>
+       <div class="stat-row"><span>⚔️ 攻擊:</span> <span id="playerAttack">10</span>
+        <div class="tooltip">
+         每次攻擊造成的基礎傷害
+        </div>
+       </div>
+       <div class="stat-row"><span>🛡️ 防禦:</span> <span id="playerDefense">0%</span>
+        <div class="tooltip">
+         減少受到傷害的百分比
+        </div>
+       </div>
+       <div class="stat-row"><span>💥 爆擊:</span> <span id="playerCrit">5%</span>
+        <div class="tooltip">
+         造成雙倍傷害的機率
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="vs-text">
+      VS
+     </div>
+     <div class="character">
+      <div class="character-avatar" id="enemyAvatar">
+       👹
+      </div>
+      <div class="character-name" id="enemyName">
+       妖怪
+      </div>
+      <div class="stats">
+       <div class="stat-row"><span>❤️ 血量:</span> <span id="enemyHp">100/100</span>
+        <div class="tooltip">
+         妖怪的當前生命值
+        </div>
+       </div>
+       <div class="hp-bar">
+        <div class="hp-fill" id="enemyHpBar" style="width: 100%;"></div>
+       </div>
+       <div class="stat-row"><span>⚔️ 攻擊:</span> <span id="enemyAttack">8</span>
+        <div class="tooltip">
+         妖怪每次攻擊的傷害
+        </div>
+       </div>
+       <div class="stat-row"><span>🛡️ 防禦:</span> <span id="enemyDefense">0%</span>
+        <div class="tooltip">
+         妖怪的防禦率
+        </div>
+       </div>
+       <div class="stat-row"><span>💥 爆擊:</span> <span id="enemyCrit">0%</span>
+        <div class="tooltip">
+         妖怪的爆擊率(最高50%)
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="weapon-info">
+     <div class="weapon-name" id="currentWeaponName">
+      🗡️ 普通劍
+     </div>
+     <div class="weapon-effect" id="currentWeaponEffect">
+      每秒攻擊一次
+     </div>
+    </div>
+    <div class="typing-area">
+     <div class="word-display" id="wordDisplay">
+      準備開始...
+     </div>
+     <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
+    </div>
+    <div class="battle-log" id="battleLog"></div>
+   </div><!-- 升級選擇畫面 -->
+   <div class="screen" id="upgradeScreen">
+    <div class="upgrade-container">
+     <div class="upgrade-title">
+      🎉 答對了!獲得金幣!
+     </div>
+     <div class="upgrade-options">
+      <div class="upgrade-card" onclick="upgradeHealth()">
+       <h3>❤️ 升級血量</h3>
+       <p>最大血量 +20<br>
+        並恢復 20 HP</p>
+       <div class="upgrade-cost">
+        💰 10 金幣
+       </div>
+      </div>
+      <div class="upgrade-card" onclick="upgradeAttack()">
+       <h3>⚔️ 升級攻擊</h3>
+       <p>攻擊力 +5</p>
+       <div class="upgrade-cost">
+        💰 15 金幣
+       </div>
+      </div>
+      <div class="upgrade-card" onclick="upgradeDefense()">
+       <h3>🛡️ 升級防禦</h3>
+       <p>防禦率 +3%</p>
+       <div class="upgrade-cost">
+        💰 12 金幣
+       </div>
+      </div>
+      <div class="upgrade-card" onclick="upgradeCrit()">
+       <h3>💥 升級爆擊</h3>
+       <p>爆擊率 +2%</p>
+       <div class="upgrade-cost">
+        💰 18 金幣
+       </div>
+      </div>
+      <div class="upgrade-card" onclick="openShop()">
+       <h3>🛒 武器商店</h3>
+       <p>購買特殊武器</p>
+       <div class="upgrade-cost">
+        查看商店
+       </div>
+      </div>
+     </div><button class="btn btn-success" onclick="continueBattle()">繼續戰鬥</button>
+    </div>
+   </div><!-- 商店畫面 -->
+   <div class="screen" id="shopScreen">
+    <div class="shop-container">
+     <div class="shop-title">
+      🛒 武器商店
+     </div>
+     <div class="weapons-grid" id="weaponsGrid"></div><button class="btn btn-secondary" onclick="closeShop()">返回</button>
+    </div>
+   </div><!-- 關卡選擇畫面 -->
+   <div class="screen" id="stageSelectScreen">
+    <div class="stage-select-container">
+     <div class="shop-title">
+      🎮 關卡選擇
+     </div>
+     <div class="stages-grid" id="stagesGrid"></div><button class="btn btn-secondary" onclick="closeStageSelect()">返回</button>
+    </div>
+   </div><!-- 失敗畫面 -->
+   <div class="screen" id="defeatScreen">
+    <div class="result-container">
+     <div class="result-title">
+      💀 戰敗了!
+     </div>
+     <div class="result-message">
+      別灰心,帶著你的能力值再挑戰一次!
+     </div>
+     <div class="button-group"><button class="btn btn-primary" onclick="retryStage()">重新挑戰</button> <button class="btn btn-secondary" onclick="backToHome()">返回首頁</button>
+     </div>
+    </div>
+   </div><!-- 通關畫面 -->
+   <div class="screen" id="victoryScreen">
+    <div class="victory-container">
+     <div class="victory-title">
+      🎊 恭喜通關!
+     </div>
+     <div class="result-message">
+      你真厲害!完成了全部100關!
+     </div>
+     <div class="button-group"><button class="btn btn-primary" onclick="startNewGamePlus()">開始二周目</button> <button class="btn btn-secondary" onclick="backToHome()">返回首頁</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      game_title: "中文打字英雄大冒險",
+      start_button_text: "開始遊戲",
+      continue_button_text: "繼續遊戲"
+    };
+
+    const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
+
+    // 500個中文單字庫
+    const wordBank = [
+      {word: "學習", pinyin: "ㄒㄩㄝˊ ㄒㄧˊ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"}, {word: "老師", pinyin: "ㄌㄠˇ ㄕ"}, 
+      {word: "學生", pinyin: "ㄒㄩㄝˊ ㄕㄥ"}, {word: "教室", pinyin: "ㄐㄧㄠˋ ㄕˋ"}, {word: "書本", pinyin: "ㄕㄨ ㄅㄣˇ"},
+      {word: "鉛筆", pinyin: "ㄑㄧㄢ ㄅㄧˇ"}, {word: "橡皮", pinyin: "ㄒㄧㄤˋ ㄆㄧˊ"}, {word: "黑板", pinyin: "ㄏㄟ ㄅㄢˇ"},
+      {word: "粉筆", pinyin: "ㄈㄣˇ ㄅㄧˇ"}, {word: "課本", pinyin: "ㄎㄜˋ ㄅㄣˇ"}, {word: "作業", pinyin: "ㄗㄨㄛˋ ㄧㄝˋ"},
+      {word: "考試", pinyin: "ㄎㄠˇ ㄕˋ"}, {word: "成績", pinyin: "ㄔㄥˊ ㄐㄧˋ"}, {word: "朋友", pinyin: "ㄆㄥˊ ㄧㄡˇ"},
+      {word: "家人", pinyin: "ㄐㄧㄚ ㄖㄣˊ"}, {word: "爸爸", pinyin: "ㄅㄚˋ ㄅㄚ"}, {word: "媽媽", pinyin: "ㄇㄚ ㄇㄚ"},
+      {word: "哥哥", pinyin: "ㄍㄜ ㄍㄜ"}, {word: "姐姐", pinyin: "ㄐㄧㄝˇ ㄐㄧㄝˇ"}, {word: "弟弟", pinyin: "ㄉㄧˋ ㄉㄧˋ"},
+      {word: "妹妹", pinyin: "ㄇㄟˋ ㄇㄟˋ"}, {word: "爺爺", pinyin: "ㄧㄝˊ ㄧㄝˊ"}, {word: "奶奶", pinyin: "ㄋㄞˇ ㄋㄞˇ"},
+      {word: "早安", pinyin: "ㄗㄠˇ ㄢ"}, {word: "午安", pinyin: "ㄨˇ ㄢ"}, {word: "晚安", pinyin: "ㄨㄢˇ ㄢ"},
+      {word: "謝謝", pinyin: "ㄒㄧㄝˋ ㄒㄧㄝˋ"}, {word: "對不起", pinyin: "ㄉㄨㄟˋ ㄅㄨˋ ㄑㄧˇ"}, {word: "沒關係", pinyin: "ㄇㄟˊ ㄍㄨㄢ ㄒㄧˋ"},
+      {word: "請問", pinyin: "ㄑㄧㄥˇ ㄨㄣˋ"}, {word: "再見", pinyin: "ㄗㄞˋ ㄐㄧㄢˋ"}, {word: "你好", pinyin: "ㄋㄧˇ ㄏㄠˇ"},
+      {word: "歡迎", pinyin: "ㄏㄨㄢ ㄧㄥˊ"}, {word: "幫忙", pinyin: "ㄅㄤ ㄇㄤˊ"}, {word: "麻煩", pinyin: "ㄇㄚˊ ㄈㄢˊ"},
+      {word: "快樂", pinyin: "ㄎㄨㄞˋ ㄌㄜˋ"}, {word: "開心", pinyin: "ㄎㄞ ㄒㄧㄣ"}, {word: "高興", pinyin: "ㄍㄠ ㄒㄧㄥˋ"},
+      {word: "傷心", pinyin: "ㄕㄤ ㄒㄧㄣ"}, {word: "生氣", pinyin: "ㄕㄥ ㄑㄧˋ"}, {word: "害怕", pinyin: "ㄏㄞˋ ㄆㄚˋ"},
+      {word: "勇敢", pinyin: "ㄩㄥˇ ㄍㄢˇ"}, {word: "聰明", pinyin: "ㄘㄨㄥ ㄇㄧㄥˊ"}, {word: "努力", pinyin: "ㄋㄨˇ ㄌㄧˋ"},
+      {word: "認真", pinyin: "ㄖㄣˋ ㄓㄣ"}, {word: "仔細", pinyin: "ㄗˇ ㄒㄧˋ"}, {word: "小心", pinyin: "ㄒㄧㄠˇ ㄒㄧㄣ"},
+      {word: "注意", pinyin: "ㄓㄨˋ ㄧˋ"}, {word: "安全", pinyin: "ㄢ ㄑㄩㄢˊ"}, {word: "危險", pinyin: "ㄨㄟˊ ㄒㄧㄢˇ"},
+      {word: "健康", pinyin: "ㄐㄧㄢˋ ㄎㄤ"}, {word: "運動", pinyin: "ㄩㄣˋ ㄉㄨㄥˋ"}, {word: "跑步", pinyin: "ㄆㄠˇ ㄅㄨˋ"},
+      {word: "游泳", pinyin: "ㄧㄡˊ ㄩㄥˇ"}, {word: "籃球", pinyin: "ㄌㄢˊ ㄑㄧㄡˊ"}, {word: "足球", pinyin: "ㄗㄨˊ ㄑㄧㄡˊ"},
+      {word: "棒球", pinyin: "ㄅㄤˋ ㄑㄧㄡˊ"}, {word: "羽球", pinyin: "ㄩˇ ㄑㄧㄡˊ"}, {word: "桌球", pinyin: "ㄓㄨㄛ ㄑㄧㄡˊ"},
+      {word: "音樂", pinyin: "ㄧㄣ ㄩㄝˋ"}, {word: "唱歌", pinyin: "ㄔㄤˋ ㄍㄜ"}, {word: "跳舞", pinyin: "ㄊㄧㄠˋ ㄨˇ"},
+      {word: "畫畫", pinyin: "ㄏㄨㄚˋ ㄏㄨㄚˋ"}, {word: "閱讀", pinyin: "ㄩㄝˋ ㄉㄨˊ"}, {word: "寫字", pinyin: "ㄒㄧㄝˇ ㄗˋ"},
+      {word: "數學", pinyin: "ㄕㄨˋ ㄒㄩㄝˊ"}, {word: "國語", pinyin: "ㄍㄨㄛˊ ㄩˇ"}, {word: "英文", pinyin: "ㄧㄥ ㄨㄣˊ"},
+      {word: "自然", pinyin: "ㄗˋ ㄖㄢˊ"}, {word: "社會", pinyin: "ㄕㄜˋ ㄏㄨㄟˋ"}, {word: "美勞", pinyin: "ㄇㄟˇ ㄌㄠˊ"},
+      {word: "體育", pinyin: "ㄊㄧˇ ㄩˋ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"}, {word: "圖書館", pinyin: "ㄊㄨˊ ㄕㄨ ㄍㄨㄢˇ"},
+      {word: "操場", pinyin: "ㄘㄠ ㄔㄤˇ"}, {word: "餐廳", pinyin: "ㄘㄢ ㄊㄧㄥ"}, {word: "廁所", pinyin: "ㄘㄜˋ ㄙㄨㄛˇ"},
+      {word: "公園", pinyin: "ㄍㄨㄥ ㄩㄢˊ"}, {word: "動物園", pinyin: "ㄉㄨㄥˋ ㄨˋ ㄩㄢˊ"}, {word: "遊樂園", pinyin: "ㄧㄡˊ ㄌㄜˋ ㄩㄢˊ"},
+      {word: "超市", pinyin: "ㄔㄠ ㄕˋ"}, {word: "商店", pinyin: "ㄕㄤ ㄉㄧㄢˋ"}, {word: "醫院", pinyin: "ㄧ ㄩㄢˋ"},
+      {word: "警察", pinyin: "ㄐㄧㄥˇ ㄔㄚˊ"}, {word: "消防員", pinyin: "ㄒㄧㄠ ㄈㄤˊ ㄩㄢˊ"}, {word: "醫生", pinyin: "ㄧ ㄕㄥ"},
+      {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"}, {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"},
+      {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"}, {word: "工人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "郵差", pinyin: "ㄧㄡˊ ㄔㄞ"},
+      {word: "春天", pinyin: "ㄔㄨㄣ ㄊㄧㄢ"}, {word: "夏天", pinyin: "ㄒㄧㄚˋ ㄊㄧㄢ"}, {word: "秋天", pinyin: "ㄑㄧㄡ ㄊㄧㄢ"},
+      {word: "冬天", pinyin: "ㄉㄨㄥ ㄊㄧㄢ"}, {word: "晴天", pinyin: "ㄑㄧㄥˊ ㄊㄧㄢ"}, {word: "雨天", pinyin: "ㄩˇ ㄊㄧㄢ"},
+      {word: "颱風", pinyin: "ㄊㄞˊ ㄈㄥ"}, {word: "地震", pinyin: "ㄉㄧˋ ㄓㄣˋ"}, {word: "太陽", pinyin: "ㄊㄞˋ ㄧㄤˊ"},
+      {word: "月亮", pinyin: "ㄩㄝˋ ㄌㄧㄤˋ"}, {word: "星星", pinyin: "ㄒㄧㄥ ㄒㄧㄥ"}, {word: "雲朵", pinyin: "ㄩㄣˊ ㄉㄨㄛˇ"},
+      {word: "彩虹", pinyin: "ㄘㄞˇ ㄏㄨㄥˊ"}, {word: "閃電", pinyin: "ㄕㄢˇ ㄉㄧㄢˋ"}, {word: "打雷", pinyin: "ㄉㄚˇ ㄌㄟˊ"},
+      {word: "下雪", pinyin: "ㄒㄧㄚˋ ㄒㄩㄝˇ"}, {word: "下雨", pinyin: "ㄒㄧㄚˋ ㄩˇ"}, {word: "刮風", pinyin: "ㄍㄨㄚ ㄈㄥ"},
+      {word: "蘋果", pinyin: "ㄆㄧㄥˊ ㄍㄨㄛˇ"}, {word: "香蕉", pinyin: "ㄒㄧㄤ ㄐㄧㄠ"}, {word: "西瓜", pinyin: "ㄒㄧ ㄍㄨㄚ"},
+      {word: "草莓", pinyin: "ㄘㄠˇ ㄇㄟˊ"}, {word: "葡萄", pinyin: "ㄆㄨˊ ㄊㄠˊ"}, {word: "橘子", pinyin: "ㄐㄩˊ ㄗˇ"},
+      {word: "芒果", pinyin: "ㄇㄤˊ ㄍㄨㄛˇ"}, {word: "鳳梨", pinyin: "ㄈㄥˋ ㄌㄧˊ"}, {word: "木瓜", pinyin: "ㄇㄨˋ ㄍㄨㄚ"},
+      {word: "水蜜桃", pinyin: "ㄕㄨㄟˇ ㄇㄧˋ ㄊㄠˊ"}, {word: "櫻桃", pinyin: "ㄧㄥ ㄊㄠˊ"}, {word: "檸檬", pinyin: "ㄋㄧㄥˊ ㄇㄥˊ"},
+      {word: "米飯", pinyin: "ㄇㄧˇ ㄈㄢˋ"}, {word: "麵條", pinyin: "ㄇㄧㄢˋ ㄊㄧㄠˊ"}, {word: "麵包", pinyin: "ㄇㄧㄢˋ ㄅㄠ"},
+      {word: "餅乾", pinyin: "ㄅㄧㄥˇ ㄍㄢ"}, {word: "蛋糕", pinyin: "ㄉㄢˋ ㄍㄠ"}, {word: "糖果", pinyin: "ㄊㄤˊ ㄍㄨㄛˇ"},
+      {word: "巧克力", pinyin: "ㄑㄧㄠˇ ㄎㄜˋ ㄌㄧˋ"}, {word: "冰淇淋", pinyin: "ㄅㄧㄥ ㄑㄧˊ ㄌㄧㄣˊ"}, {word: "果汁", pinyin: "ㄍㄨㄛˇ ㄓ"},
+      {word: "牛奶", pinyin: "ㄋㄧㄡˊ ㄋㄞˇ"}, {word: "豆漿", pinyin: "ㄉㄡˋ ㄐㄧㄤ"}, {word: "茶", pinyin: "ㄔㄚˊ"},
+      {word: "咖啡", pinyin: "ㄎㄚ ㄈㄟ"}, {word: "可樂", pinyin: "ㄎㄜˇ ㄌㄜˋ"}, {word: "汽水", pinyin: "ㄑㄧˋ ㄕㄨㄟˇ"},
+      {word: "雞肉", pinyin: "ㄐㄧ ㄖㄡˋ"}, {word: "豬肉", pinyin: "ㄓㄨ ㄖㄡˋ"}, {word: "牛肉", pinyin: "ㄋㄧㄡˊ ㄖㄡˋ"},
+      {word: "魚", pinyin: "ㄩˊ"}, {word: "蝦", pinyin: "ㄒㄧㄚ"}, {word: "螃蟹", pinyin: "ㄆㄤˊ ㄒㄧㄝˋ"},
+      {word: "青菜", pinyin: "ㄑㄧㄥ ㄘㄞˋ"}, {word: "高麗菜", pinyin: "ㄍㄠ ㄌㄧˊ ㄘㄞˋ"}, {word: "白菜", pinyin: "ㄅㄞˊ ㄘㄞˋ"},
+      {word: "紅蘿蔔", pinyin: "ㄏㄨㄥˊ ㄌㄨㄛˊ ㄅㄛˊ"}, {word: "馬鈴薯", pinyin: "ㄇㄚˇ ㄌㄧㄥˊ ㄕㄨˇ"}, {word: "番茄", pinyin: "ㄈㄢ ㄑㄧㄝˊ"},
+      {word: "黃瓜", pinyin: "ㄏㄨㄤˊ ㄍㄨㄚ"}, {word: "茄子", pinyin: "ㄑㄧㄝˊ ㄗˇ"}, {word: "玉米", pinyin: "ㄩˋ ㄇㄧˇ"},
+      {word: "狗", pinyin: "ㄍㄡˇ"}, {word: "貓", pinyin: "ㄇㄠ"}, {word: "兔子", pinyin: "ㄊㄨˋ ㄗˇ"},
+      {word: "老鼠", pinyin: "ㄌㄠˇ ㄕㄨˇ"}, {word: "牛", pinyin: "ㄋㄧㄡˊ"}, {word: "馬", pinyin: "ㄇㄚˇ"},
+      {word: "羊", pinyin: "ㄧㄤˊ"}, {word: "豬", pinyin: "ㄓㄨ"}, {word: "雞", pinyin: "ㄐㄧ"},
+      {word: "鴨", pinyin: "ㄧㄚ"}, {word: "鵝", pinyin: "ㄜˊ"}, {word: "鳥", pinyin: "ㄋㄧㄠˇ"},
+      {word: "老虎", pinyin: "ㄌㄠˇ ㄏㄨˇ"}, {word: "獅子", pinyin: "ㄕ ㄗˇ"}, {word: "大象", pinyin: "ㄉㄚˋ ㄒㄧㄤˋ"},
+      {word: "長頸鹿", pinyin: "ㄔㄤˊ ㄐㄧㄥˇ ㄌㄨˋ"}, {word: "猴子", pinyin: "ㄏㄡˊ ㄗˇ"}, {word: "熊貓", pinyin: "ㄒㄩㄥˊ ㄇㄠ"},
+      {word: "企鵝", pinyin: "ㄑㄧˇ ㄜˊ"}, {word: "海豚", pinyin: "ㄏㄞˇ ㄊㄨㄣˊ"}, {word: "鯨魚", pinyin: "ㄐㄧㄥ ㄩˊ"},
+      {word: "蝴蝶", pinyin: "ㄏㄨˊ ㄉㄧㄝˊ"}, {word: "蜜蜂", pinyin: "ㄇㄧˋ ㄈㄥ"}, {word: "螞蟻", pinyin: "ㄇㄚˇ ㄧˇ"},
+      {word: "蜘蛛", pinyin: "ㄓ ㄓㄨ"}, {word: "蚊子", pinyin: "ㄨㄣˊ ㄗˇ"}, {word: "蒼蠅", pinyin: "ㄘㄤ ㄧㄥˊ"},
+      {word: "紅色", pinyin: "ㄏㄨㄥˊ ㄙㄜˋ"}, {word: "黃色", pinyin: "ㄏㄨㄤˊ ㄙㄜˋ"}, {word: "藍色", pinyin: "ㄌㄢˊ ㄙㄜˋ"},
+      {word: "綠色", pinyin: "ㄌㄩˋ ㄙㄜˋ"}, {word: "黑色", pinyin: "ㄏㄟ ㄙㄜˋ"}, {word: "白色", pinyin: "ㄅㄞˊ ㄙㄜˋ"},
+      {word: "紫色", pinyin: "ㄗˇ ㄙㄜˋ"}, {word: "橘色", pinyin: "ㄐㄩˊ ㄙㄜˋ"}, {word: "粉紅色", pinyin: "ㄈㄣˇ ㄏㄨㄥˊ ㄙㄜˋ"},
+      {word: "灰色", pinyin: "ㄏㄨㄟ ㄙㄜˋ"}, {word: "棕色", pinyin: "ㄗㄨㄥ ㄙㄜˋ"}, {word: "金色", pinyin: "ㄐㄧㄣ ㄙㄜˋ"},
+      {word: "銀色", pinyin: "ㄧㄣˊ ㄙㄜˋ"}, {word: "彩色", pinyin: "ㄘㄞˇ ㄙㄜˋ"}, {word: "透明", pinyin: "ㄊㄡˋ ㄇㄧㄥˊ"},
+      {word: "一", pinyin: "ㄧ"}, {word: "二", pinyin: "ㄦˋ"}, {word: "三", pinyin: "ㄙㄢ"},
+      {word: "四", pinyin: "ㄙˋ"}, {word: "五", pinyin: "ㄨˇ"}, {word: "六", pinyin: "ㄌㄧㄡˋ"},
+      {word: "七", pinyin: "ㄑㄧ"}, {word: "八", pinyin: "ㄅㄚ"}, {word: "九", pinyin: "ㄐㄧㄡˇ"},
+      {word: "十", pinyin: "ㄕˊ"}, {word: "百", pinyin: "ㄅㄞˇ"}, {word: "千", pinyin: "ㄑㄧㄢ"},
+      {word: "萬", pinyin: "ㄨㄢˋ"}, {word: "零", pinyin: "ㄌㄧㄥˊ"}, {word: "第一", pinyin: "ㄉㄧˋ ㄧ"},
+      {word: "星期一", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄧ"}, {word: "星期二", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄦˋ"}, {word: "星期三", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄙㄢ"},
+      {word: "星期四", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄙˋ"}, {word: "星期五", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄨˇ"}, {word: "星期六", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄌㄧㄡˋ"},
+      {word: "星期日", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄖˋ"}, {word: "今天", pinyin: "ㄐㄧㄣ ㄊㄧㄢ"}, {word: "明天", pinyin: "ㄇㄧㄥˊ ㄊㄧㄢ"},
+      {word: "昨天", pinyin: "ㄗㄨㄛˊ ㄊㄧㄢ"}, {word: "早上", pinyin: "ㄗㄠˇ ㄕㄤˋ"}, {word: "中午", pinyin: "ㄓㄨㄥ ㄨˇ"},
+      {word: "下午", pinyin: "ㄒㄧㄚˋ ㄨˇ"}, {word: "晚上", pinyin: "ㄨㄢˇ ㄕㄤˋ"}, {word: "半夜", pinyin: "ㄅㄢˋ ㄧㄝˋ"},
+      {word: "現在", pinyin: "ㄒㄧㄢˋ ㄗㄞˋ"}, {word: "以前", pinyin: "ㄧˇ ㄑㄧㄢˊ"}, {word: "以後", pinyin: "ㄧˇ ㄏㄡˋ"},
+      {word: "上面", pinyin: "ㄕㄤˋ ㄇㄧㄢˋ"}, {word: "下面", pinyin: "ㄒㄧㄚˋ ㄇㄧㄢˋ"}, {word: "左邊", pinyin: "ㄗㄨㄛˇ ㄅㄧㄢ"},
+      {word: "右邊", pinyin: "ㄧㄡˋ ㄅㄧㄢ"}, {word: "前面", pinyin: "ㄑㄧㄢˊ ㄇㄧㄢˋ"}, {word: "後面", pinyin: "ㄏㄡˋ ㄇㄧㄢˋ"},
+      {word: "裡面", pinyin: "ㄌㄧˇ ㄇㄧㄢˋ"}, {word: "外面", pinyin: "ㄨㄞˋ ㄇㄧㄢˋ"}, {word: "旁邊", pinyin: "ㄆㄤˊ ㄅㄧㄢ"},
+      {word: "中間", pinyin: "ㄓㄨㄥ ㄐㄧㄢ"}, {word: "附近", pinyin: "ㄈㄨˋ ㄐㄧㄣˋ"}, {word: "遠方", pinyin: "ㄩㄢˇ ㄈㄤ"},
+      {word: "大", pinyin: "ㄉㄚˋ"}, {word: "小", pinyin: "ㄒㄧㄠˇ"}, {word: "高", pinyin: "ㄍㄠ"},
+      {word: "矮", pinyin: "ㄞˇ"}, {word: "長", pinyin: "ㄔㄤˊ"}, {word: "短", pinyin: "ㄉㄨㄢˇ"},
+      {word: "胖", pinyin: "ㄆㄤˋ"}, {word: "瘦", pinyin: "ㄕㄡˋ"}, {word: "厚", pinyin: "ㄏㄡˋ"},
+      {word: "薄", pinyin: "ㄅㄛˊ"}, {word: "寬", pinyin: "ㄎㄨㄢ"}, {word: "窄", pinyin: "ㄓㄞˇ"},
+      {word: "深", pinyin: "ㄕㄣ"}, {word: "淺", pinyin: "ㄑㄧㄢˇ"}, {word: "重", pinyin: "ㄓㄨㄥˋ"},
+      {word: "輕", pinyin: "ㄑㄧㄥ"}, {word: "快", pinyin: "ㄎㄨㄞˋ"}, {word: "慢", pinyin: "ㄇㄢˋ"},
+      {word: "多", pinyin: "ㄉㄨㄛ"}, {word: "少", pinyin: "ㄕㄠˇ"}, {word: "新", pinyin: "ㄒㄧㄣ"},
+      {word: "舊", pinyin: "ㄐㄧㄡˋ"}, {word: "好", pinyin: "ㄏㄠˇ"}, {word: "壞", pinyin: "ㄏㄨㄞˋ"},
+      {word: "美", pinyin: "ㄇㄟˇ"}, {word: "醜", pinyin: "ㄔㄡˇ"}, {word: "乾淨", pinyin: "ㄍㄢ ㄐㄧㄥˋ"},
+      {word: "髒", pinyin: "ㄗㄤ"}, {word: "熱", pinyin: "ㄖㄜˋ"}, {word: "冷", pinyin: "ㄌㄥˇ"},
+      {word: "溫暖", pinyin: "ㄨㄣ ㄋㄨㄢˇ"}, {word: "涼快", pinyin: "ㄌㄧㄤˊ ㄎㄨㄞˋ"}, {word: "明亮", pinyin: "ㄇㄧㄥˊ ㄌㄧㄤˋ"},
+      {word: "黑暗", pinyin: "ㄏㄟ ㄢˋ"}, {word: "吵", pinyin: "ㄔㄠˇ"}, {word: "安靜", pinyin: "ㄢ ㄐㄧㄥˋ"},
+      {word: "走路", pinyin: "ㄗㄡˇ ㄌㄨˋ"}, {word: "跑", pinyin: "ㄆㄠˇ"}, {word: "跳", pinyin: "ㄊㄧㄠˋ"},
+      {word: "爬", pinyin: "ㄆㄚˊ"}, {word: "飛", pinyin: "ㄈㄟ"}, {word: "游", pinyin: "ㄧㄡˊ"},
+      {word: "坐", pinyin: "ㄗㄨㄛˋ"}, {word: "站", pinyin: "ㄓㄢˋ"}, {word: "躺", pinyin: "ㄊㄤˇ"},
+      {word: "睡覺", pinyin: "ㄕㄨㄟˋ ㄐㄧㄠˋ"}, {word: "起床", pinyin: "ㄑㄧˇ ㄔㄨㄤˊ"}, {word: "吃飯", pinyin: "ㄔ ㄈㄢˋ"},
+      {word: "喝水", pinyin: "ㄏㄜ ㄕㄨㄟˇ"}, {word: "看書", pinyin: "ㄎㄢˋ ㄕㄨ"}, {word: "聽", pinyin: "ㄊㄧㄥ"},
+      {word: "說話", pinyin: "ㄕㄨㄛ ㄏㄨㄚˋ"}, {word: "笑", pinyin: "ㄒㄧㄠˋ"}, {word: "哭", pinyin: "ㄎㄨ"},
+      {word: "唱", pinyin: "ㄔㄤˋ"}, {word: "跳舞", pinyin: "ㄊㄧㄠˋ ㄨˇ"}, {word: "玩", pinyin: "ㄨㄢˊ"},
+      {word: "工作", pinyin: "ㄍㄨㄥ ㄗㄨㄛˋ"}, {word: "休息", pinyin: "ㄒㄧㄡ ㄒㄧˊ"}, {word: "打掃", pinyin: "ㄉㄚˇ ㄙㄠˇ"},
+      {word: "洗澡", pinyin: "ㄒㄧˇ ㄗㄠˇ"}, {word: "刷牙", pinyin: "ㄕㄨㄚ ㄧㄚˊ"}, {word: "洗臉", pinyin: "ㄒㄧˇ ㄌㄧㄢˇ"},
+      {word: "穿衣服", pinyin: "ㄔㄨㄢ ㄧ ㄈㄨˊ"}, {word: "脫衣服", pinyin: "ㄊㄨㄛ ㄧ ㄈㄨˊ"}, {word: "戴帽子", pinyin: "ㄉㄞˋ ㄇㄠˋ ㄗˇ"},
+      {word: "穿鞋子", pinyin: "ㄔㄨㄢ ㄒㄧㄝˊ ㄗˇ"}, {word: "背書包", pinyin: "ㄅㄟ ㄕㄨ ㄅㄠ"}, {word: "拿", pinyin: "ㄋㄚˊ"},
+      {word: "放", pinyin: "ㄈㄤˋ"}, {word: "開", pinyin: "ㄎㄞ"}, {word: "關", pinyin: "ㄍㄨㄢ"},
+      {word: "推", pinyin: "ㄊㄨㄟ"}, {word: "拉", pinyin: "ㄌㄚ"}, {word: "打", pinyin: "ㄉㄚˇ"},
+      {word: "踢", pinyin: "ㄊㄧ"}, {word: "丟", pinyin: "ㄉㄧㄡ"}, {word: "接", pinyin: "ㄐㄧㄝ"},
+      {word: "抓", pinyin: "ㄓㄨㄚ"}, {word: "摸", pinyin: "ㄇㄛ"}, {word: "抱", pinyin: "ㄅㄠˋ"},
+      {word: "親", pinyin: "ㄑㄧㄣ"}, {word: "握手", pinyin: "ㄨㄛˋ ㄕㄡˇ"}, {word: "揮手", pinyin: "ㄏㄨㄟ ㄕㄡˇ"},
+      {word: "點頭", pinyin: "ㄉㄧㄢˇ ㄊㄡˊ"}, {word: "搖頭", pinyin: "ㄧㄠˊ ㄊㄡˊ"}, {word: "眨眼", pinyin: "ㄓㄚˇ ㄧㄢˇ"},
+      {word: "頭", pinyin: "ㄊㄡˊ"}, {word: "臉", pinyin: "ㄌㄧㄢˇ"}, {word: "眼睛", pinyin: "ㄧㄢˇ ㄐㄧㄥ"},
+      {word: "鼻子", pinyin: "ㄅㄧˊ ㄗˇ"}, {word: "嘴巴", pinyin: "ㄗㄨㄟˇ ㄅㄚ"}, {word: "耳朵", pinyin: "ㄦˇ ㄉㄨㄛˇ"},
+      {word: "頭髮", pinyin: "ㄊㄡˊ ㄈㄚˇ"}, {word: "眉毛", pinyin: "ㄇㄟˊ ㄇㄠˊ"}, {word: "牙齒", pinyin: "ㄧㄚˊ ㄔˇ"},
+      {word: "舌頭", pinyin: "ㄕㄜˊ ㄊㄡˊ"}, {word: "脖子", pinyin: "ㄅㄛˊ ㄗˇ"}, {word: "肩膀", pinyin: "ㄐㄧㄢ ㄅㄤˇ"},
+      {word: "手", pinyin: "ㄕㄡˇ"}, {word: "手臂", pinyin: "ㄕㄡˇ ㄅㄧˋ"}, {word: "手指", pinyin: "ㄕㄡˇ ㄓˇ"},
+      {word: "手掌", pinyin: "ㄕㄡˇ ㄓㄤˇ"}, {word: "腳", pinyin: "ㄐㄧㄠˇ"}, {word: "腿", pinyin: "ㄊㄨㄟˇ"},
+      {word: "膝蓋", pinyin: "ㄒㄧ ㄍㄞˋ"}, {word: "腳趾", pinyin: "ㄐㄧㄠˇ ㄓˇ"}, {word: "身體", pinyin: "ㄕㄣ ㄊㄧˇ"},
+      {word: "肚子", pinyin: "ㄉㄨˋ ㄗˇ"}, {word: "背", pinyin: "ㄅㄟˋ"}, {word: "心臟", pinyin: "ㄒㄧㄣ ㄗㄤˋ"},
+      {word: "衣服", pinyin: "ㄧ ㄈㄨˊ"}, {word: "褲子", pinyin: "ㄎㄨˋ ㄗˇ"}, {word: "裙子", pinyin: "ㄑㄩㄣˊ ㄗˇ"},
+      {word: "外套", pinyin: "ㄨㄞˋ ㄊㄠˋ"}, {word: "帽子", pinyin: "ㄇㄠˋ ㄗˇ"}, {word: "鞋子", pinyin: "ㄒㄧㄝˊ ㄗˇ"},
+      {word: "襪子", pinyin: "ㄨㄚˋ ㄗˇ"}, {word: "手套", pinyin: "ㄕㄡˇ ㄊㄠˋ"}, {word: "圍巾", pinyin: "ㄨㄟˊ ㄐㄧㄣ"},
+      {word: "眼鏡", pinyin: "ㄧㄢˇ ㄐㄧㄥˋ"}, {word: "書包", pinyin: "ㄕㄨ ㄅㄠ"}, {word: "雨傘", pinyin: "ㄩˇ ㄙㄢˇ"},
+      {word: "房子", pinyin: "ㄈㄤˊ ㄗˇ"}, {word: "門", pinyin: "ㄇㄣˊ"}, {word: "窗戶", pinyin: "ㄔㄨㄤ ㄏㄨˋ"},
+      {word: "屋頂", pinyin: "ㄨ ㄉㄧㄥˇ"}, {word: "牆壁", pinyin: "ㄑㄧㄤˊ ㄅㄧˋ"}, {word: "地板", pinyin: "ㄉㄧˋ ㄅㄢˇ"},
+      {word: "天花板", pinyin: "ㄊㄧㄢ ㄏㄨㄚ ㄅㄢˇ"}, {word: "樓梯", pinyin: "ㄌㄡˊ ㄊㄧ"}, {word: "電梯", pinyin: "ㄉㄧㄢˋ ㄊㄧ"},
+      {word: "客廳", pinyin: "ㄎㄜˋ ㄊㄧㄥ"}, {word: "臥室", pinyin: "ㄨㄛˋ ㄕˋ"}, {word: "廚房", pinyin: "ㄔㄨˊ ㄈㄤˊ"},
+      {word: "浴室", pinyin: "ㄩˋ ㄕˋ"}, {word: "陽台", pinyin: "ㄧㄤˊ ㄊㄞˊ"}, {word: "院子", pinyin: "ㄩㄢˋ ㄗˇ"},
+      {word: "桌子", pinyin: "ㄓㄨㄛ ㄗˇ"}, {word: "椅子", pinyin: "ㄧˇ ㄗˇ"}, {word: "床", pinyin: "ㄔㄨㄤˊ"},
+      {word: "沙發", pinyin: "ㄕㄚ ㄈㄚ"}, {word: "櫃子", pinyin: "ㄍㄨㄟˋ ㄗˇ"}, {word: "冰箱", pinyin: "ㄅㄧㄥ ㄒㄧㄤ"},
+      {word: "電視", pinyin: "ㄉㄧㄢˋ ㄕˋ"}, {word: "電話", pinyin: "ㄉㄧㄢˋ ㄏㄨㄚˋ"}, {word: "時鐘", pinyin: "ㄕˊ ㄓㄨㄥ"},
+      {word: "燈", pinyin: "ㄉㄥ"}, {word: "風扇", pinyin: "ㄈㄥ ㄕㄢˋ"}, {word: "冷氣", pinyin: "ㄌㄥˇ ㄑㄧˋ"},
+      {word: "汽車", pinyin: "ㄑㄧˋ ㄔㄜ"}, {word: "機車", pinyin: "ㄐㄧ ㄔㄜ"}, {word: "腳踏車", pinyin: "ㄐㄧㄠˇ ㄊㄚˋ ㄔㄜ"},
+      {word: "公車", pinyin: "ㄍㄨㄥ ㄔㄜ"}, {word: "火車", pinyin: "ㄏㄨㄛˇ ㄔㄜ"}, {word: "飛機", pinyin: "ㄈㄟ ㄐㄧ"},
+      {word: "船", pinyin: "ㄔㄨㄢˊ"}, {word: "捷運", pinyin: "ㄐㄧㄝˊ ㄩㄣˋ"}, {word: "計程車", pinyin: "ㄐㄧˋ ㄔㄥˊ ㄔㄜ"},
+      {word: "馬路", pinyin: "ㄇㄚˇ ㄌㄨˋ"}, {word: "紅綠燈", pinyin: "ㄏㄨㄥˊ ㄌㄩˋ ㄉㄥ"}, {word: "斑馬線", pinyin: "ㄅㄢ ㄇㄚˇ ㄒㄧㄢˋ"}
+    ];
+
+    // 10種武器定義
+    const weapons = [
+      {id: 0, name: "🗡️ 普通劍", cost: 0, effect: "每秒攻擊一次", icon: "🗡️"},
+      {id: 1, name: "⚔️ 雙刃劍", cost: 50, effect: "同時砍兩下,但有3秒冷卻", icon: "⚔️"},
+      {id: 2, name: "🔨 重錘", cost: 60, effect: "每三下有一下造成2倍傷害", icon: "🔨"},
+      {id: 3, name: "🏹 神弓", cost: 80, effect: "每三秒攻擊一次,但造成5倍傷害", icon: "🏹"},
+      {id: 4, name: "💎 暴擊劍", cost: 100, effect: "每下必定爆擊,但每3秒才攻擊一次", icon: "💎"},
+      {id: 5, name: "☠️ 毒刃", cost: 70, effect: "附加毒性傷害,每秒額外扣血(累加)", icon: "☠️"},
+      {id: 6, name: "💰 財富劍", cost: 90, effect: "每打五下額外獲得一個金幣", icon: "💰"},
+      {id: 7, name: "🛡️ 破甲劍", cost: 85, effect: "每打三下減少對手5%防禦率", icon: "🛡️"},
+      {id: 8, name: "⚡ 虛弱劍", cost: 85, effect: "每打三下減少對手2點攻擊力", icon: "⚡"},
+      {id: 9, name: "🎲 隨機劍", cost: 75, effect: "每次攻擊隨機觸發不同效果", icon: "🎲"},
+      {id: 10, name: "💀 秒殺劍", cost: 120, effect: "極低機率(5%)直接秒殺怪獸", icon: "💀"}
+    ];
+
+    // 100種妖怪
+    const monsters = [
+      "👹", "👺", "👻", "👽", "👾", "🤖", "😈", "💀", "☠️", "👿",
+      "🧟", "🧛", "🧙", "🧚", "🧜", "🧝", "🧞", "🧌", "🐉", "🐲",
+      "🦖", "🦕", "🐍", "🦂", "🕷️", "🦇", "🐺", "🦁", "🐯", "🐻",
+      "🦍", "🦧", "🐗", "🐊", "🦈", "🐙", "🦑", "🦞", "🦀", "🐡",
+      "🦐", "🐢", "🦎", "🐛", "🦗", "🕸️", "🦟", "🐝", "🐜", "🦋",
+      "🐞", "🦂", "🕷️", "🦇", "🐺", "🦊", "🦝", "🐻", "🐼", "🦘",
+      "🦡", "🦨", "🦦", "🦥", "🐁", "🐀", "🐹", "🐰", "🐇", "🐿️",
+      "🦔", "🦇", "🐻", "🐨", "🐯", "🦁", "🐮", "🐷", "🐗", "🐵",
+      "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐩",
+      "🐺", "🦊", "🦝", "🐱", "🐈", "🦁", "🐯", "🐅", "🐆", "🐴"
+    ];
+
+    // 遊戲狀態
+    let gameState = {
+      currentStage: 1,
+      playerHp: 100,
+      playerMaxHp: 100,
+      playerAttack: 10,
+      playerDefense: 0,
+      playerCritRate: 5,
+      coins: 0,
+      weaponId: 0,
+      completedStages: [],
+      enemyHp: 100,
+      enemyMaxHp: 100,
+      enemyAttack: 8,
+      enemyDefense: 0,
+      enemyCritRate: 0,
+      currentWord: null,
+      weaponHitCount: 0,
+      poisonStacks: 0,
+      enemyDefenseReduction: 0,
+      enemyAttackReduction: 0,
+      lastWeaponUseTime: 0,
+      battleLogEntries: []
+    };
+
+    // 初始化 SDK
+    async function initSDKs() {
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('gameTitle').textContent = config.game_title || defaultConfig.game_title;
+            const startBtn = document.getElementById('startNewGameBtn');
+            const continueBtn = document.getElementById('continueGameBtn');
+            if (startBtn) startBtn.textContent = config.start_button_text || defaultConfig.start_button_text;
+            if (continueBtn) continueBtn.textContent = config.continue_button_text || defaultConfig.continue_button_text;
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["game_title", config.game_title || defaultConfig.game_title],
+            ["start_button_text", config.start_button_text || defaultConfig.start_button_text],
+            ["continue_button_text", config.continue_button_text || defaultConfig.continue_button_text]
+          ])
+        });
+      }
+    }
+
+    // 切換畫面
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    // 載入存檔
+    function loadSave() {
+      try {
+        const saved = localStorage.getItem('typingGameSave');
+        if (saved) {
+          const data = JSON.parse(saved);
+          gameState = {...gameState, ...data};
+          document.getElementById('continueGameBtn').style.display = 'inline-block';
+          return true;
+        }
+      } catch (e) {
+        console.error('Failed to load save:', e);
+      }
+      return false;
+    }
+
+    // 保存進度
+    function saveProgress() {
+      try {
+        const saveData = {
+          currentStage: gameState.currentStage,
+          playerHp: gameState.playerHp,
+          playerMaxHp: gameState.playerMaxHp,
+          playerAttack: gameState.playerAttack,
+          playerDefense: gameState.playerDefense,
+          playerCritRate: gameState.playerCritRate,
+          coins: gameState.coins,
+          weaponId: gameState.weaponId,
+          completedStages: gameState.completedStages
+        };
+        localStorage.setItem('typingGameSave', JSON.stringify(saveData));
+      } catch (e) {
+        console.error('Failed to save:', e);
+      }
+    }
+
+    // 開始新遊戲
+    function startNewGame() {
+      resetGameState();
+      saveProgress();
+      startStage(1);
+    }
+    
+    window.startNewGame = startNewGame;
+
+    // 繼續遊戲
+    function continueGame() {
+      if (loadSave()) {
+        startStage(gameState.currentStage);
+      }
+    }
+    
+    window.continueGame = continueGame;
+
+    // 重置遊戲狀態
+    function resetGameState() {
+      gameState.currentStage = 1;
+      gameState.playerHp = 100;
+      gameState.playerMaxHp = 100;
+      gameState.playerAttack = 10;
+      gameState.playerDefense = 0;
+      gameState.playerCritRate = 5;
+      gameState.coins = 0;
+      gameState.weaponId = 0;
+      gameState.completedStages = [];
+    }
+
+    // 開始關卡
+    function startStage(stage) {
+      gameState.currentStage = stage;
+      gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.2, stage - 1));
+      gameState.enemyHp = gameState.enemyMaxHp;
+      gameState.enemyAttack = 8 + Math.floor((stage - 1) * 0.5);
+      gameState.enemyDefense = Math.min(Math.floor((stage - 1) * 0.3), 50);
+      gameState.enemyCritRate = Math.min((stage - 1) * 0.5, 50);
+      gameState.weaponHitCount = 0;
+      gameState.poisonStacks = 0;
+      gameState.enemyDefenseReduction = 0;
+      gameState.enemyAttackReduction = 0;
+      gameState.battleLogEntries = [];
+
+      updateUI();
+      showScreen('gameScreen');
+      nextWord();
+      
+      document.getElementById('typingInput').focus();
+    }
+
+    // 更新UI
+    function updateUI() {
+      document.getElementById('currentStage').textContent = gameState.currentStage;
+      document.getElementById('coinsDisplay').textContent = gameState.coins;
+      
+      document.getElementById('playerHp').textContent = `${gameState.playerHp}/${gameState.playerMaxHp}`;
+      document.getElementById('playerAttack').textContent = gameState.playerAttack;
+      document.getElementById('playerDefense').textContent = `${gameState.playerDefense}%`;
+      document.getElementById('playerCrit').textContent = `${gameState.playerCritRate}%`;
+      
+      const playerHpPercent = (gameState.playerHp / gameState.playerMaxHp) * 100;
+      document.getElementById('playerHpBar').style.width = `${playerHpPercent}%`;
+      
+      document.getElementById('enemyHp').textContent = `${gameState.enemyHp}/${gameState.enemyMaxHp}`;
+      document.getElementById('enemyAttack').textContent = Math.max(1, gameState.enemyAttack - gameState.enemyAttackReduction);
+      document.getElementById('enemyDefense').textContent = `${Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction)}%`;
+      document.getElementById('enemyCrit').textContent = `${gameState.enemyCritRate}%`;
+      
+      const enemyHpPercent = (gameState.enemyHp / gameState.enemyMaxHp) * 100;
+      document.getElementById('enemyHpBar').style.width = `${enemyHpPercent}%`;
+      
+      const monsterIndex = (gameState.currentStage - 1) % monsters.length;
+      document.getElementById('enemyAvatar').textContent = monsters[monsterIndex];
+      document.getElementById('enemyName').textContent = `妖怪 Lv.${gameState.currentStage}`;
+      
+      const weapon = weapons[gameState.weaponId];
+      document.getElementById('currentWeaponName').textContent = weapon.name;
+      document.getElementById('currentWeaponEffect').textContent = weapon.effect;
+    }
+
+    // 下一個單字
+    function nextWord() {
+      const randomIndex = Math.floor(Math.random() * wordBank.length);
+      gameState.currentWord = wordBank[randomIndex];
+      
+      document.getElementById('wordDisplay').textContent = gameState.currentWord.word;
+      document.getElementById('pinyinDisplay').textContent = gameState.currentWord.pinyin;
+      document.getElementById('typingInput').value = '';
+    }
+
+    // 處理輸入
+    document.getElementById('typingInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const input = this.value.trim();
+        if (input === gameState.currentWord.word) {
+          handleCorrectAnswer();
+        } else {
+          addBattleLog("❌ 答錯了!再試一次!", "enemy");
+          this.value = '';
+        }
+      }
+    });
+
+    // 處理正確答案
+    function handleCorrectAnswer() {
+      gameState.coins += 5;
+      addBattleLog("✅ 答對了!獲得5金幣!", "player");
+      
+      playerAttack();
+      
+      if (gameState.enemyHp <= 0) {
+        handleStageComplete();
+      } else {
+        setTimeout(() => {
+          enemyAttack();
+          if (gameState.playerHp <= 0) {
+            showScreen('defeatScreen');
+          } else {
+            nextWord();
+          }
+        }, 1000);
+      }
+    }
+
+    // 玩家攻擊
+    function playerAttack() {
+      const weapon = weapons[gameState.weaponId];
+      let attacks = 1;
+      let damageMultiplier = 1;
+      let extraEffects = [];
+
+      gameState.weaponHitCount++;
+
+      // 武器特效
+      switch(gameState.weaponId) {
+        case 1: // 雙刃劍
+          const now = Date.now();
+          if (now - gameState.lastWeaponUseTime >= 3000) {
+            attacks = 2;
+            gameState.lastWeaponUseTime = now;
+            extraEffects.push("⚔️ 雙重攻擊!");
+          }
+          break;
+        case 2: // 重錘
+          if (gameState.weaponHitCount % 3 === 0) {
+            damageMultiplier = 2;
+            extraEffects.push("🔨 重擊!2倍傷害!");
+          }
+          break;
+        case 3: // 神弓
+          damageMultiplier = 5;
+          extraEffects.push("🏹 強力射擊!5倍傷害!");
+          break;
+        case 4: // 暴擊劍
+          damageMultiplier = 2;
+          extraEffects.push("💎 必定爆擊!");
+          break;
+        case 5: // 毒刃
+          gameState.poisonStacks++;
+          extraEffects.push(`☠️ 中毒!每秒扣${gameState.poisonStacks}血`);
+          break;
+        case 6: // 財富劍
+          if (gameState.weaponHitCount % 5 === 0) {
+            gameState.coins++;
+            extraEffects.push("💰 額外獲得1金幣!");
+          }
+          break;
+        case 7: // 破甲劍
+          if (gameState.weaponHitCount % 3 === 0) {
+            gameState.enemyDefenseReduction += 5;
+            extraEffects.push("🛡️ 降低敵人5%防禦!");
+          }
+          break;
+        case 8: // 虛弱劍
+          if (gameState.weaponHitCount % 3 === 0) {
+            gameState.enemyAttackReduction += 2;
+            extraEffects.push("⚡ 降低敵人2點攻擊!");
+          }
+          break;
+        case 9: // 隨機劍
+          const randomEffect = Math.floor(Math.random() * 5);
+          switch(randomEffect) {
+            case 0:
+              damageMultiplier = 2;
+              extraEffects.push("🎲 隨機效果:雙倍傷害!");
+              break;
+            case 1:
+              gameState.coins++;
+              extraEffects.push("🎲 隨機效果:獲得1金幣!");
+              break;
+            case 2:
+              gameState.enemyDefenseReduction += 3;
+              extraEffects.push("🎲 隨機效果:降低3%防禦!");
+              break;
+            case 3:
+              gameState.poisonStacks++;
+              extraEffects.push("🎲 隨機效果:中毒!");
+              break;
+            case 4:
+              attacks = 2;
+              extraEffects.push("🎲 隨機效果:雙重攻擊!");
+              break;
+          }
+          break;
+        case 10: // 秒殺劍
+          if (Math.random() < 0.05) {
+            gameState.enemyHp = 0;
+            addBattleLog("💀 秒殺成功!敵人被一擊擊敗!", "player");
+            updateUI();
+            return;
+          }
+          break;
+      }
+
+      // 執行攻擊
+      for (let i = 0; i < attacks; i++) {
+        let damage = gameState.playerAttack * damageMultiplier;
+        
+        // 爆擊判定
+        const isCrit = Math.random() * 100 < gameState.playerCritRate;
+        if (isCrit && gameState.weaponId !== 4) {
+          damage *= 2;
+          extraEffects.push("💥 爆擊!");
+        }
+        
+        // 防禦減傷
+        const effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
+        damage = Math.floor(damage * (1 - effectiveDefense / 100));
+        
+        gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
+        addBattleLog(`⚔️ 你造成了${damage}點傷害! ${extraEffects.join(' ')}`, "player");
+        extraEffects = [];
+      }
+
+      // 毒性傷害
+      if (gameState.poisonStacks > 0) {
+        gameState.enemyHp = Math.max(0, gameState.enemyHp - gameState.poisonStacks);
+        addBattleLog(`☠️ 毒性傷害:${gameState.poisonStacks}點`, "player");
+      }
+
+      updateUI();
+    }
+
+    // 敵人攻擊
+    function enemyAttack() {
+      let damage = Math.max(1, gameState.enemyAttack - gameState.enemyAttackReduction);
+      
+      const isCrit = Math.random() * 100 < gameState.enemyCritRate;
+      if (isCrit) {
+        damage *= 2;
+        addBattleLog(`💥 敵人爆擊!造成${damage}點傷害!`, "enemy");
+      } else {
+        addBattleLog(`👹 敵人攻擊!造成${damage}點傷害!`, "enemy");
+      }
+      
+      damage = Math.floor(damage * (1 - gameState.playerDefense / 100));
+      gameState.playerHp = Math.max(0, gameState.playerHp - damage);
+      
+      updateUI();
+    }
+
+    // 關卡完成
+    function handleStageComplete() {
+      if (!gameState.completedStages.includes(gameState.currentStage)) {
+        gameState.completedStages.push(gameState.currentStage);
+      }
+      
+      saveProgress();
+      
+      if (gameState.currentStage >= 100) {
+        showScreen('victoryScreen');
+      } else {
+        showScreen('upgradeScreen');
+      }
+    }
+
+    // 升級功能
+    function upgradeHealth() {
+      if (gameState.coins >= 10) {
+        gameState.coins -= 10;
+        gameState.playerMaxHp += 20;
+        gameState.playerHp = Math.min(gameState.playerHp + 20, gameState.playerMaxHp);
+        saveProgress();
+        updateUI();
+      } else {
+        alert("金幣不足!");
+      }
+    }
+
+    function upgradeAttack() {
+      if (gameState.coins >= 15) {
+        gameState.coins -= 15;
+        gameState.playerAttack += 5;
+        saveProgress();
+        updateUI();
+      } else {
+        alert("金幣不足!");
+      }
+    }
+
+    function upgradeDefense() {
+      if (gameState.coins >= 12) {
+        gameState.coins -= 12;
+        gameState.playerDefense = Math.min(gameState.playerDefense + 3, 75);
+        saveProgress();
+        updateUI();
+      } else {
+        alert("金幣不足!");
+      }
+    }
+
+    function upgradeCrit() {
+      if (gameState.coins >= 18) {
+        gameState.coins -= 18;
+        gameState.playerCritRate = Math.min(gameState.playerCritRate + 2, 100);
+        saveProgress();
+        updateUI();
+      } else {
+        alert("金幣不足!");
+      }
+    }
+
+    // 繼續戰鬥
+    function continueBattle() {
+      gameState.currentStage++;
+      startStage(gameState.currentStage);
+    }
+
+    // 商店
+    function openShop() {
+      renderWeaponsShop();
+      showScreen('shopScreen');
+    }
+
+    function closeShop() {
+      showScreen('upgradeScreen');
+    }
+    
+    window.upgradeHealth = upgradeHealth;
+    window.upgradeAttack = upgradeAttack;
+    window.upgradeDefense = upgradeDefense;
+    window.upgradeCrit = upgradeCrit;
+    window.continueBattle = continueBattle;
+    window.openShop = openShop;
+    window.closeShop = closeShop;
+
+    function renderWeaponsShop() {
+      const grid = document.getElementById('weaponsGrid');
+      grid.innerHTML = '';
+      
+      weapons.forEach(weapon => {
+        const equipped = gameState.weaponId === weapon.id;
+        
+        const card = document.createElement('div');
+        card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
+        card.innerHTML = `
+          <div class="weapon-icon">${weapon.icon}</div>
+          <h3>${weapon.name}</h3>
+          <p>${weapon.effect}</p>
+          <div class="upgrade-cost">${equipped ? '✅ 已裝備' : `💰 ${weapon.cost} 金幣`}</div>
+        `;
+        
+        if (!equipped) {
+          card.onclick = () => buyWeapon(weapon.id);
+        }
+        
+        grid.appendChild(card);
+      });
+    }
+
+    function buyWeapon(weaponId) {
+      const weapon = weapons[weaponId];
+      if (gameState.coins >= weapon.cost) {
+        gameState.coins -= weapon.cost;
+        gameState.weaponId = weaponId;
+        saveProgress();
+        updateUI();
+        renderWeaponsShop();
+      } else {
+        alert("金幣不足!");
+      }
+    }
+
+    // 關卡選擇
+    function openStageSelect() {
+      renderStageSelect();
+      showScreen('stageSelectScreen');
+    }
+
+    function closeStageSelect() {
+      showScreen('gameScreen');
+    }
+    
+    window.openStageSelect = openStageSelect;
+    window.closeStageSelect = closeStageSelect;
+
+    function renderStageSelect() {
+      const grid = document.getElementById('stagesGrid');
+      grid.innerHTML = '';
+      
+      for (let i = 1; i <= 100; i++) {
+        const card = document.createElement('div');
+        const completed = gameState.completedStages.includes(i);
+        const current = i === gameState.currentStage;
+        const locked = i > Math.max(...gameState.completedStages, gameState.currentStage);
+        
+        card.className = `stage-card ${completed ? 'completed' : ''} ${current ? 'current' : ''} ${locked ? 'locked' : ''}`;
+        card.textContent = i;
+        
+        if (!locked) {
+          card.onclick = () => {
+            startStage(i);
+          };
+        }
+        
+        grid.appendChild(card);
+      }
+    }
+
+    // 戰鬥日誌
+    function addBattleLog(message, type) {
+      const log = document.getElementById('battleLog');
+      const entry = document.createElement('div');
+      entry.className = `battle-log-entry ${type}`;
+      entry.textContent = message;
+      log.appendChild(entry);
+      log.scrollTop = log.scrollHeight;
+      
+      if (log.children.length > 10) {
+        log.removeChild(log.children[0]);
+      }
+    }
+
+    // 重試關卡
+    function retryStage() {
+      startStage(gameState.currentStage);
+    }
+
+    // 返回首頁
+    function backToHome() {
+      showScreen('homeScreen');
+    }
+
+    // 二周目
+    function startNewGamePlus() {
+      gameState.currentStage = 1;
+      gameState.completedStages = [];
+      saveProgress();
+      startStage(1);
+    }
+    
+    window.retryStage = retryStage;
+    window.backToHome = backToHome;
+    window.startNewGamePlus = startNewGamePlus;
+
+    // 事件監聽
+    document.getElementById('startNewGameBtn').addEventListener('click', startNewGame);
+    document.getElementById('continueGameBtn').addEventListener('click', continueGame);
+    document.getElementById('stageSelectBtn').addEventListener('click', openStageSelect);
+
+    // 初始化
+    initSDKs();
+    loadSave();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b40214533cf251',t:'MTc2MjU5Mzc3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
