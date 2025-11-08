@@ -74,7 +74,7 @@
       font-size: 18px;
       line-height: 1.8;
       margin-bottom: 15px;
-      text-align: left;
+      text-align: center;
     }
 
     .button-group {
@@ -167,6 +167,27 @@
       padding: 20px;
       border-radius: 15px;
       min-width: 280px;
+      transition: transform 0.5s;
+    }
+
+    .character.attacking {
+      animation: clash 0.5s ease-in-out;
+    }
+
+    @keyframes clash {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(30px); }
+      100% { transform: translateX(0); }
+    }
+
+    .character:last-child.attacking {
+      animation: clash-reverse 0.5s ease-in-out;
+    }
+
+    @keyframes clash-reverse {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(-30px); }
+      100% { transform: translateX(0); }
     }
 
     .character-avatar {
@@ -543,6 +564,47 @@
       font-size: 12px;
       color: #cccccc;
     }
+
+    .upgrade-panel {
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+    }
+
+    .upgrade-panel-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .upgrade-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .btn-upgrade {
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      color: #ffffff;
+    }
+
+    .btn-upgrade:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .btn-upgrade:active {
+      transform: translateY(0);
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -556,7 +618,7 @@
       中文打字英雄大冒險
      </div>
      <div class="game-description">
-      <h2>遊戲說明</h2>
+      <h2 style="text-align: center;">遊戲說明</h2>
       <p style="text-align: center;"><strong>🎯 遊戲目標：</strong>通過打字擊敗100關的妖怪!</p>
       <p style="text-align: center;"><strong>⌨️ 遊戲方式：</strong>看到中文字和注音後,正確輸入中文字並按Enter確認。答對後可獲得金幣並對妖怪造成傷害。</p>
       <p style="text-align: center;"><strong>💰 金幣系統：</strong>每答對一題獲得金幣,可用來升級血量、攻擊力、防禦率、爆擊率,或購買特殊武器。</p>
@@ -667,6 +729,43 @@
      <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
     </div>
     <div class="battle-log" id="battleLog"></div>
+    <div class="upgrade-panel">
+     <div class="upgrade-panel-title">
+      💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
+     </div>
+     <div class="upgrade-buttons"><button class="btn-upgrade" onclick="upgradeHealthInGame()">
+       <div>
+        ❤️ 升級血量
+       </div>
+       <div class="small-text">
+        +20 HP (10💰)
+       </div></button> <button class="btn-upgrade" onclick="upgradeAttackInGame()">
+       <div>
+        ⚔️ 升級攻擊
+       </div>
+       <div class="small-text">
+        +5 攻擊 (15💰)
+       </div></button> <button class="btn-upgrade" onclick="upgradeDefenseInGame()">
+       <div>
+        🛡️ 升級防禦
+       </div>
+       <div class="small-text">
+        +3% 防禦 (12💰)
+       </div></button> <button class="btn-upgrade" onclick="upgradeCritInGame()">
+       <div>
+        💥 升級爆擊
+       </div>
+       <div class="small-text">
+        +2% 爆擊 (18💰)
+       </div></button> <button class="btn-upgrade" onclick="openShopInGame()">
+       <div>
+        🛒 武器商店
+       </div>
+       <div class="small-text">
+        購買武器
+       </div></button>
+     </div>
+    </div>
    </div><!-- 升級選擇畫面 -->
    <div class="screen" id="upgradeScreen">
     <div class="upgrade-container">
@@ -674,7 +773,7 @@
       🎉 答對了!獲得金幣!
      </div>
      <div class="upgrade-options">
-      <div class="upgrade-card" onclick="upgradeHealth()">
+      <div class="upgrade-card" id="upgradeHealthCard">
        <h3>❤️ 升級血量</h3>
        <p>最大血量 +20<br>
         並恢復 20 HP</p>
@@ -682,35 +781,35 @@
         💰 10 金幣
        </div>
       </div>
-      <div class="upgrade-card" onclick="upgradeAttack()">
+      <div class="upgrade-card" id="upgradeAttackCard">
        <h3>⚔️ 升級攻擊</h3>
        <p>攻擊力 +5</p>
        <div class="upgrade-cost">
         💰 15 金幣
        </div>
       </div>
-      <div class="upgrade-card" onclick="upgradeDefense()">
+      <div class="upgrade-card" id="upgradeDefenseCard">
        <h3>🛡️ 升級防禦</h3>
        <p>防禦率 +3%</p>
        <div class="upgrade-cost">
         💰 12 金幣
        </div>
       </div>
-      <div class="upgrade-card" onclick="upgradeCrit()">
+      <div class="upgrade-card" id="upgradeCritCard">
        <h3>💥 升級爆擊</h3>
        <p>爆擊率 +2%</p>
        <div class="upgrade-cost">
         💰 18 金幣
        </div>
       </div>
-      <div class="upgrade-card" onclick="openShop()">
+      <div class="upgrade-card" id="openShopCard">
        <h3>🛒 武器商店</h3>
        <p>購買特殊武器</p>
        <div class="upgrade-cost">
         查看商店
        </div>
       </div>
-     </div><button class="btn btn-success" onclick="continueBattle()">繼續戰鬥</button>
+     </div><button class="btn btn-success" id="continueBattleBtn">繼續戰鬥</button>
     </div>
    </div><!-- 商店畫面 -->
    <div class="screen" id="shopScreen">
@@ -1057,7 +1156,13 @@
 
     // 開始關卡
     function startStage(stage) {
+      // 清除舊的計時器
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+      }
+      
       gameState.currentStage = stage;
+      gameState.playerHp = gameState.playerMaxHp; // 回復滿血
       gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.2, stage - 1));
       gameState.enemyHp = gameState.enemyMaxHp;
       gameState.enemyAttack = 8 + Math.floor((stage - 1) * 0.5);
@@ -1073,6 +1178,11 @@
       showScreen('gameScreen');
       nextWord();
       
+      // 開始自動戰鬥
+      gameState.battleInterval = setInterval(() => {
+        autoBattle();
+      }, 1000);
+      
       document.getElementById('typingInput').focus();
     }
 
@@ -1080,6 +1190,11 @@
     function updateUI() {
       document.getElementById('currentStage').textContent = gameState.currentStage;
       document.getElementById('coinsDisplay').textContent = gameState.coins;
+      
+      const upgradeCoinsEl = document.getElementById('upgradeCoins');
+      if (upgradeCoinsEl) {
+        upgradeCoinsEl.textContent = gameState.coins;
+      }
       
       document.getElementById('playerHp').textContent = `${gameState.playerHp}/${gameState.playerMaxHp}`;
       document.getElementById('playerAttack').textContent = gameState.playerAttack;
@@ -1133,21 +1248,8 @@
     function handleCorrectAnswer() {
       gameState.coins += 5;
       addBattleLog("✅ 答對了!獲得5金幣!", "player");
-      
-      playerAttack();
-      
-      if (gameState.enemyHp <= 0) {
-        handleStageComplete();
-      } else {
-        setTimeout(() => {
-          enemyAttack();
-          if (gameState.playerHp <= 0) {
-            showScreen('defeatScreen');
-          } else {
-            nextWord();
-          }
-        }, 1000);
-      }
+      updateUI();
+      nextWord();
     }
 
     // 玩家攻擊
@@ -1287,6 +1389,46 @@
       updateUI();
     }
 
+    // 自動戰鬥
+    function autoBattle() {
+      if (gameState.enemyHp <= 0 || gameState.playerHp <= 0) {
+        return;
+      }
+
+      // 觸發對撞動畫
+      const playerChar = document.querySelector('.character:first-child');
+      const enemyChar = document.querySelector('.character:last-child');
+      
+      playerChar.classList.add('attacking');
+      enemyChar.classList.add('attacking');
+      
+      setTimeout(() => {
+        playerChar.classList.remove('attacking');
+        enemyChar.classList.remove('attacking');
+      }, 500);
+
+      // 玩家攻擊
+      playerAttack();
+      
+      // 檢查敵人是否死亡
+      if (gameState.enemyHp <= 0) {
+        clearInterval(gameState.battleInterval);
+        handleStageComplete();
+        return;
+      }
+
+      // 敵人攻擊
+      setTimeout(() => {
+        enemyAttack();
+        
+        // 檢查玩家是否死亡
+        if (gameState.playerHp <= 0) {
+          clearInterval(gameState.battleInterval);
+          showScreen('defeatScreen');
+        }
+      }, 500);
+    }
+
     // 關卡完成
     function handleStageComplete() {
       if (!gameState.completedStages.includes(gameState.currentStage)) {
@@ -1311,7 +1453,7 @@
         saveProgress();
         updateUI();
       } else {
-        alert("金幣不足!");
+        showInlineMessage("金幣不足!");
       }
     }
 
@@ -1322,7 +1464,7 @@
         saveProgress();
         updateUI();
       } else {
-        alert("金幣不足!");
+        showInlineMessage("金幣不足!");
       }
     }
 
@@ -1333,7 +1475,7 @@
         saveProgress();
         updateUI();
       } else {
-        alert("金幣不足!");
+        showInlineMessage("金幣不足!");
       }
     }
 
@@ -1344,9 +1486,44 @@
         saveProgress();
         updateUI();
       } else {
-        alert("金幣不足!");
+        showInlineMessage("金幣不足!");
       }
     }
+
+    // 遊戲內即時升級
+    function upgradeHealthInGame() {
+      upgradeHealth();
+    }
+
+    function upgradeAttackInGame() {
+      upgradeAttack();
+    }
+
+    function upgradeDefenseInGame() {
+      upgradeDefense();
+    }
+
+    function upgradeCritInGame() {
+      upgradeCrit();
+    }
+
+    function openShopInGame() {
+      // 暫停戰鬥
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+      }
+      openShop();
+    }
+
+    function showInlineMessage(message) {
+      addBattleLog(`⚠️ ${message}`, "enemy");
+    }
+
+    window.upgradeHealthInGame = upgradeHealthInGame;
+    window.upgradeAttackInGame = upgradeAttackInGame;
+    window.upgradeDefenseInGame = upgradeDefenseInGame;
+    window.upgradeCritInGame = upgradeCritInGame;
+    window.openShopInGame = openShopInGame;
 
     // 繼續戰鬥
     function continueBattle() {
@@ -1361,7 +1538,13 @@
     }
 
     function closeShop() {
-      showScreen('upgradeScreen');
+      showScreen('gameScreen');
+      // 恢復戰鬥
+      if (!gameState.battleInterval) {
+        gameState.battleInterval = setInterval(() => {
+          autoBattle();
+        }, 1000);
+      }
     }
     
     window.upgradeHealth = upgradeHealth;
@@ -1481,14 +1664,53 @@
     window.backToHome = backToHome;
     window.startNewGamePlus = startNewGamePlus;
 
-    // 事件監聽
-    document.getElementById('startNewGameBtn').addEventListener('click', startNewGame);
-    document.getElementById('continueGameBtn').addEventListener('click', continueGame);
-    document.getElementById('stageSelectBtn').addEventListener('click', openStageSelect);
-
     // 初始化
-    initSDKs();
-    loadSave();
+    window.addEventListener('load', function() {
+      // 事件監聽
+      const startBtn = document.getElementById('startNewGameBtn');
+      const continueBtn = document.getElementById('continueGameBtn');
+      const stageBtn = document.getElementById('stageSelectBtn');
+      
+      if (startBtn) {
+        startBtn.addEventListener('click', startNewGame);
+      }
+      if (continueBtn) {
+        continueBtn.addEventListener('click', continueGame);
+      }
+      if (stageBtn) {
+        stageBtn.addEventListener('click', openStageSelect);
+      }
+      
+      // 升級畫面按鈕
+      const upgradeHealthCard = document.getElementById('upgradeHealthCard');
+      const upgradeAttackCard = document.getElementById('upgradeAttackCard');
+      const upgradeDefenseCard = document.getElementById('upgradeDefenseCard');
+      const upgradeCritCard = document.getElementById('upgradeCritCard');
+      const openShopCard = document.getElementById('openShopCard');
+      const continueBattleBtn = document.getElementById('continueBattleBtn');
+      
+      if (upgradeHealthCard) {
+        upgradeHealthCard.addEventListener('click', upgradeHealth);
+      }
+      if (upgradeAttackCard) {
+        upgradeAttackCard.addEventListener('click', upgradeAttack);
+      }
+      if (upgradeDefenseCard) {
+        upgradeDefenseCard.addEventListener('click', upgradeDefense);
+      }
+      if (upgradeCritCard) {
+        upgradeCritCard.addEventListener('click', upgradeCrit);
+      }
+      if (openShopCard) {
+        openShopCard.addEventListener('click', openShop);
+      }
+      if (continueBattleBtn) {
+        continueBattleBtn.addEventListener('click', continueBattle);
+      }
+      
+      initSDKs();
+      loadSave();
+    });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b40214533cf251',t:'MTc2MjU5Mzc3MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b41277e2d2f251',t:'MTc2MjU5NDQ0MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
