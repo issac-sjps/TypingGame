@@ -155,6 +155,16 @@
       gap: 10px;
     }
 
+    .countdown-info {
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(0,0,0,0.3);
+      padding: 8px 15px;
+      border-radius: 8px;
+    }
+
     .battle-area {
       display: flex;
       justify-content: space-around;
@@ -712,6 +722,8 @@
       第 <span id="currentStage">1</span> 關
      </div>
      <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
+     </div>
+     <div class="countdown-info"><span>⏱️ 下次攻擊: </span> <span id="countdownDisplay" style="font-weight: bold; color: #ffd700;">5</span>
      </div><button class="btn btn-secondary" id="stageSelectBtn">關卡選擇</button>
     </div>
     <div class="battle-area">
@@ -1071,7 +1083,9 @@
       enemyAttackReduction: 0,
       lastWeaponUseTime: 0,
       battleLogEntries: [],
-      battleInterval: null
+      battleInterval: null,
+      countdownInterval: null,
+      countdown: 5
     };
 
     // 初始化 SDK
@@ -1180,6 +1194,9 @@
       if (gameState.battleInterval) {
         clearInterval(gameState.battleInterval);
       }
+      if (gameState.countdownInterval) {
+        clearInterval(gameState.countdownInterval);
+      }
       
       gameState.currentStage = stage;
       gameState.playerHp = gameState.playerMaxHp;
@@ -1193,10 +1210,21 @@
       gameState.enemyDefenseReduction = 0;
       gameState.enemyAttackReduction = 0;
       gameState.battleLogEntries = [];
+      gameState.countdown = 5;
 
       updateUI();
       showScreen('gameScreen');
       nextWord();
+      
+      // 開始倒數計時（每秒更新）
+      gameState.countdownInterval = setInterval(() => {
+        gameState.countdown--;
+        updateCountdown();
+        
+        if (gameState.countdown <= 0) {
+          gameState.countdown = 5;
+        }
+      }, 1000);
       
       // 開始自動戰鬥（每5秒一次）
       gameState.battleInterval = setInterval(() => {
@@ -1204,6 +1232,20 @@
       }, 5000);
       
       document.getElementById('typingInput').focus();
+    }
+
+    // 更新倒數計時顯示
+    function updateCountdown() {
+      const countdownEl = document.getElementById('countdownDisplay');
+      if (countdownEl) {
+        if (gameState.countdown === 0) {
+          countdownEl.textContent = '攻擊!';
+          countdownEl.style.color = '#ff4444';
+        } else {
+          countdownEl.textContent = gameState.countdown;
+          countdownEl.style.color = '#ffd700';
+        }
+      }
     }
 
     // 更新UI
@@ -1451,6 +1493,11 @@
 
     // 關卡完成
     function handleStageComplete() {
+      // 清除計時器
+      if (gameState.countdownInterval) {
+        clearInterval(gameState.countdownInterval);
+      }
+      
       if (!gameState.completedStages.includes(gameState.currentStage)) {
         gameState.completedStages.push(gameState.currentStage);
       }
@@ -1557,6 +1604,9 @@
       if (gameState.battleInterval) {
         clearInterval(gameState.battleInterval);
       }
+      if (gameState.countdownInterval) {
+        clearInterval(gameState.countdownInterval);
+      }
       openShop();
     }
 
@@ -1585,6 +1635,16 @@
     function closeShop() {
       // 恢復戰鬥
       if (document.getElementById('gameScreen').classList.contains('active')) {
+        gameState.countdown = 5;
+        gameState.countdownInterval = setInterval(() => {
+          gameState.countdown--;
+          updateCountdown();
+          
+          if (gameState.countdown <= 0) {
+            gameState.countdown = 5;
+          }
+        }, 1000);
+        
         gameState.battleInterval = setInterval(() => {
           autoBattle();
         }, 5000);
@@ -1642,6 +1702,9 @@
       if (gameState.battleInterval) {
         clearInterval(gameState.battleInterval);
       }
+      if (gameState.countdownInterval) {
+        clearInterval(gameState.countdownInterval);
+      }
       renderStageSelect();
       showScreen('stageSelectScreen');
     }
@@ -1649,6 +1712,16 @@
     function closeStageSelect() {
       showScreen('gameScreen');
       // 恢復戰鬥
+      gameState.countdown = 5;
+      gameState.countdownInterval = setInterval(() => {
+        gameState.countdown--;
+        updateCountdown();
+        
+        if (gameState.countdown <= 0) {
+          gameState.countdown = 5;
+        }
+      }, 1000);
+      
       gameState.battleInterval = setInterval(() => {
         autoBattle();
       }, 5000);
@@ -1657,6 +1730,9 @@
     function backToHomeFromStageSelect() {
       if (gameState.battleInterval) {
         clearInterval(gameState.battleInterval);
+      }
+      if (gameState.countdownInterval) {
+        clearInterval(gameState.countdownInterval);
       }
       showScreen('homeScreen');
     }
@@ -1711,6 +1787,9 @@
     function backToHome() {
       if (gameState.battleInterval) {
         clearInterval(gameState.battleInterval);
+      }
+      if (gameState.countdownInterval) {
+        clearInterval(gameState.countdownInterval);
       }
       showScreen('homeScreen');
     }
@@ -1775,5 +1854,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b54e62a150f251',t:'MTc2MjYwNzM4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5531625bdf251',t:'MTc2MjYwNzU3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
