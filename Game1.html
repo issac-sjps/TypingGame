@@ -703,11 +703,11 @@
       <p><strong>🎯 遊戲目標：</strong>通過打字擊敗100關的妖怪!</p>
       <p><strong>⌨️ 遊戲方式：</strong>看到中文字和注音後,正確輸入中文字並按Enter確認。答對後可獲得金幣並對妖怪造成傷害。</p>
       <p><strong>💰 金幣系統：</strong>每答對一題獲得金幣,可用來升級血量、攻擊力、防禦率、爆擊率,或購買特殊武器。</p>
-      <p><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、爆擊率+0.5%)。</p>
+      <p><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、攻擊力×1.2、防禦率+1%、爆擊率+0.5%)。</p>
       <p><strong>🛡️ 數值說明：</strong></p>
       <p>• 血量(HP)：生命值,歸零則失敗</p>
       <p>• 攻擊力：每次攻擊造成的傷害</p>
-      <p>• 防禦率：減少受到的傷害百分比</p>
+      <p>• 防禦率：減少受到的傷害百分比 (實際傷害 = 攻擊力 × (100% - 防禦率))</p>
       <p>• 爆擊率：造成雙倍傷害的機率</p>
       <p><strong>🗡️ 武器系統：</strong>10種特殊武器,各有獨特效果(雙擊、毒性、秒殺等)。</p>
       <p><strong>💾 進度保存：</strong>遊戲進度會自動保存在你的電腦上。</p>
@@ -1202,8 +1202,8 @@
       gameState.playerHp = gameState.playerMaxHp;
       gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.2, stage - 1));
       gameState.enemyHp = gameState.enemyMaxHp;
-      gameState.enemyAttack = 8 + Math.floor((stage - 1) * 0.5);
-      gameState.enemyDefense = Math.min(Math.floor((stage - 1) * 0.3), 50);
+      gameState.enemyAttack = Math.floor(8 * Math.pow(1.2, stage - 1));
+      gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
       gameState.enemyCritRate = Math.min((stage - 1) * 0.5, 50);
       gameState.weaponHitCount = 0;
       gameState.poisonStacks = 0;
@@ -1415,9 +1415,9 @@
           extraEffects.push("💥 爆擊!");
         }
         
-        // 防禦減傷
+        // 防禦減傷：實際傷害 = 攻擊力 * (1 - 防禦率)
         const effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
-        damage = Math.floor(damage * (1 - effectiveDefense / 100));
+        damage = Math.floor(damage * (100 - effectiveDefense) / 100);
         
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
         addBattleLog(`⚔️ 你造成了${damage}點傷害! ${extraEffects.join(' ')}`, "player");
@@ -1442,8 +1442,8 @@
         damage *= 2;
       }
       
-      // 防禦減傷
-      const finalDamage = Math.floor(damage * (1 - gameState.playerDefense / 100));
+      // 防禦減傷：實際傷害 = 攻擊力 * (1 - 防禦率)
+      const finalDamage = Math.floor(damage * (100 - gameState.playerDefense) / 100);
       gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
       
       if (isCrit) {
@@ -1893,5 +1893,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b557c0c389f251',t:'MTc2MjYwNzc2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5772f6717f251',t:'MTc2MjYwOTA1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
