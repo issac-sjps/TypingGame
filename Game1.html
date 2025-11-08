@@ -1440,13 +1440,17 @@
       const isCrit = Math.random() * 100 < gameState.enemyCritRate;
       if (isCrit) {
         damage *= 2;
-        addBattleLog(`💥 敵人爆擊!造成${damage}點傷害!`, "enemy");
-      } else {
-        addBattleLog(`👹 敵人攻擊!造成${damage}點傷害!`, "enemy");
       }
       
-      damage = Math.floor(damage * (1 - gameState.playerDefense / 100));
-      gameState.playerHp = Math.max(0, gameState.playerHp - damage);
+      // 防禦減傷
+      const finalDamage = Math.floor(damage * (1 - gameState.playerDefense / 100));
+      gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
+      
+      if (isCrit) {
+        addBattleLog(`💥 敵人爆擊!造成${finalDamage}點傷害!`, "enemy");
+      } else {
+        addBattleLog(`👹 敵人攻擊!造成${finalDamage}點傷害!`, "enemy");
+      }
       
       updateUI();
     }
@@ -1461,12 +1465,12 @@
       const playerChar = document.querySelector('.character:first-child');
       const enemyChar = document.querySelector('.character:last-child');
       
-      playerChar.classList.add('attacking');
-      enemyChar.classList.add('attacking');
+      if (playerChar) playerChar.classList.add('attacking');
+      if (enemyChar) enemyChar.classList.add('attacking');
       
       setTimeout(() => {
-        playerChar.classList.remove('attacking');
-        enemyChar.classList.remove('attacking');
+        if (playerChar) playerChar.classList.remove('attacking');
+        if (enemyChar) enemyChar.classList.remove('attacking');
       }, 500);
 
       // 玩家攻擊
@@ -1474,7 +1478,14 @@
       
       // 檢查敵人是否死亡
       if (gameState.enemyHp <= 0) {
-        clearInterval(gameState.battleInterval);
+        if (gameState.battleInterval) {
+          clearInterval(gameState.battleInterval);
+          gameState.battleInterval = null;
+        }
+        if (gameState.countdownInterval) {
+          clearInterval(gameState.countdownInterval);
+          gameState.countdownInterval = null;
+        }
         handleStageComplete();
         return;
       }
@@ -1485,7 +1496,14 @@
         
         // 檢查玩家是否死亡
         if (gameState.playerHp <= 0) {
-          clearInterval(gameState.battleInterval);
+          if (gameState.battleInterval) {
+            clearInterval(gameState.battleInterval);
+            gameState.battleInterval = null;
+          }
+          if (gameState.countdownInterval) {
+            clearInterval(gameState.countdownInterval);
+            gameState.countdownInterval = null;
+          }
           showScreen('defeatScreen');
         }
       }, 500);
@@ -1633,21 +1651,30 @@
     }
 
     function closeShop() {
-      // 恢復戰鬥
-      if (document.getElementById('gameScreen').classList.contains('active')) {
+      const wasInGame = gameState.enemyHp > 0 && gameState.playerHp > 0 && gameState.currentStage > 0;
+      
+      if (wasInGame) {
+        showScreen('gameScreen');
+        // 恢復戰鬥
         gameState.countdown = 5;
-        gameState.countdownInterval = setInterval(() => {
-          gameState.countdown--;
-          updateCountdown();
-          
-          if (gameState.countdown <= 0) {
-            gameState.countdown = 5;
-          }
-        }, 1000);
+        updateCountdown();
         
-        gameState.battleInterval = setInterval(() => {
-          autoBattle();
-        }, 5000);
+        if (!gameState.countdownInterval) {
+          gameState.countdownInterval = setInterval(() => {
+            gameState.countdown--;
+            updateCountdown();
+            
+            if (gameState.countdown <= 0) {
+              gameState.countdown = 5;
+            }
+          }, 1000);
+        }
+        
+        if (!gameState.battleInterval) {
+          gameState.battleInterval = setInterval(() => {
+            autoBattle();
+          }, 5000);
+        }
       } else {
         showScreen('upgradeScreen');
       }
@@ -1710,21 +1737,33 @@
     }
 
     function closeStageSelect() {
-      showScreen('gameScreen');
-      // 恢復戰鬥
-      gameState.countdown = 5;
-      gameState.countdownInterval = setInterval(() => {
-        gameState.countdown--;
+      const wasInGame = gameState.enemyHp > 0 && gameState.playerHp > 0 && gameState.currentStage > 0;
+      
+      if (wasInGame) {
+        showScreen('gameScreen');
+        // 恢復戰鬥
+        gameState.countdown = 5;
         updateCountdown();
         
-        if (gameState.countdown <= 0) {
-          gameState.countdown = 5;
+        if (!gameState.countdownInterval) {
+          gameState.countdownInterval = setInterval(() => {
+            gameState.countdown--;
+            updateCountdown();
+            
+            if (gameState.countdown <= 0) {
+              gameState.countdown = 5;
+            }
+          }, 1000);
         }
-      }, 1000);
-      
-      gameState.battleInterval = setInterval(() => {
-        autoBattle();
-      }, 5000);
+        
+        if (!gameState.battleInterval) {
+          gameState.battleInterval = setInterval(() => {
+            autoBattle();
+          }, 5000);
+        }
+      } else {
+        showScreen('homeScreen');
+      }
     }
 
     function backToHomeFromStageSelect() {
@@ -1854,5 +1893,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b5531625bdf251',t:'MTc2MjYwNzU3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b557c0c389f251',t:'MTc2MjYwNzc2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
