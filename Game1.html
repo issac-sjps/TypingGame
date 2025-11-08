@@ -616,7 +616,7 @@
       <h3>💰 金幣系統</h3>
       <p>每答對一題獲得5金幣，可用來升級血量(+100 HP)、攻擊力(+5)、防禦率(+2%)、爆擊機率(+5%)、爆擊傷害(+5%)(每項5金幣)，或購買特殊武器。</p>
       <h3>⚔️ 戰鬥系統</h3>
-      <p>你和妖怪每5秒輪流攻擊。妖怪每關會變強(血量×1.05、攻擊力×1.1、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%))。</p>
+      <p>你和妖怪每5秒輪流攻擊。妖怪每關會變強(血量×1.05、攻擊力×1.05、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%))。</p>
       <h3>🛡️ 數值說明</h3>
       <p>• 血量(HP)：生命值，歸零則失敗<br>
         • 攻擊力：每次攻擊造成的傷害<br>
@@ -657,19 +657,6 @@
      </div>
      <div class="battle-area">
       <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
-       <div class="weapon-display" style="background: rgba(255,200,100,0.15);">
-        <div class="weapon-icon" id="currentItemIcon">
-         📦
-        </div>
-        <div class="weapon-name" id="currentItemName">
-         無裝備
-        </div>
-        <div class="weapon-effect" id="currentItemEffect">
-         未使用道具
-        </div>
-       </div><button class="btn btn-secondary" id="openItemShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffa500 0%, #ff6347 100%);">🧪 道具商店</button>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
        <div class="weapon-display" style="background: rgba(255,215,0,0.15);">
         <div class="weapon-icon" id="currentRelicIcon">
          ⭐
@@ -681,6 +668,19 @@
          未裝備聖遺物
         </div>
        </div><button class="btn btn-secondary" id="openRelicShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffd700 0%, #ffA500 100%);">✨ 聖遺物商店</button>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+       <div class="weapon-display" style="background: rgba(255,200,100,0.15);">
+        <div class="weapon-icon" id="currentItemIcon">
+         📦
+        </div>
+        <div class="weapon-name" id="currentItemName">
+         無裝備
+        </div>
+        <div class="weapon-effect" id="currentItemEffect">
+         未使用道具
+        </div>
+       </div><button class="btn btn-secondary" id="openItemShopButton" style="padding: 12px 20px; width: 180px; font-size: 16px; background: linear-gradient(135deg, #ffa500 0%, #ff6347 100%);">🧪 道具商店</button>
       </div>
       <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
        <div class="weapon-display">
@@ -1211,7 +1211,7 @@
       // 計算敵人數值
       gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
       gameState.enemyHp = gameState.enemyMaxHp;
-      gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.1, stage - 1));
+      gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
       gameState.enemyAttack = gameState.enemyBaseAttack;
       gameState.enemyDefense = Math.min((stage - 1) * 1, 50);
       gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
@@ -1324,6 +1324,9 @@
       if (gameState.itemAttackBoostCount > 0) {
         attackBoost = 2;
         gameState.itemAttackBoostCount--;
+        if (gameState.itemAttackBoostCount === 0) {
+          resetItemToNone();
+        }
       }
       
       // 聖遺物效果：赫拉克勒斯的戰車（爆擊傷害×2）
@@ -1337,6 +1340,9 @@
       if (gameState.itemCritDamageBoostCount > 0) {
         critDamageBoost = 2;
         gameState.itemCritDamageBoostCount--;
+        if (gameState.itemCritDamageBoostCount === 0) {
+          resetItemToNone();
+        }
       }
       
       // 道具效果：爆擊藥水
@@ -1344,6 +1350,9 @@
       if (gameState.itemCritBoostCount > 0) {
         forceCrit = true;
         gameState.itemCritBoostCount--;
+        if (gameState.itemCritBoostCount === 0) {
+          resetItemToNone();
+        }
       }
       
       // 武器特效
@@ -1476,6 +1485,9 @@
       // 道具效果：混亂藥水（50%機率攻擊自己）
       if (gameState.itemConfusionCount > 0) {
         gameState.itemConfusionCount--;
+        if (gameState.itemConfusionCount === 0) {
+          resetItemToNone();
+        }
         if (Math.random() < 0.5) {
           let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
           gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
@@ -1495,6 +1507,9 @@
       // 道具效果：無敵盾牌（不受傷害）
       if (gameState.itemShieldCount > 0) {
         gameState.itemShieldCount--;
+        if (gameState.itemShieldCount === 0) {
+          resetItemToNone();
+        }
         updateUI();
         return;
       }
@@ -1518,8 +1533,32 @@
       updateUI();
     }
 
+    // 重置道具為無裝備
+    function resetItemToNone() {
+      gameState.itemId = 0;
+      gameState.itemBurnActive = false;
+      gameState.itemShieldCount = 0;
+      gameState.itemAttackBoostCount = 0;
+      gameState.itemPoisonActive = false;
+      gameState.itemCritDamageBoostCount = 0;
+      gameState.itemConfusionCount = 0;
+      gameState.itemCritBoostCount = 0;
+      // 不重置運氣藥水時間，讓它自然過期
+      saveGame();
+    }
+
+    // 檢查運氣藥水是否過期
+    function checkLuckPotionExpiry() {
+      if (gameState.itemLuckEndTime > 0 && gameState.itemLuckEndTime <= Date.now() && gameState.itemId === 7) {
+        resetItemToNone();
+        updateUI();
+      }
+    }
+
     // 更新UI
     function updateUI() {
+      // 檢查運氣藥水是否過期
+      checkLuckPotionExpiry();
       document.getElementById('currentStage').textContent = gameState.currentStage;
       document.getElementById('coinsDisplay').textContent = gameState.coins;
       document.getElementById('shopCoinsDisplay').textContent = gameState.coins;
@@ -1903,7 +1942,6 @@
       
       items.forEach(item => {
         const equipped = gameState.itemId === item.id;
-        const owned = gameState.ownedItems.includes(item.id);
         
         const card = document.createElement('div');
         card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
@@ -1911,7 +1949,7 @@
         let statusText = '';
         if (equipped) {
           statusText = '✅ 已裝備';
-        } else if (owned) {
+        } else if (item.id === 0) {
           statusText = '🔄 點擊裝備';
         } else {
           statusText = `💰 ${item.cost} 金幣`;
@@ -1935,20 +1973,19 @@
     // 購買道具
     function buyItem(itemId) {
       const item = items[itemId];
-      const owned = gameState.ownedItems.includes(itemId);
       
-      if (owned) {
-        // 已擁有，直接裝備並啟動效果
-        gameState.itemId = itemId;
-        activateItem(itemId);
+      if (itemId === 0) {
+        // 選擇無裝備
+        resetItemToNone();
         updateUI();
         renderItemsShop();
-        saveGame();
-      } else if (gameState.coins >= item.cost) {
+        return;
+      }
+      
+      if (gameState.coins >= item.cost) {
         // 購買並裝備
         gameState.coins -= item.cost;
         gameState.itemId = itemId;
-        gameState.ownedItems.push(itemId);
         activateItem(itemId);
         updateUI();
         renderItemsShop();
@@ -2202,5 +2239,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b78857c638f251',t:'MTc2MjYzMDcyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b78fb3a25df251',t:'MTc2MjYzMTAyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
