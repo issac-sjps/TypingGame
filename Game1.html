@@ -443,8 +443,7 @@
     /* 商店畫面 */
     .shop-screen {
       align-items: center;
-      justify-content: flex-start;
-      padding-top: 30px;
+      justify-content: center;
     }
 
     .shop-container {
@@ -453,6 +452,7 @@
       border-radius: 15px;
       width: 100%;
       max-width: 1000px;
+      margin: 0 auto;
     }
 
     .shop-title {
@@ -510,8 +510,7 @@
     /* 關卡選擇畫面 */
     .stage-select-screen {
       align-items: center;
-      justify-content: flex-start;
-      padding-top: 30px;
+      justify-content: center;
     }
 
     .stage-select-container {
@@ -520,6 +519,7 @@
       border-radius: 15px;
       width: 100%;
       max-width: 1000px;
+      margin: 0 auto;
     }
 
     .stages-grid {
@@ -720,7 +720,7 @@
        🗡️ 普通劍
       </div>
       <div class="weapon-effect" id="currentWeaponEffect">
-       每秒攻擊一次
+       每次攻擊一次
       </div>
      </div>
      <div class="character">
@@ -941,7 +941,9 @@
      <div class="shop-title">
       🎮 關卡選擇
      </div>
-     <div class="stages-grid" id="stagesGrid"></div><button class="btn btn-secondary" onclick="closeStageSelect()">返回</button>
+     <div class="stages-grid" id="stagesGrid"></div>
+     <div class="button-group"><button class="btn btn-secondary" onclick="backToHomeFromStageSelect()">返回首頁</button> <button class="btn btn-secondary" onclick="closeStageSelect()">返回遊戲</button>
+     </div>
     </div>
    </div><!-- 失敗畫面 -->
    <div class="screen" id="defeatScreen">
@@ -978,7 +980,7 @@
 
     const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
 
-    // 500個中文單字庫
+    // 100個中文單字庫（全部兩個字以上）
     const wordBank = [
       {word: "學習", pinyin: "ㄒㄩㄝˊ ㄒㄧˊ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"}, {word: "老師", pinyin: "ㄌㄠˇ ㄕ"}, 
       {word: "學生", pinyin: "ㄒㄩㄝˊ ㄕㄥ"}, {word: "教室", pinyin: "ㄐㄧㄠˋ ㄕˋ"}, {word: "書本", pinyin: "ㄕㄨ ㄅㄣˇ"},
@@ -1004,121 +1006,22 @@
       {word: "畫畫", pinyin: "ㄏㄨㄚˋ ㄏㄨㄚˋ"}, {word: "閱讀", pinyin: "ㄩㄝˋ ㄉㄨˊ"}, {word: "寫字", pinyin: "ㄒㄧㄝˇ ㄗˋ"},
       {word: "數學", pinyin: "ㄕㄨˋ ㄒㄩㄝˊ"}, {word: "國語", pinyin: "ㄍㄨㄛˊ ㄩˇ"}, {word: "英文", pinyin: "ㄧㄥ ㄨㄣˊ"},
       {word: "自然", pinyin: "ㄗˋ ㄖㄢˊ"}, {word: "社會", pinyin: "ㄕㄜˋ ㄏㄨㄟˋ"}, {word: "美勞", pinyin: "ㄇㄟˇ ㄌㄠˊ"},
-      {word: "體育", pinyin: "ㄊㄧˇ ㄩˋ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"}, {word: "圖書館", pinyin: "ㄊㄨˊ ㄕㄨ ㄍㄨㄢˇ"},
-      {word: "操場", pinyin: "ㄘㄠ ㄔㄤˇ"}, {word: "餐廳", pinyin: "ㄘㄢ ㄊㄧㄥ"}, {word: "廁所", pinyin: "ㄘㄜˋ ㄙㄨㄛˇ"},
-      {word: "公園", pinyin: "ㄍㄨㄥ ㄩㄢˊ"}, {word: "動物園", pinyin: "ㄉㄨㄥˋ ㄨˋ ㄩㄢˊ"}, {word: "遊樂園", pinyin: "ㄧㄡˊ ㄌㄜˋ ㄩㄢˊ"},
-      {word: "超市", pinyin: "ㄔㄠ ㄕˋ"}, {word: "商店", pinyin: "ㄕㄤ ㄉㄧㄢˋ"}, {word: "醫院", pinyin: "ㄧ ㄩㄢˋ"},
-      {word: "警察", pinyin: "ㄐㄧㄥˇ ㄔㄚˊ"}, {word: "消防員", pinyin: "ㄒㄧㄠ ㄈㄤˊ ㄩㄢˊ"}, {word: "醫生", pinyin: "ㄧ ㄕㄥ"},
-      {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"}, {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"},
-      {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"}, {word: "工人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "郵差", pinyin: "ㄧㄡˊ ㄔㄞ"},
-      {word: "春天", pinyin: "ㄔㄨㄣ ㄊㄧㄢ"}, {word: "夏天", pinyin: "ㄒㄧㄚˋ ㄊㄧㄢ"}, {word: "秋天", pinyin: "ㄑㄧㄡ ㄊㄧㄢ"},
-      {word: "冬天", pinyin: "ㄉㄨㄥ ㄊㄧㄢ"}, {word: "晴天", pinyin: "ㄑㄧㄥˊ ㄊㄧㄢ"}, {word: "雨天", pinyin: "ㄩˇ ㄊㄧㄢ"},
-      {word: "颱風", pinyin: "ㄊㄞˊ ㄈㄥ"}, {word: "地震", pinyin: "ㄉㄧˋ ㄓㄣˋ"}, {word: "太陽", pinyin: "ㄊㄞˋ ㄧㄤˊ"},
-      {word: "月亮", pinyin: "ㄩㄝˋ ㄌㄧㄤˋ"}, {word: "星星", pinyin: "ㄒㄧㄥ ㄒㄧㄥ"}, {word: "雲朵", pinyin: "ㄩㄣˊ ㄉㄨㄛˇ"},
-      {word: "彩虹", pinyin: "ㄘㄞˇ ㄏㄨㄥˊ"}, {word: "閃電", pinyin: "ㄕㄢˇ ㄉㄧㄢˋ"}, {word: "打雷", pinyin: "ㄉㄚˇ ㄌㄟˊ"},
-      {word: "下雪", pinyin: "ㄒㄧㄚˋ ㄒㄩㄝˇ"}, {word: "下雨", pinyin: "ㄒㄧㄚˋ ㄩˇ"}, {word: "刮風", pinyin: "ㄍㄨㄚ ㄈㄥ"},
-      {word: "蘋果", pinyin: "ㄆㄧㄥˊ ㄍㄨㄛˇ"}, {word: "香蕉", pinyin: "ㄒㄧㄤ ㄐㄧㄠ"}, {word: "西瓜", pinyin: "ㄒㄧ ㄍㄨㄚ"},
-      {word: "草莓", pinyin: "ㄘㄠˇ ㄇㄟˊ"}, {word: "葡萄", pinyin: "ㄆㄨˊ ㄊㄠˊ"}, {word: "橘子", pinyin: "ㄐㄩˊ ㄗˇ"},
-      {word: "芒果", pinyin: "ㄇㄤˊ ㄍㄨㄛˇ"}, {word: "鳳梨", pinyin: "ㄈㄥˋ ㄌㄧˊ"}, {word: "木瓜", pinyin: "ㄇㄨˋ ㄍㄨㄚ"},
-      {word: "水蜜桃", pinyin: "ㄕㄨㄟˇ ㄇㄧˋ ㄊㄠˊ"}, {word: "櫻桃", pinyin: "ㄧㄥ ㄊㄠˊ"}, {word: "檸檬", pinyin: "ㄋㄧㄥˊ ㄇㄥˊ"},
-      {word: "米飯", pinyin: "ㄇㄧˇ ㄈㄢˋ"}, {word: "麵條", pinyin: "ㄇㄧㄢˋ ㄊㄧㄠˊ"}, {word: "麵包", pinyin: "ㄇㄧㄢˋ ㄅㄠ"},
-      {word: "餅乾", pinyin: "ㄅㄧㄥˇ ㄍㄢ"}, {word: "蛋糕", pinyin: "ㄉㄢˋ ㄍㄠ"}, {word: "糖果", pinyin: "ㄊㄤˊ ㄍㄨㄛˇ"},
-      {word: "巧克力", pinyin: "ㄑㄧㄠˇ ㄎㄜˋ ㄌㄧˋ"}, {word: "冰淇淋", pinyin: "ㄅㄧㄥ ㄑㄧˊ ㄌㄧㄣˊ"}, {word: "果汁", pinyin: "ㄍㄨㄛˇ ㄓ"},
-      {word: "牛奶", pinyin: "ㄋㄧㄡˊ ㄋㄞˇ"}, {word: "豆漿", pinyin: "ㄉㄡˋ ㄐㄧㄤ"}, {word: "茶", pinyin: "ㄔㄚˊ"},
-      {word: "咖啡", pinyin: "ㄎㄚ ㄈㄟ"}, {word: "可樂", pinyin: "ㄎㄜˇ ㄌㄜˋ"}, {word: "汽水", pinyin: "ㄑㄧˋ ㄕㄨㄟˇ"},
-      {word: "雞肉", pinyin: "ㄐㄧ ㄖㄡˋ"}, {word: "豬肉", pinyin: "ㄓㄨ ㄖㄡˋ"}, {word: "牛肉", pinyin: "ㄋㄧㄡˊ ㄖㄡˋ"},
-      {word: "魚", pinyin: "ㄩˊ"}, {word: "蝦", pinyin: "ㄒㄧㄚ"}, {word: "螃蟹", pinyin: "ㄆㄤˊ ㄒㄧㄝˋ"},
-      {word: "青菜", pinyin: "ㄑㄧㄥ ㄘㄞˋ"}, {word: "高麗菜", pinyin: "ㄍㄠ ㄌㄧˊ ㄘㄞˋ"}, {word: "白菜", pinyin: "ㄅㄞˊ ㄘㄞˋ"},
-      {word: "紅蘿蔔", pinyin: "ㄏㄨㄥˊ ㄌㄨㄛˊ ㄅㄛˊ"}, {word: "馬鈴薯", pinyin: "ㄇㄚˇ ㄌㄧㄥˊ ㄕㄨˇ"}, {word: "番茄", pinyin: "ㄈㄢ ㄑㄧㄝˊ"},
-      {word: "黃瓜", pinyin: "ㄏㄨㄤˊ ㄍㄨㄚ"}, {word: "茄子", pinyin: "ㄑㄧㄝˊ ㄗˇ"}, {word: "玉米", pinyin: "ㄩˋ ㄇㄧˇ"},
-      {word: "狗", pinyin: "ㄍㄡˇ"}, {word: "貓", pinyin: "ㄇㄠ"}, {word: "兔子", pinyin: "ㄊㄨˋ ㄗˇ"},
-      {word: "老鼠", pinyin: "ㄌㄠˇ ㄕㄨˇ"}, {word: "牛", pinyin: "ㄋㄧㄡˊ"}, {word: "馬", pinyin: "ㄇㄚˇ"},
-      {word: "羊", pinyin: "ㄧㄤˊ"}, {word: "豬", pinyin: "ㄓㄨ"}, {word: "雞", pinyin: "ㄐㄧ"},
-      {word: "鴨", pinyin: "ㄧㄚ"}, {word: "鵝", pinyin: "ㄜˊ"}, {word: "鳥", pinyin: "ㄋㄧㄠˇ"},
-      {word: "老虎", pinyin: "ㄌㄠˇ ㄏㄨˇ"}, {word: "獅子", pinyin: "ㄕ ㄗˇ"}, {word: "大象", pinyin: "ㄉㄚˋ ㄒㄧㄤˋ"},
-      {word: "長頸鹿", pinyin: "ㄔㄤˊ ㄐㄧㄥˇ ㄌㄨˋ"}, {word: "猴子", pinyin: "ㄏㄡˊ ㄗˇ"}, {word: "熊貓", pinyin: "ㄒㄩㄥˊ ㄇㄠ"},
-      {word: "企鵝", pinyin: "ㄑㄧˇ ㄜˊ"}, {word: "海豚", pinyin: "ㄏㄞˇ ㄊㄨㄣˊ"}, {word: "鯨魚", pinyin: "ㄐㄧㄥ ㄩˊ"},
-      {word: "蝴蝶", pinyin: "ㄏㄨˊ ㄉㄧㄝˊ"}, {word: "蜜蜂", pinyin: "ㄇㄧˋ ㄈㄥ"}, {word: "螞蟻", pinyin: "ㄇㄚˇ ㄧˇ"},
-      {word: "蜘蛛", pinyin: "ㄓ ㄓㄨ"}, {word: "蚊子", pinyin: "ㄨㄣˊ ㄗˇ"}, {word: "蒼蠅", pinyin: "ㄘㄤ ㄧㄥˊ"},
-      {word: "紅色", pinyin: "ㄏㄨㄥˊ ㄙㄜˋ"}, {word: "黃色", pinyin: "ㄏㄨㄤˊ ㄙㄜˋ"}, {word: "藍色", pinyin: "ㄌㄢˊ ㄙㄜˋ"},
-      {word: "綠色", pinyin: "ㄌㄩˋ ㄙㄜˋ"}, {word: "黑色", pinyin: "ㄏㄟ ㄙㄜˋ"}, {word: "白色", pinyin: "ㄅㄞˊ ㄙㄜˋ"},
-      {word: "紫色", pinyin: "ㄗˇ ㄙㄜˋ"}, {word: "橘色", pinyin: "ㄐㄩˊ ㄙㄜˋ"}, {word: "粉紅色", pinyin: "ㄈㄣˇ ㄏㄨㄥˊ ㄙㄜˋ"},
-      {word: "灰色", pinyin: "ㄏㄨㄟ ㄙㄜˋ"}, {word: "棕色", pinyin: "ㄗㄨㄥ ㄙㄜˋ"}, {word: "金色", pinyin: "ㄐㄧㄣ ㄙㄜˋ"},
-      {word: "銀色", pinyin: "ㄧㄣˊ ㄙㄜˋ"}, {word: "彩色", pinyin: "ㄘㄞˇ ㄙㄜˋ"}, {word: "透明", pinyin: "ㄊㄡˋ ㄇㄧㄥˊ"},
-      {word: "一", pinyin: "ㄧ"}, {word: "二", pinyin: "ㄦˋ"}, {word: "三", pinyin: "ㄙㄢ"},
-      {word: "四", pinyin: "ㄙˋ"}, {word: "五", pinyin: "ㄨˇ"}, {word: "六", pinyin: "ㄌㄧㄡˋ"},
-      {word: "七", pinyin: "ㄑㄧ"}, {word: "八", pinyin: "ㄅㄚ"}, {word: "九", pinyin: "ㄐㄧㄡˇ"},
-      {word: "十", pinyin: "ㄕˊ"}, {word: "百", pinyin: "ㄅㄞˇ"}, {word: "千", pinyin: "ㄑㄧㄢ"},
-      {word: "萬", pinyin: "ㄨㄢˋ"}, {word: "零", pinyin: "ㄌㄧㄥˊ"}, {word: "第一", pinyin: "ㄉㄧˋ ㄧ"},
-      {word: "星期一", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄧ"}, {word: "星期二", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄦˋ"}, {word: "星期三", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄙㄢ"},
-      {word: "星期四", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄙˋ"}, {word: "星期五", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄨˇ"}, {word: "星期六", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄌㄧㄡˋ"},
-      {word: "星期日", pinyin: "ㄒㄧㄥ ㄑㄧˊ ㄖˋ"}, {word: "今天", pinyin: "ㄐㄧㄣ ㄊㄧㄢ"}, {word: "明天", pinyin: "ㄇㄧㄥˊ ㄊㄧㄢ"},
-      {word: "昨天", pinyin: "ㄗㄨㄛˊ ㄊㄧㄢ"}, {word: "早上", pinyin: "ㄗㄠˇ ㄕㄤˋ"}, {word: "中午", pinyin: "ㄓㄨㄥ ㄨˇ"},
-      {word: "下午", pinyin: "ㄒㄧㄚˋ ㄨˇ"}, {word: "晚上", pinyin: "ㄨㄢˇ ㄕㄤˋ"}, {word: "半夜", pinyin: "ㄅㄢˋ ㄧㄝˋ"},
-      {word: "現在", pinyin: "ㄒㄧㄢˋ ㄗㄞˋ"}, {word: "以前", pinyin: "ㄧˇ ㄑㄧㄢˊ"}, {word: "以後", pinyin: "ㄧˇ ㄏㄡˋ"},
-      {word: "上面", pinyin: "ㄕㄤˋ ㄇㄧㄢˋ"}, {word: "下面", pinyin: "ㄒㄧㄚˋ ㄇㄧㄢˋ"}, {word: "左邊", pinyin: "ㄗㄨㄛˇ ㄅㄧㄢ"},
-      {word: "右邊", pinyin: "ㄧㄡˋ ㄅㄧㄢ"}, {word: "前面", pinyin: "ㄑㄧㄢˊ ㄇㄧㄢˋ"}, {word: "後面", pinyin: "ㄏㄡˋ ㄇㄧㄢˋ"},
-      {word: "裡面", pinyin: "ㄌㄧˇ ㄇㄧㄢˋ"}, {word: "外面", pinyin: "ㄨㄞˋ ㄇㄧㄢˋ"}, {word: "旁邊", pinyin: "ㄆㄤˊ ㄅㄧㄢ"},
-      {word: "中間", pinyin: "ㄓㄨㄥ ㄐㄧㄢ"}, {word: "附近", pinyin: "ㄈㄨˋ ㄐㄧㄣˋ"}, {word: "遠方", pinyin: "ㄩㄢˇ ㄈㄤ"},
-      {word: "大", pinyin: "ㄉㄚˋ"}, {word: "小", pinyin: "ㄒㄧㄠˇ"}, {word: "高", pinyin: "ㄍㄠ"},
-      {word: "矮", pinyin: "ㄞˇ"}, {word: "長", pinyin: "ㄔㄤˊ"}, {word: "短", pinyin: "ㄉㄨㄢˇ"},
-      {word: "胖", pinyin: "ㄆㄤˋ"}, {word: "瘦", pinyin: "ㄕㄡˋ"}, {word: "厚", pinyin: "ㄏㄡˋ"},
-      {word: "薄", pinyin: "ㄅㄛˊ"}, {word: "寬", pinyin: "ㄎㄨㄢ"}, {word: "窄", pinyin: "ㄓㄞˇ"},
-      {word: "深", pinyin: "ㄕㄣ"}, {word: "淺", pinyin: "ㄑㄧㄢˇ"}, {word: "重", pinyin: "ㄓㄨㄥˋ"},
-      {word: "輕", pinyin: "ㄑㄧㄥ"}, {word: "快", pinyin: "ㄎㄨㄞˋ"}, {word: "慢", pinyin: "ㄇㄢˋ"},
-      {word: "多", pinyin: "ㄉㄨㄛ"}, {word: "少", pinyin: "ㄕㄠˇ"}, {word: "新", pinyin: "ㄒㄧㄣ"},
-      {word: "舊", pinyin: "ㄐㄧㄡˋ"}, {word: "好", pinyin: "ㄏㄠˇ"}, {word: "壞", pinyin: "ㄏㄨㄞˋ"},
-      {word: "美", pinyin: "ㄇㄟˇ"}, {word: "醜", pinyin: "ㄔㄡˇ"}, {word: "乾淨", pinyin: "ㄍㄢ ㄐㄧㄥˋ"},
-      {word: "髒", pinyin: "ㄗㄤ"}, {word: "熱", pinyin: "ㄖㄜˋ"}, {word: "冷", pinyin: "ㄌㄥˇ"},
-      {word: "溫暖", pinyin: "ㄨㄣ ㄋㄨㄢˇ"}, {word: "涼快", pinyin: "ㄌㄧㄤˊ ㄎㄨㄞˋ"}, {word: "明亮", pinyin: "ㄇㄧㄥˊ ㄌㄧㄤˋ"},
-      {word: "黑暗", pinyin: "ㄏㄟ ㄢˋ"}, {word: "吵", pinyin: "ㄔㄠˇ"}, {word: "安靜", pinyin: "ㄢ ㄐㄧㄥˋ"},
-      {word: "走路", pinyin: "ㄗㄡˇ ㄌㄨˋ"}, {word: "跑", pinyin: "ㄆㄠˇ"}, {word: "跳", pinyin: "ㄊㄧㄠˋ"},
-      {word: "爬", pinyin: "ㄆㄚˊ"}, {word: "飛", pinyin: "ㄈㄟ"}, {word: "游", pinyin: "ㄧㄡˊ"},
-      {word: "坐", pinyin: "ㄗㄨㄛˋ"}, {word: "站", pinyin: "ㄓㄢˋ"}, {word: "躺", pinyin: "ㄊㄤˇ"},
-      {word: "睡覺", pinyin: "ㄕㄨㄟˋ ㄐㄧㄠˋ"}, {word: "起床", pinyin: "ㄑㄧˇ ㄔㄨㄤˊ"}, {word: "吃飯", pinyin: "ㄔ ㄈㄢˋ"},
-      {word: "喝水", pinyin: "ㄏㄜ ㄕㄨㄟˇ"}, {word: "看書", pinyin: "ㄎㄢˋ ㄕㄨ"}, {word: "聽", pinyin: "ㄊㄧㄥ"},
-      {word: "說話", pinyin: "ㄕㄨㄛ ㄏㄨㄚˋ"}, {word: "笑", pinyin: "ㄒㄧㄠˋ"}, {word: "哭", pinyin: "ㄎㄨ"},
-      {word: "唱", pinyin: "ㄔㄤˋ"}, {word: "跳舞", pinyin: "ㄊㄧㄠˋ ㄨˇ"}, {word: "玩", pinyin: "ㄨㄢˊ"},
-      {word: "工作", pinyin: "ㄍㄨㄥ ㄗㄨㄛˋ"}, {word: "休息", pinyin: "ㄒㄧㄡ ㄒㄧˊ"}, {word: "打掃", pinyin: "ㄉㄚˇ ㄙㄠˇ"},
-      {word: "洗澡", pinyin: "ㄒㄧˇ ㄗㄠˇ"}, {word: "刷牙", pinyin: "ㄕㄨㄚ ㄧㄚˊ"}, {word: "洗臉", pinyin: "ㄒㄧˇ ㄌㄧㄢˇ"},
-      {word: "穿外套", pinyin: "ㄔㄨㄢ ㄨㄞˋ ㄊㄠˋ"}, {word: "整理", pinyin: "ㄓㄥˇ ㄌㄧˇ"}, {word: "戴帽子", pinyin: "ㄉㄞˋ ㄇㄠˋ ㄗˇ"},
-      {word: "穿鞋子", pinyin: "ㄔㄨㄢ ㄒㄧㄝˊ ㄗˇ"}, {word: "背書包", pinyin: "ㄅㄟ ㄕㄨ ㄅㄠ"}, {word: "拿", pinyin: "ㄋㄚˊ"},
-      {word: "放", pinyin: "ㄈㄤˋ"}, {word: "開", pinyin: "ㄎㄞ"}, {word: "關", pinyin: "ㄍㄨㄢ"},
-      {word: "推", pinyin: "ㄊㄨㄟ"}, {word: "拉", pinyin: "ㄌㄚ"}, {word: "打", pinyin: "ㄉㄚˇ"},
-      {word: "踢", pinyin: "ㄊㄧ"}, {word: "丟", pinyin: "ㄉㄧㄡ"}, {word: "接", pinyin: "ㄐㄧㄝ"},
-      {word: "抓", pinyin: "ㄓㄨㄚ"}, {word: "摸", pinyin: "ㄇㄛ"}, {word: "抱", pinyin: "ㄅㄠˋ"},
-      {word: "親", pinyin: "ㄑㄧㄣ"}, {word: "握手", pinyin: "ㄨㄛˋ ㄕㄡˇ"}, {word: "揮手", pinyin: "ㄏㄨㄟ ㄕㄡˇ"},
-      {word: "點頭", pinyin: "ㄉㄧㄢˇ ㄊㄡˊ"}, {word: "搖頭", pinyin: "ㄧㄠˊ ㄊㄡˊ"}, {word: "眨眼", pinyin: "ㄓㄚˇ ㄧㄢˇ"},
-      {word: "頭", pinyin: "ㄊㄡˊ"}, {word: "臉", pinyin: "ㄌㄧㄢˇ"}, {word: "眼睛", pinyin: "ㄧㄢˇ ㄐㄧㄥ"},
-      {word: "鼻子", pinyin: "ㄅㄧˊ ㄗˇ"}, {word: "嘴巴", pinyin: "ㄗㄨㄟˇ ㄅㄚ"}, {word: "耳朵", pinyin: "ㄦˇ ㄉㄨㄛˇ"},
-      {word: "頭髮", pinyin: "ㄊㄡˊ ㄈㄚˇ"}, {word: "眉毛", pinyin: "ㄇㄟˊ ㄇㄠˊ"}, {word: "牙齒", pinyin: "ㄧㄚˊ ㄔˇ"},
-      {word: "舌頭", pinyin: "ㄕㄜˊ ㄊㄡˊ"}, {word: "脖子", pinyin: "ㄅㄛˊ ㄗˇ"}, {word: "肩膀", pinyin: "ㄐㄧㄢ ㄅㄤˇ"},
-      {word: "手", pinyin: "ㄕㄡˇ"}, {word: "手臂", pinyin: "ㄕㄡˇ ㄅㄧˋ"}, {word: "手指", pinyin: "ㄕㄡˇ ㄓˇ"},
-      {word: "手掌", pinyin: "ㄕㄡˇ ㄓㄤˇ"}, {word: "腳", pinyin: "ㄐㄧㄠˇ"}, {word: "腿", pinyin: "ㄊㄨㄟˇ"},
-      {word: "膝蓋", pinyin: "ㄒㄧ ㄍㄞˋ"}, {word: "腳趾", pinyin: "ㄐㄧㄠˇ ㄓˇ"}, {word: "身體", pinyin: "ㄕㄣ ㄊㄧˇ"},
-      {word: "肚子", pinyin: "ㄉㄨˋ ㄗˇ"}, {word: "背", pinyin: "ㄅㄟˋ"}, {word: "心臟", pinyin: "ㄒㄧㄣ ㄗㄤˋ"},
-      {word: "衣服", pinyin: "ㄧ ㄈㄨˊ"}, {word: "褲子", pinyin: "ㄎㄨˋ ㄗˇ"}, {word: "裙子", pinyin: "ㄑㄩㄣˊ ㄗˇ"},
-      {word: "外套", pinyin: "ㄨㄞˋ ㄊㄠˋ"}, {word: "帽子", pinyin: "ㄇㄠˋ ㄗˇ"}, {word: "鞋子", pinyin: "ㄒㄧㄝˊ ㄗˇ"},
-      {word: "襪子", pinyin: "ㄨㄚˋ ㄗˇ"}, {word: "手套", pinyin: "ㄕㄡˇ ㄊㄠˋ"}, {word: "圍巾", pinyin: "ㄨㄟˊ ㄐㄧㄣ"},
-      {word: "眼鏡", pinyin: "ㄧㄢˇ ㄐㄧㄥˋ"}, {word: "書包", pinyin: "ㄕㄨ ㄅㄠ"}, {word: "雨傘", pinyin: "ㄩˇ ㄙㄢˇ"},
-      {word: "房子", pinyin: "ㄈㄤˊ ㄗˇ"}, {word: "門", pinyin: "ㄇㄣˊ"}, {word: "窗戶", pinyin: "ㄔㄨㄤ ㄏㄨˋ"},
-      {word: "屋頂", pinyin: "ㄨ ㄉㄧㄥˇ"}, {word: "牆壁", pinyin: "ㄑㄧㄤˊ ㄅㄧˋ"}, {word: "地板", pinyin: "ㄉㄧˋ ㄅㄢˇ"},
-      {word: "天花板", pinyin: "ㄊㄧㄢ ㄏㄨㄚ ㄅㄢˇ"}, {word: "樓梯", pinyin: "ㄌㄡˊ ㄊㄧ"}, {word: "電梯", pinyin: "ㄉㄧㄢˋ ㄊㄧ"},
-      {word: "客廳", pinyin: "ㄎㄜˋ ㄊㄧㄥ"}, {word: "臥室", pinyin: "ㄨㄛˋ ㄕˋ"}, {word: "廚房", pinyin: "ㄔㄨˊ ㄈㄤˊ"},
-      {word: "浴室", pinyin: "ㄩˋ ㄕˋ"}, {word: "陽台", pinyin: "ㄧㄤˊ ㄊㄞˊ"}, {word: "院子", pinyin: "ㄩㄢˋ ㄗˇ"},
-      {word: "桌子", pinyin: "ㄓㄨㄛ ㄗˇ"}, {word: "椅子", pinyin: "ㄧˇ ㄗˇ"}, {word: "床", pinyin: "ㄔㄨㄤˊ"},
-      {word: "沙發", pinyin: "ㄕㄚ ㄈㄚ"}, {word: "櫃子", pinyin: "ㄍㄨㄟˋ ㄗˇ"}, {word: "冰箱", pinyin: "ㄅㄧㄥ ㄒㄧㄤ"},
-      {word: "電視", pinyin: "ㄉㄧㄢˋ ㄕˋ"}, {word: "電話", pinyin: "ㄉㄧㄢˋ ㄏㄨㄚˋ"}, {word: "時鐘", pinyin: "ㄕˊ ㄓㄨㄥ"},
-      {word: "燈", pinyin: "ㄉㄥ"}, {word: "風扇", pinyin: "ㄈㄥ ㄕㄢˋ"}, {word: "冷氣", pinyin: "ㄌㄥˇ ㄑㄧˋ"},
-      {word: "汽車", pinyin: "ㄑㄧˋ ㄔㄜ"}, {word: "機車", pinyin: "ㄐㄧ ㄔㄜ"}, {word: "腳踏車", pinyin: "ㄐㄧㄠˇ ㄊㄚˋ ㄔㄜ"},
-      {word: "公車", pinyin: "ㄍㄨㄥ ㄔㄜ"}, {word: "火車", pinyin: "ㄏㄨㄛˇ ㄔㄜ"}, {word: "飛機", pinyin: "ㄈㄟ ㄐㄧ"},
-      {word: "船", pinyin: "ㄔㄨㄢˊ"}, {word: "捷運", pinyin: "ㄐㄧㄝˊ ㄩㄣˋ"}, {word: "計程車", pinyin: "ㄐㄧˋ ㄔㄥˊ ㄔㄜ"},
-      {word: "馬路", pinyin: "ㄇㄚˇ ㄌㄨˋ"}, {word: "紅綠燈", pinyin: "ㄏㄨㄥˊ ㄌㄩˋ ㄉㄥ"}, {word: "斑馬線", pinyin: "ㄅㄢ ㄇㄚˇ ㄒㄧㄢˋ"}
+      {word: "體育", pinyin: "ㄊㄧˇ ㄩˋ"}, {word: "圖書館", pinyin: "ㄊㄨˊ ㄕㄨ ㄍㄨㄢˇ"}, {word: "操場", pinyin: "ㄘㄠ ㄔㄤˇ"},
+      {word: "餐廳", pinyin: "ㄘㄢ ㄊㄧㄥ"}, {word: "廁所", pinyin: "ㄘㄜˋ ㄙㄨㄛˇ"}, {word: "公園", pinyin: "ㄍㄨㄥ ㄩㄢˊ"},
+      {word: "動物園", pinyin: "ㄉㄨㄥˋ ㄨˋ ㄩㄢˊ"}, {word: "遊樂園", pinyin: "ㄧㄡˊ ㄌㄜˋ ㄩㄢˊ"}, {word: "超市", pinyin: "ㄔㄠ ㄕˋ"},
+      {word: "商店", pinyin: "ㄕㄤ ㄉㄧㄢˋ"}, {word: "醫院", pinyin: "ㄧ ㄩㄢˋ"}, {word: "警察", pinyin: "ㄐㄧㄥˇ ㄔㄚˊ"},
+      {word: "消防員", pinyin: "ㄒㄧㄠ ㄈㄤˊ ㄩㄢˊ"}, {word: "醫生", pinyin: "ㄧ ㄕㄥ"}, {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"},
+      {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"}, {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"},
+      {word: "工人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "郵差", pinyin: "ㄧㄡˊ ㄔㄞ"}, {word: "春天", pinyin: "ㄔㄨㄣ ㄊㄧㄢ"},
+      {word: "夏天", pinyin: "ㄒㄧㄚˋ ㄊㄧㄢ"}, {word: "秋天", pinyin: "ㄑㄧㄡ ㄊㄧㄢ"}, {word: "冬天", pinyin: "ㄉㄨㄥ ㄊㄧㄢ"},
+      {word: "晴天", pinyin: "ㄑㄧㄥˊ ㄊㄧㄢ"}, {word: "雨天", pinyin: "ㄩˇ ㄊㄧㄢ"}, {word: "颱風", pinyin: "ㄊㄞˊ ㄈㄥ"},
+      {word: "地震", pinyin: "ㄉㄧˋ ㄓㄣˋ"}, {word: "太陽", pinyin: "ㄊㄞˋ ㄧㄤˊ"}, {word: "月亮", pinyin: "ㄩㄝˋ ㄌㄧㄤˋ"},
+      {word: "星星", pinyin: "ㄒㄧㄥ ㄒㄧㄥ"}, {word: "雲朵", pinyin: "ㄩㄣˊ ㄉㄨㄛˇ"}, {word: "彩虹", pinyin: "ㄘㄞˇ ㄏㄨㄥˊ"}
     ];
 
     // 10種武器定義
     const weapons = [
-      {id: 0, name: "🗡️ 普通劍", cost: 0, effect: "每秒攻擊一次", icon: "🗡️"},
+      {id: 0, name: "🗡️ 普通劍", cost: 0, effect: "每次攻擊一次", icon: "🗡️"},
       {id: 1, name: "⚔️ 雙刃劍", cost: 50, effect: "同時砍兩下,但有3秒冷卻", icon: "⚔️"},
       {id: 2, name: "🔨 重錘", cost: 60, effect: "每三下有一下造成2倍傷害", icon: "🔨"},
       {id: 3, name: "🏹 神弓", cost: 80, effect: "每三秒攻擊一次,但造成5倍傷害", icon: "🏹"},
@@ -1128,7 +1031,7 @@
       {id: 7, name: "🛡️ 破甲劍", cost: 85, effect: "每打三下減少對手5%防禦率", icon: "🛡️"},
       {id: 8, name: "⚡ 虛弱劍", cost: 85, effect: "每打三下減少對手2點攻擊力", icon: "⚡"},
       {id: 9, name: "🎲 隨機劍", cost: 75, effect: "每次攻擊隨機觸發不同效果", icon: "🎲"},
-      {id: 10, name: "💀 秒殺劍", cost: 120, effect: "極低機率(5%)直接秒殺怪獸", icon: "💀"}
+      {id: 10, name: "💀 秒殺劍", cost: 120, effect: "極低機率(3%)直接秒殺怪獸", icon: "💀"}
     ];
 
     // 100種妖怪
@@ -1167,7 +1070,8 @@
       enemyDefenseReduction: 0,
       enemyAttackReduction: 0,
       lastWeaponUseTime: 0,
-      battleLogEntries: []
+      battleLogEntries: [],
+      battleInterval: null
     };
 
     // 初始化 SDK
@@ -1278,7 +1182,7 @@
       }
       
       gameState.currentStage = stage;
-      gameState.playerHp = gameState.playerMaxHp; // 回復滿血
+      gameState.playerHp = gameState.playerMaxHp;
       gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.2, stage - 1));
       gameState.enemyHp = gameState.enemyMaxHp;
       gameState.enemyAttack = 8 + Math.floor((stage - 1) * 0.5);
@@ -1449,7 +1353,7 @@
           }
           break;
         case 10: // 秒殺劍
-          if (Math.random() < 0.05) {
+          if (Math.random() < 0.03) {
             gameState.enemyHp = 0;
             addBattleLog("💀 秒殺成功!敵人被一擊擊敗!", "player");
             updateUI();
@@ -1679,7 +1583,14 @@
     }
 
     function closeShop() {
-      showScreen('upgradeScreen');
+      // 恢復戰鬥
+      if (document.getElementById('gameScreen').classList.contains('active')) {
+        gameState.battleInterval = setInterval(() => {
+          autoBattle();
+        }, 5000);
+      } else {
+        showScreen('upgradeScreen');
+      }
     }
     
     window.upgradeHealth = upgradeHealth;
@@ -1727,16 +1638,32 @@
 
     // 關卡選擇
     function openStageSelect() {
+      // 暫停戰鬥
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+      }
       renderStageSelect();
       showScreen('stageSelectScreen');
     }
 
     function closeStageSelect() {
       showScreen('gameScreen');
+      // 恢復戰鬥
+      gameState.battleInterval = setInterval(() => {
+        autoBattle();
+      }, 5000);
+    }
+
+    function backToHomeFromStageSelect() {
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+      }
+      showScreen('homeScreen');
     }
     
     window.openStageSelect = openStageSelect;
     window.closeStageSelect = closeStageSelect;
+    window.backToHomeFromStageSelect = backToHomeFromStageSelect;
 
     function renderStageSelect() {
       const grid = document.getElementById('stagesGrid');
@@ -1782,6 +1709,9 @@
 
     // 返回首頁
     function backToHome() {
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+      }
       showScreen('homeScreen');
     }
 
@@ -1845,5 +1775,5 @@
       loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b42c21b58af251',t:'MTc2MjU5NTQ5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b54e62a150f251',t:'MTc2MjYwNzM4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
