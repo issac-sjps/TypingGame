@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>中文打字英雄大冒險</title>
   <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
   <style>
     body {
       box-sizing: border-box;
@@ -42,59 +43,68 @@
       flex-direction: column;
     }
 
-    /* 首頁樣式 */
-    .home-screen {
+    /* 登入/註冊畫面 */
+    .auth-screen {
       align-items: center;
       justify-content: center;
-      text-align: center;
+    }
+
+    .auth-container {
+      background: rgba(255,255,255,0.2);
+      padding: 40px;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+      backdrop-filter: blur(10px);
     }
 
     .game-title {
-      font-size: 48px;
+      font-size: 36px;
       font-weight: bold;
       margin-bottom: 30px;
+      text-align: center;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
     }
 
-    .game-description {
-      background: rgba(255,255,255,0.2);
-      padding: 30px;
-      border-radius: 15px;
-      max-width: 800px;
-      margin: 0 auto 30px auto;
-      backdrop-filter: blur(10px);
-      text-align: center;
-    }
-
-    .game-description h2 {
-      font-size: 28px;
+    .form-group {
       margin-bottom: 20px;
-      text-align: center;
     }
 
-    .game-description p {
-      font-size: 18px;
-      line-height: 1.8;
-      margin-bottom: 15px;
-      text-align: center;
+    .form-label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-weight: bold;
     }
 
-    .button-group {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      margin-top: 20px;
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #ffd700;
+      box-shadow: 0 0 10px rgba(255,215,0,0.3);
     }
 
     .btn {
-      padding: 15px 40px;
-      font-size: 20px;
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
       font-weight: bold;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s;
       color: #ffffff;
+      margin-bottom: 10px;
     }
 
     .btn-primary {
@@ -123,12 +133,80 @@
       transform: scale(1.05);
     }
 
+    .btn-danger {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .btn-danger:hover {
+      transform: scale(1.05);
+    }
+
     .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
-    /* 遊戲畫面樣式 */
+    .link-button {
+      background: none;
+      border: none;
+      color: #ffd700;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+      padding: 5px;
+      margin-top: 10px;
+    }
+
+    .link-button:hover {
+      color: #ffed4e;
+    }
+
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .message-error {
+      background: rgba(245,87,108,0.3);
+      border: 2px solid #f5576c;
+    }
+
+    .message-success {
+      background: rgba(67,233,123,0.3);
+      border: 2px solid #43e97b;
+    }
+
+    /* 主選單畫面 */
+    .menu-screen {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-container {
+      background: rgba(255,255,255,0.2);
+      padding: 40px;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 100%;
+      backdrop-filter: blur(10px);
+    }
+
+    .welcome-text {
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    /* 遊戲畫面 */
     .game-screen {
       padding: 15px;
     }
@@ -141,6 +219,8 @@
       background: rgba(255,255,255,0.1);
       padding: 15px;
       border-radius: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .stage-info {
@@ -153,16 +233,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-
-    .countdown-info {
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(0,0,0,0.3);
-      padding: 8px 15px;
-      border-radius: 8px;
     }
 
     .battle-area {
@@ -180,28 +250,6 @@
       padding: 20px;
       border-radius: 15px;
       min-width: 280px;
-      transition: transform 0.5s;
-      position: relative;
-    }
-
-    .character.attacking {
-      animation: clash 0.5s ease-in-out;
-    }
-
-    @keyframes clash {
-      0% { transform: translateX(0); }
-      50% { transform: translateX(30px); }
-      100% { transform: translateX(0); }
-    }
-
-    .character:last-child.attacking {
-      animation: clash-reverse 0.5s ease-in-out;
-    }
-
-    @keyframes clash-reverse {
-      0% { transform: translateX(0); }
-      50% { transform: translateX(-30px); }
-      100% { transform: translateX(0); }
     }
 
     .character-avatar {
@@ -227,27 +275,6 @@
       padding: 5px;
       background: rgba(0,0,0,0.2);
       border-radius: 5px;
-      cursor: help;
-      position: relative;
-    }
-
-    .stat-row:hover .tooltip {
-      display: block;
-    }
-
-    .tooltip {
-      display: none;
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.9);
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 14px;
-      white-space: nowrap;
-      z-index: 1000;
-      margin-bottom: 5px;
     }
 
     .hp-bar {
@@ -299,6 +326,7 @@
       border: 3px solid #ffffff;
       border-radius: 10px;
       width: 400px;
+      max-width: 100%;
       text-align: center;
       background: rgba(255,255,255,0.9);
       color: #000000;
@@ -333,354 +361,6 @@
       color: #ffd700;
     }
 
-    /* 升級選擇畫面 */
-    .upgrade-screen {
-      align-items: center;
-      justify-content: center;
-    }
-
-    .upgrade-container {
-      background: rgba(255,255,255,0.2);
-      padding: 40px;
-      border-radius: 15px;
-      text-align: center;
-      max-width: 900px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .upgrade-title {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-
-    .coins-display-large {
-      font-size: 28px;
-      color: #ffd700;
-      font-weight: bold;
-      margin-bottom: 30px;
-      background: rgba(0,0,0,0.3);
-      padding: 15px;
-      border-radius: 10px;
-      display: inline-block;
-    }
-
-    .upgrade-options {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .upgrade-card {
-      background: rgba(255,255,255,0.3);
-      padding: 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .upgrade-card:hover {
-      transform: translateY(-5px);
-      background: rgba(255,255,255,0.4);
-    }
-
-    .upgrade-card h3 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .upgrade-card p {
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
-
-    .upgrade-cost {
-      font-size: 18px;
-      color: #ffd700;
-      font-weight: bold;
-    }
-
-    /* 武器商店特殊卡片 */
-    .shop-card-special {
-      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-      padding: 25px;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 30px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-
-    .shop-card-special:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
-    }
-
-    .shop-icon {
-      font-size: 60px;
-      margin-right: 20px;
-    }
-
-    .shop-content {
-      flex: 1;
-      text-align: left;
-    }
-
-    .shop-content h3 {
-      font-size: 32px;
-      margin-bottom: 8px;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .shop-content p {
-      font-size: 18px;
-      margin: 0;
-      color: #ffffff;
-    }
-
-    .shop-arrow {
-      font-size: 48px;
-      font-weight: bold;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-
-    /* 商店畫面 */
-    .shop-screen {
-      align-items: center;
-      justify-content: center;
-    }
-
-    .shop-container {
-      background: rgba(255,255,255,0.2);
-      padding: 30px;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .shop-title {
-      font-size: 36px;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    /* 浮動商店視窗 */
-    .shop-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-
-    .shop-modal.active {
-      display: flex;
-    }
-
-    .shop-modal-content {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 30px;
-      border-radius: 15px;
-      max-width: 900px;
-      width: 100%;
-      max-height: 90%;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .shop-modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .shop-modal-title {
-      font-size: 32px;
-      font-weight: bold;
-      color: #ffffff;
-    }
-
-    .shop-close-btn {
-      background: rgba(255,255,255,0.3);
-      border: none;
-      color: #ffffff;
-      font-size: 28px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .shop-close-btn:hover {
-      background: rgba(255,255,255,0.5);
-      transform: scale(1.1);
-    }
-
-    .weapons-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .weapon-card {
-      background: rgba(255,255,255,0.3);
-      padding: 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: 3px solid transparent;
-    }
-
-    .weapon-card:hover {
-      transform: translateY(-5px);
-      border-color: #ffd700;
-    }
-
-    .weapon-card.owned {
-      border-color: #43e97b;
-    }
-
-    .weapon-card.equipped {
-      border-color: #f5576c;
-      background: rgba(245,87,108,0.3);
-    }
-
-    .weapon-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
-    }
-
-    .weapon-card h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    .weapon-card p {
-      font-size: 14px;
-      margin-bottom: 10px;
-      min-height: 60px;
-    }
-
-    /* 關卡選擇畫面 */
-    .stage-select-screen {
-      align-items: center;
-      justify-content: center;
-    }
-
-    .stage-select-container {
-      background: rgba(255,255,255,0.2);
-      padding: 30px;
-      border-radius: 15px;
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .stages-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-
-    .stage-card {
-      background: rgba(255,255,255,0.3);
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .stage-card:hover:not(.locked) {
-      transform: scale(1.1);
-      background: rgba(255,255,255,0.5);
-    }
-
-    .stage-card.completed {
-      background: rgba(67,233,123,0.5);
-    }
-
-    .stage-card.current {
-      background: rgba(245,87,108,0.5);
-      border: 3px solid #ffd700;
-    }
-
-    .stage-card.locked {
-      background: rgba(0,0,0,0.3);
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-
-    /* 勝利/失敗畫面 */
-    .result-screen {
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .result-container {
-      background: rgba(255,255,255,0.2);
-      padding: 50px;
-      border-radius: 15px;
-    }
-
-    .result-title {
-      font-size: 48px;
-      margin-bottom: 30px;
-    }
-
-    .result-message {
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
-
-    /* 通關畫面 */
-    .victory-screen {
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .victory-container {
-      background: rgba(255,255,255,0.2);
-      padding: 50px;
-      border-radius: 15px;
-    }
-
-    .victory-title {
-      font-size: 60px;
-      margin-bottom: 30px;
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
     .battle-log {
       background: rgba(0,0,0,0.3);
       padding: 15px;
@@ -705,78 +385,248 @@
       background: rgba(245,87,108,0.3);
     }
 
-    .small-text {
-      font-size: 12px;
-      color: #cccccc;
+    /* 商店畫面 */
+    .shop-screen {
+      align-items: center;
+      justify-content: flex-start;
     }
 
-    .upgrade-panel {
+    .shop-container {
       background: rgba(255,255,255,0.2);
-      padding: 20px;
+      padding: 30px;
       border-radius: 15px;
-      margin-top: 20px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
-    .upgrade-panel-title {
+    .shop-title {
+      font-size: 36px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .weapons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .weapon-card {
+      background: rgba(255,255,255,0.3);
+      padding: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 3px solid transparent;
+    }
+
+    .weapon-card:hover {
+      transform: translateY(-5px);
+      border-color: #ffd700;
+    }
+
+    .weapon-card.equipped {
+      border-color: #f5576c;
+      background: rgba(245,87,108,0.3);
+    }
+
+    .weapon-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .weapon-card h3 {
       font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .weapon-card p {
+      font-size: 14px;
+      margin-bottom: 10px;
+      min-height: 60px;
+    }
+
+    .upgrade-cost {
+      font-size: 18px;
+      color: #ffd700;
       font-weight: bold;
-      margin-bottom: 15px;
+    }
+
+    /* 登入紀錄畫面 */
+    .records-screen {
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .records-container {
+      background: rgba(255,255,255,0.2);
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .records-title {
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .records-list {
+      background: rgba(0,0,0,0.3);
+      padding: 20px;
+      border-radius: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .record-item {
+      background: rgba(255,255,255,0.2);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .record-time {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .record-ip {
+      font-size: 14px;
+      color: #ffd700;
+    }
+
+    /* 失敗畫面 */
+    .defeat-screen {
+      align-items: center;
+      justify-content: center;
       text-align: center;
     }
 
-    .upgrade-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 10px;
+    .result-container {
+      background: rgba(255,255,255,0.2);
+      padding: 50px;
+      border-radius: 15px;
     }
 
-    .btn-upgrade {
-      padding: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #ffffff;
+    .result-title {
+      font-size: 48px;
+      margin-bottom: 30px;
     }
 
-    .btn-upgrade:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    .result-message {
+      font-size: 24px;
+      margin-bottom: 30px;
     }
 
-    .btn-upgrade:active {
-      transform: translateY(0);
+    .button-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* 通關畫面 */
+    .victory-screen {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .victory-title {
+      font-size: 60px;
+      margin-bottom: 30px;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .loading-spinner {
+      font-size: 48px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body>
-  <div class="game-container"><!-- 首頁 -->
-   <div class="screen active" id="homeScreen">
-    <div class="home-screen">
-     <div class="game-title" id="gameTitle">
-      中文打字英雄大冒險
+  <div class="game-container"><!-- 登入畫面 -->
+   <div class="screen active" id="loginScreen">
+    <div class="auth-screen">
+     <div class="auth-container">
+      <div class="game-title" id="gameTitle">
+       中文打字英雄大冒險
+      </div>
+      <div id="loginMessage"></div>
+      <form id="loginForm" onsubmit="return false;">
+       <div class="form-group"><label class="form-label" for="loginUsername">帳號</label> <input type="text" class="form-input" id="loginUsername" required>
+       </div>
+       <div class="form-group"><label class="form-label" for="loginPassword">密碼</label> <input type="password" class="form-input" id="loginPassword" required>
+       </div><button type="submit" class="btn btn-primary" id="loginButton">登入</button> <button type="button" class="link-button" onclick="showRegisterScreen()">還沒有帳號？點此註冊</button>
+      </form>
      </div>
-     <div class="game-description">
-      <h2>遊戲說明</h2>
-      <p><strong>🎯 遊戲目標：</strong>通過打字擊敗100關的妖怪!</p>
-      <p><strong>⌨️ 遊戲方式：</strong>看到中文字和注音後,正確輸入中文字並按Enter確認。答對後可獲得金幣並對妖怪造成傷害。</p>
-      <p><strong>💰 金幣系統：</strong>每答對一題獲得金幣,可用來升級血量、攻擊力、防禦率、爆擊率,或購買特殊武器。</p>
-      <p><strong>⚔️ 戰鬥系統：</strong>你和妖怪輪流攻擊。妖怪每關會變強(血量×1.2、攻擊力×1.2、防禦率+1%、爆擊率起始2%每關+0.5%)。</p>
-      <p><strong>🛡️ 數值說明：</strong></p>
-      <p>• 血量(HP)：生命值,歸零則失敗</p>
-      <p>• 攻擊力：每次攻擊造成的傷害</p>
-      <p>• 防禦率：減少受到的傷害百分比 (實際傷害 = 攻擊力 × (100% - 防禦率))</p>
-      <p>• 爆擊率：造成雙倍傷害的機率</p>
-      <p><strong>🗡️ 武器系統：</strong>10種特殊武器,各有獨特效果(雙擊、毒性、秒殺等)。</p>
-      <p><strong>💾 進度保存：</strong>遊戲進度會自動保存在你的電腦上。</p>
+    </div>
+   </div><!-- 註冊畫面 -->
+   <div class="screen" id="registerScreen">
+    <div class="auth-screen">
+     <div class="auth-container">
+      <div class="game-title">
+       註冊新帳號
+      </div>
+      <div id="registerMessage"></div>
+      <form id="registerForm" onsubmit="return false;">
+       <div class="form-group"><label class="form-label" for="registerUsername">帳號</label> <input type="text" class="form-input" id="registerUsername" required>
+       </div>
+       <div class="form-group"><label class="form-label" for="registerPassword">密碼</label> <input type="password" class="form-input" id="registerPassword" required>
+       </div>
+       <div class="form-group"><label class="form-label" for="registerPasswordConfirm">確認密碼</label> <input type="password" class="form-input" id="registerPasswordConfirm" required>
+       </div><button type="submit" class="btn btn-primary" id="registerButton">註冊</button> <button type="button" class="link-button" onclick="showLoginScreen()">已有帳號？返回登入</button>
+      </form>
      </div>
-     <div class="button-group"><button class="btn btn-primary" id="startNewGameBtn">開始新遊戲</button> <button class="btn btn-secondary" id="continueGameBtn" style="display:none;">繼續遊戲</button>
+    </div>
+   </div><!-- 主選單畫面 -->
+   <div class="screen" id="menuScreen">
+    <div class="menu-screen">
+     <div class="menu-container">
+      <div class="game-title">
+       中文打字英雄大冒險
+      </div>
+      <div class="welcome-text">
+       歡迎回來，<span id="welcomeUsername"></span>！
+      </div>
+      <div class="menu-buttons"><button class="btn btn-success" onclick="startGame()">開始遊戲</button> <button class="btn btn-secondary" onclick="showRecordsScreen()">查看登入紀錄</button> <button class="btn btn-danger" onclick="resetProgress()">重置遊戲進度</button> <button class="btn btn-secondary" onclick="logout()">登出</button>
+      </div>
      </div>
     </div>
    </div><!-- 遊戲畫面 -->
@@ -786,9 +636,7 @@
       第 <span id="currentStage">1</span> 關
      </div>
      <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
-     </div>
-     <div class="countdown-info"><span>⏱️ 下次攻擊: </span> <span id="countdownDisplay" style="font-weight: bold; color: #ffd700;">5</span>
-     </div><button class="btn btn-secondary" id="stageSelectBtn">關卡選擇</button>
+     </div><button class="btn btn-secondary" onclick="openShop()" style="padding: 10px 20px; width: auto;">🛒 武器商店</button> <button class="btn btn-secondary" onclick="backToMenu()" style="padding: 10px 20px; width: auto;">返回選單</button>
     </div>
     <div class="battle-area">
      <div class="weapon-info">
@@ -808,27 +656,15 @@
       </div>
       <div class="stats">
        <div class="stat-row"><span>❤️ 血量:</span> <span id="playerHp">100/100</span>
-        <div class="tooltip">
-         當前生命值 / 最大生命值
-        </div>
        </div>
        <div class="hp-bar">
         <div class="hp-fill" id="playerHpBar" style="width: 100%;"></div>
        </div>
        <div class="stat-row"><span>⚔️ 攻擊:</span> <span id="playerAttack">10</span>
-        <div class="tooltip">
-         每次攻擊造成的基礎傷害
-        </div>
        </div>
        <div class="stat-row"><span>🛡️ 防禦:</span> <span id="playerDefense">0%</span>
-        <div class="tooltip">
-         減少受到傷害的百分比
-        </div>
        </div>
        <div class="stat-row"><span>💥 爆擊:</span> <span id="playerCrit">5%</span>
-        <div class="tooltip">
-         造成雙倍傷害的機率
-        </div>
        </div>
       </div>
      </div>
@@ -844,66 +680,17 @@
       </div>
       <div class="stats">
        <div class="stat-row"><span>❤️ 血量:</span> <span id="enemyHp">100/100</span>
-        <div class="tooltip">
-         妖怪的當前生命值
-        </div>
        </div>
        <div class="hp-bar">
         <div class="hp-fill" id="enemyHpBar" style="width: 100%;"></div>
        </div>
        <div class="stat-row"><span>⚔️ 攻擊:</span> <span id="enemyAttack">8</span>
-        <div class="tooltip">
-         妖怪每次攻擊的傷害
-        </div>
        </div>
        <div class="stat-row"><span>🛡️ 防禦:</span> <span id="enemyDefense">0%</span>
-        <div class="tooltip">
-         妖怪的防禦率
-        </div>
        </div>
        <div class="stat-row"><span>💥 爆擊:</span> <span id="enemyCrit">0%</span>
-        <div class="tooltip">
-         妖怪的爆擊率(最高50%)
-        </div>
        </div>
       </div>
-     </div>
-    </div>
-    <div class="upgrade-panel">
-     <div class="upgrade-panel-title">
-      💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
-     </div>
-     <div class="upgrade-buttons"><button class="btn-upgrade" onclick="upgradeHealthInGame()">
-       <div>
-        ❤️ 升級血量
-       </div>
-       <div class="small-text">
-        +20 HP (5💰)
-       </div></button> <button class="btn-upgrade" onclick="upgradeAttackInGame()">
-       <div>
-        ⚔️ 升級攻擊
-       </div>
-       <div class="small-text">
-        +5 攻擊 (5💰)
-       </div></button> <button class="btn-upgrade" onclick="upgradeDefenseInGame()">
-       <div>
-        🛡️ 升級防禦
-       </div>
-       <div class="small-text">
-        +3% 防禦 (5💰)
-       </div></button> <button class="btn-upgrade" onclick="upgradeCritInGame()">
-       <div>
-        💥 升級爆擊
-       </div>
-       <div class="small-text">
-        +2% 爆擊 (5💰)
-       </div></button> <button class="btn-upgrade" onclick="openShopInGame()">
-       <div>
-        🛒 武器商店
-       </div>
-       <div class="small-text">
-        購買武器
-       </div></button>
      </div>
     </div>
     <div class="typing-area">
@@ -913,160 +700,69 @@
      <div class="pinyin-display" id="pinyinDisplay"></div><input type="text" class="typing-input" id="typingInput" placeholder="輸入中文字後按Enter">
     </div>
     <div class="battle-log" id="battleLog"></div>
-   </div><!-- 升級選擇畫面 -->
-   <div class="screen" id="upgradeScreen">
-    <div class="upgrade-container">
-     <div class="upgrade-title">
-      🎉 過關了!
-     </div>
-     <div class="coins-display-large">
-      💰 剩餘金幣: <span id="upgradeScreenCoins">0</span>
-     </div>
-     <div class="hero-stats-display">
-      <h3 style="margin-bottom: 15px; font-size: 22px;">🦸 目前英雄數值</h3>
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
-       <div style="text-align: center;">
-        <div style="font-size: 18px; margin-bottom: 5px;">
-         ❤️ 血量
-        </div>
-        <div style="font-size: 24px; font-weight: bold; color: #f5576c;">
-         <span id="upgradeScreenHp">100</span>/<span id="upgradeScreenMaxHp">100</span>
-        </div>
-       </div>
-       <div style="text-align: center;">
-        <div style="font-size: 18px; margin-bottom: 5px;">
-         ⚔️ 攻擊力
-        </div>
-        <div style="font-size: 24px; font-weight: bold; color: #ffd700;">
-         <span id="upgradeScreenAttack">10</span>
-        </div>
-       </div>
-       <div style="text-align: center;">
-        <div style="font-size: 18px; margin-bottom: 5px;">
-         🛡️ 防禦率
-        </div>
-        <div style="font-size: 24px; font-weight: bold; color: #4facfe;">
-         <span id="upgradeScreenDefense">0</span>%
-        </div>
-       </div>
-       <div style="text-align: center;">
-        <div style="font-size: 18px; margin-bottom: 5px;">
-         💥 爆擊率
-        </div>
-        <div style="font-size: 24px; font-weight: bold; color: #f093fb;">
-         <span id="upgradeScreenCrit">5</span>%
-        </div>
-       </div>
-      </div>
-     </div>
-     <div class="upgrade-options">
-      <div class="upgrade-card" id="upgradeHealthCard">
-       <h3>❤️ 升級血量</h3>
-       <p>最大血量 +20<br>
-        並恢復 20 HP</p>
-       <div class="upgrade-cost">
-        💰 5 金幣
-       </div>
-      </div>
-      <div class="upgrade-card" id="upgradeAttackCard">
-       <h3>⚔️ 升級攻擊</h3>
-       <p>攻擊力 +5</p>
-       <div class="upgrade-cost">
-        💰 5 金幣
-       </div>
-      </div>
-      <div class="upgrade-card" id="upgradeDefenseCard">
-       <h3>🛡️ 升級防禦</h3>
-       <p>防禦率 +3%</p>
-       <div class="upgrade-cost">
-        💰 5 金幣
-       </div>
-      </div>
-      <div class="upgrade-card" id="upgradeCritCard">
-       <h3>💥 升級爆擊</h3>
-       <p>爆擊率 +2%</p>
-       <div class="upgrade-cost">
-        💰 5 金幣
-       </div>
-      </div>
-     </div>
-     <div class="shop-card-special" id="openShopCard">
-      <div class="shop-icon">
-       🛒
-      </div>
-      <div class="shop-content">
-       <h3>武器商店</h3>
-       <p>購買特殊武器，提升戰鬥能力！</p>
-      </div>
-      <div class="shop-arrow">
-       →
-      </div>
-     </div><button class="btn btn-success" id="continueBattleBtn">繼續戰鬥</button>
-    </div>
    </div><!-- 商店畫面 -->
    <div class="screen" id="shopScreen">
     <div class="shop-container">
      <div class="shop-title">
       🛒 武器商店
      </div>
-     <div class="weapons-grid" id="weaponsGrid"></div><button class="btn btn-secondary" onclick="closeShop()">返回</button>
+     <div class="coins-info" style="justify-content: center; margin-bottom: 20px; font-size: 24px;"><span>💰 剩餘金幣:</span> <span id="shopCoinsDisplay">0</span>
+     </div>
+     <div class="weapons-grid" id="weaponsGrid"></div><button class="btn btn-secondary" onclick="closeShop()">返回遊戲</button>
     </div>
-   </div><!-- 浮動商店視窗 -->
-   <div class="shop-modal" id="shopModal">
-    <div class="shop-modal-content">
-     <div class="shop-modal-header">
-      <div class="shop-modal-title">
-       🛒 武器商店
-      </div><button class="shop-close-btn" onclick="closeShopModal()">✕</button>
+   </div><!-- 登入紀錄畫面 -->
+   <div class="screen" id="recordsScreen">
+    <div class="records-container">
+     <div class="records-title">
+      📋 登入紀錄
      </div>
-     <div class="weapons-grid" id="weaponsGridModal"></div>
-    </div>
-   </div><!-- 關卡選擇畫面 -->
-   <div class="screen" id="stageSelectScreen">
-    <div class="stage-select-container">
-     <div class="shop-title">
-      🎮 關卡選擇
-     </div>
-     <div class="stages-grid" id="stagesGrid"></div>
-     <div class="button-group"><button class="btn btn-secondary" onclick="backToHomeFromStageSelect()">返回首頁</button> <button class="btn btn-secondary" onclick="closeStageSelect()">返回遊戲</button>
-     </div>
+     <div class="records-list" id="recordsList"></div><button class="btn btn-secondary" onclick="backToMenu()">返回選單</button>
     </div>
    </div><!-- 失敗畫面 -->
    <div class="screen" id="defeatScreen">
-    <div class="result-container">
-     <div class="result-title">
-      💀 戰敗了!
-     </div>
-     <div class="result-message">
-      別灰心,帶著你的能力值再挑戰一次!
-     </div>
-     <div class="button-group"><button class="btn btn-primary" onclick="retryStage()">重新挑戰</button> <button class="btn btn-secondary" onclick="backToHome()">返回首頁</button>
+    <div class="defeat-screen">
+     <div class="result-container">
+      <div class="result-title">
+       💀 戰敗了!
+      </div>
+      <div class="result-message">
+       別灰心，再試一次！
+      </div>
+      <div class="button-group"><button class="btn btn-primary" onclick="retryStage()">重新挑戰</button> <button class="btn btn-secondary" onclick="backToMenu()">返回選單</button>
+      </div>
      </div>
     </div>
    </div><!-- 通關畫面 -->
    <div class="screen" id="victoryScreen">
-    <div class="victory-container">
-     <div class="victory-title">
-      🎊 恭喜通關!
-     </div>
-     <div class="result-message">
-      你真厲害!完成了全部100關!
-     </div>
-     <div class="button-group"><button class="btn btn-primary" onclick="startNewGamePlus()">開始二周目</button> <button class="btn btn-secondary" onclick="backToHome()">返回首頁</button>
+    <div class="victory-screen">
+     <div class="result-container">
+      <div class="victory-title">
+       🎊 恭喜通關!
+      </div>
+      <div class="result-message">
+       你真厲害！完成了全部100關！
+      </div>
+      <div class="button-group"><button class="btn btn-primary" onclick="resetProgress()">重新開始</button> <button class="btn btn-secondary" onclick="backToMenu()">返回選單</button>
+      </div>
      </div>
     </div>
+   </div>
+  </div><!-- 載入中覆蓋層 -->
+  <div class="loading-overlay" id="loadingOverlay">
+   <div class="loading-spinner">
+    ⏳
    </div>
   </div>
   <script>
     const defaultConfig = {
       game_title: "中文打字英雄大冒險",
-      start_button_text: "開始新遊戲",
-      continue_button_text: "繼續遊戲"
+      login_button_text: "登入",
+      register_button_text: "註冊"
     };
 
     const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
 
-    // 100個中文單字庫（全部兩個字以上）
+    // 100個中文單字庫
     const wordBank = [
       {word: "學習", pinyin: "ㄒㄩㄝˊ ㄒㄧˊ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"}, {word: "老師", pinyin: "ㄌㄠˇ ㄕ"}, 
       {word: "學生", pinyin: "ㄒㄩㄝˊ ㄕㄥ"}, {word: "教室", pinyin: "ㄐㄧㄠˋ ㄕˋ"}, {word: "書本", pinyin: "ㄕㄨ ㄅㄣˇ"},
@@ -1086,31 +782,15 @@
       {word: "認真", pinyin: "ㄖㄣˋ ㄓㄣ"}, {word: "仔細", pinyin: "ㄗˇ ㄒㄧˋ"}, {word: "小心", pinyin: "ㄒㄧㄠˇ ㄒㄧㄣ"},
       {word: "注意", pinyin: "ㄓㄨˋ ㄧˋ"}, {word: "安全", pinyin: "ㄢ ㄑㄩㄢˊ"}, {word: "危險", pinyin: "ㄨㄟˊ ㄒㄧㄢˇ"},
       {word: "健康", pinyin: "ㄐㄧㄢˋ ㄎㄤ"}, {word: "運動", pinyin: "ㄩㄣˋ ㄉㄨㄥˋ"}, {word: "跑步", pinyin: "ㄆㄠˇ ㄅㄨˋ"},
-      {word: "游泳", pinyin: "ㄧㄡˊ ㄩㄥˇ"}, {word: "籃球", pinyin: "ㄌㄢˊ ㄑㄧㄡˊ"}, {word: "足球", pinyin: "ㄗㄨˊ ㄑㄧㄡˊ"},
-      {word: "棒球", pinyin: "ㄅㄤˋ ㄑㄧㄡˊ"}, {word: "羽球", pinyin: "ㄩˇ ㄑㄧㄡˊ"}, {word: "桌球", pinyin: "ㄓㄨㄛ ㄑㄧㄡˊ"},
-      {word: "音樂", pinyin: "ㄧㄣ ㄩㄝˋ"}, {word: "唱歌", pinyin: "ㄔㄤˋ ㄍㄜ"}, {word: "跳舞", pinyin: "ㄊㄧㄠˋ ㄨˇ"},
-      {word: "畫畫", pinyin: "ㄏㄨㄚˋ ㄏㄨㄚˋ"}, {word: "閱讀", pinyin: "ㄩㄝˋ ㄉㄨˊ"}, {word: "寫字", pinyin: "ㄒㄧㄝˇ ㄗˋ"},
-      {word: "數學", pinyin: "ㄕㄨˋ ㄒㄩㄝˊ"}, {word: "國語", pinyin: "ㄍㄨㄛˊ ㄩˇ"}, {word: "英文", pinyin: "ㄧㄥ ㄨㄣˊ"},
-      {word: "自然", pinyin: "ㄗˋ ㄖㄢˊ"}, {word: "社會", pinyin: "ㄕㄜˋ ㄏㄨㄟˋ"}, {word: "美勞", pinyin: "ㄇㄟˇ ㄌㄠˊ"},
-      {word: "體育", pinyin: "ㄊㄧˇ ㄩˋ"}, {word: "圖書館", pinyin: "ㄊㄨˊ ㄕㄨ ㄍㄨㄢˇ"}, {word: "操場", pinyin: "ㄘㄠ ㄔㄤˇ"},
-      {word: "餐廳", pinyin: "ㄘㄢ ㄊㄧㄥ"}, {word: "廁所", pinyin: "ㄘㄜˋ ㄙㄨㄛˇ"}, {word: "公園", pinyin: "ㄍㄨㄥ ㄩㄢˊ"},
-      {word: "動物園", pinyin: "ㄉㄨㄥˋ ㄨˋ ㄩㄢˊ"}, {word: "遊樂園", pinyin: "ㄧㄡˊ ㄌㄜˋ ㄩㄢˊ"}, {word: "超市", pinyin: "ㄔㄠ ㄕˋ"},
-      {word: "商店", pinyin: "ㄕㄤ ㄉㄧㄢˋ"}, {word: "醫院", pinyin: "ㄧ ㄩㄢˋ"}, {word: "警察", pinyin: "ㄐㄧㄥˇ ㄔㄚˊ"},
-      {word: "消防員", pinyin: "ㄒㄧㄠ ㄈㄤˊ ㄩㄢˊ"}, {word: "醫生", pinyin: "ㄧ ㄕㄥ"}, {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"},
-      {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"}, {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"},
-      {word: "工人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "郵差", pinyin: "ㄧㄡˊ ㄔㄞ"}, {word: "春天", pinyin: "ㄔㄨㄣ ㄊㄧㄢ"},
-      {word: "夏天", pinyin: "ㄒㄧㄚˋ ㄊㄧㄢ"}, {word: "秋天", pinyin: "ㄑㄧㄡ ㄊㄧㄢ"}, {word: "冬天", pinyin: "ㄉㄨㄥ ㄊㄧㄢ"},
-      {word: "晴天", pinyin: "ㄑㄧㄥˊ ㄊㄧㄢ"}, {word: "雨天", pinyin: "ㄩˇ ㄊㄧㄢ"}, {word: "颱風", pinyin: "ㄊㄞˊ ㄈㄥ"},
-      {word: "地震", pinyin: "ㄉㄧˋ ㄓㄣˋ"}, {word: "太陽", pinyin: "ㄊㄞˋ ㄧㄤˊ"}, {word: "月亮", pinyin: "ㄩㄝˋ ㄌㄧㄤˋ"},
-      {word: "星星", pinyin: "ㄒㄧㄥ ㄒㄧㄥ"}, {word: "雲朵", pinyin: "ㄩㄣˊ ㄉㄨㄛˇ"}, {word: "彩虹", pinyin: "ㄘㄞˇ ㄏㄨㄥˊ"}
+      {word: "游泳", pinyin: "ㄧㄡˊ ㄩㄥˇ"}, {word: "籃球", pinyin: "ㄌㄢˊ ㄑㄧㄡˊ"}, {word: "足球", pinyin: "ㄗㄨˊ ㄑㄧㄡˊ"}
     ];
 
-    // 11種武器定義（按金額排序）
+    // 武器定義
     const weapons = [
       {id: 0, name: "🗡️ 普通劍", cost: 0, effect: "每次攻擊一次", icon: "🗡️"},
       {id: 1, name: "⚔️ 雙刃劍", cost: 50, effect: "第三次攻擊同時砍兩下", icon: "⚔️"},
       {id: 2, name: "🔨 重錘", cost: 60, effect: "每一下攻擊都是1.5倍傷害", icon: "🔨"},
-      {id: 3, name: "☠️ 毒刃", cost: 70, effect: "附加毒性傷害,每秒額外扣血(累加)", icon: "☠️"},
+      {id: 3, name: "☠️ 毒刃", cost: 70, effect: "附加毒性傷害,每秒額外扣血", icon: "☠️"},
       {id: 4, name: "🏹 神弓", cost: 80, effect: "第5次攻擊造成5倍傷害", icon: "🏹"},
       {id: 5, name: "🛡️ 破甲劍", cost: 85, effect: "每打三下減少對手5%防禦率", icon: "🛡️"},
       {id: 6, name: "⚡ 虛弱劍", cost: 85, effect: "每打三下減少對手2點攻擊力", icon: "⚡"},
@@ -1135,17 +815,18 @@
       "🐺", "🦊", "🦝", "🐱", "🐈", "🦁", "🐯", "🐅", "🐆", "🐴"
     ];
 
-    // 遊戲狀態
+    // 全局變數
+    let allData = [];
+    let currentUser = null;
     let gameState = {
       currentStage: 1,
       playerHp: 100,
       playerMaxHp: 100,
       playerAttack: 10,
       playerDefense: 0,
-      playerCritRate: 2,
+      playerCritRate: 5,
       coins: 0,
       weaponId: 0,
-      completedStages: [],
       enemyHp: 100,
       enemyMaxHp: 100,
       enemyAttack: 8,
@@ -1156,24 +837,43 @@
       poisonStacks: 0,
       enemyDefenseReduction: 0,
       enemyAttackReduction: 0,
-      lastWeaponUseTime: 0,
-      battleLogEntries: [],
-      battleInterval: null,
-      countdownInterval: null,
-      countdown: 5
+      battleInterval: null
+    };
+
+    // Data SDK Handler
+    const dataHandler = {
+      onDataChanged(data) {
+        allData = data;
+      }
     };
 
     // 初始化 SDK
     async function initSDKs() {
+      showLoading();
+      
+      if (window.dataSdk) {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error("Failed to initialize data SDK");
+        }
+      }
+
       if (window.elementSdk) {
         await window.elementSdk.init({
           defaultConfig,
           onConfigChange: async (config) => {
-            document.getElementById('gameTitle').textContent = config.game_title || defaultConfig.game_title;
-            const startBtn = document.getElementById('startNewGameBtn');
-            const continueBtn = document.getElementById('continueGameBtn');
-            if (startBtn) startBtn.textContent = config.start_button_text || defaultConfig.start_button_text;
-            if (continueBtn) continueBtn.textContent = config.continue_button_text || defaultConfig.continue_button_text;
+            const titleEl = document.getElementById('gameTitle');
+            if (titleEl) {
+              titleEl.textContent = config.game_title || defaultConfig.game_title;
+            }
+            const loginBtn = document.getElementById('loginButton');
+            if (loginBtn) {
+              loginBtn.textContent = config.login_button_text || defaultConfig.login_button_text;
+            }
+            const registerBtn = document.getElementById('registerButton');
+            if (registerBtn) {
+              registerBtn.textContent = config.register_button_text || defaultConfig.register_button_text;
+            }
           },
           mapToCapabilities: (config) => ({
             recolorables: [],
@@ -1183,11 +883,22 @@
           }),
           mapToEditPanelValues: (config) => new Map([
             ["game_title", config.game_title || defaultConfig.game_title],
-            ["start_button_text", config.start_button_text || defaultConfig.start_button_text],
-            ["continue_button_text", config.continue_button_text || defaultConfig.continue_button_text]
+            ["login_button_text", config.login_button_text || defaultConfig.login_button_text],
+            ["register_button_text", config.register_button_text || defaultConfig.register_button_text]
           ])
         });
       }
+
+      hideLoading();
+    }
+
+    // 顯示/隱藏載入中
+    function showLoading() {
+      document.getElementById('loadingOverlay').classList.add('active');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.remove('active');
     }
 
     // 切換畫面
@@ -1196,83 +907,229 @@
       document.getElementById(screenId).classList.add('active');
     }
 
-    // 載入存檔
-    function loadSave() {
-      try {
-        const saved = localStorage.getItem('typingGameSave');
-        if (saved) {
-          const data = JSON.parse(saved);
-          gameState = {...gameState, ...data};
-          document.getElementById('continueGameBtn').style.display = 'inline-block';
-          return true;
-        }
-      } catch (e) {
-        console.error('Failed to load save:', e);
+    // 顯示訊息
+    function showMessage(elementId, message, isError = false) {
+      const messageEl = document.getElementById(elementId);
+      messageEl.innerHTML = `<div class="message ${isError ? 'message-error' : 'message-success'}">${message}</div>`;
+      setTimeout(() => {
+        messageEl.innerHTML = '';
+      }, 3000);
+    }
+
+    // 註冊
+    async function handleRegister(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('registerUsername').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+
+      if (!username || !password) {
+        showMessage('registerMessage', '請填寫所有欄位', true);
+        return;
       }
-      return false;
-    }
 
-    // 保存進度
-    function saveProgress() {
-      try {
-        const saveData = {
-          currentStage: gameState.currentStage,
-          playerHp: gameState.playerHp,
-          playerMaxHp: gameState.playerMaxHp,
-          playerAttack: gameState.playerAttack,
-          playerDefense: gameState.playerDefense,
-          playerCritRate: gameState.playerCritRate,
-          coins: gameState.coins,
-          weaponId: gameState.weaponId,
-          completedStages: gameState.completedStages
-        };
-        localStorage.setItem('typingGameSave', JSON.stringify(saveData));
-      } catch (e) {
-        console.error('Failed to save:', e);
+      if (password !== passwordConfirm) {
+        showMessage('registerMessage', '兩次密碼輸入不一致', true);
+        return;
+      }
+
+      // 檢查帳號是否已存在
+      const existingUser = allData.find(d => d.type === 'user' && d.username === username);
+      if (existingUser) {
+        showMessage('registerMessage', '此帳號已被註冊', true);
+        return;
+      }
+
+      showLoading();
+
+      // 創建新用戶
+      const result = await window.dataSdk.create({
+        type: 'user',
+        username: username,
+        password: password,
+        currentStage: 1,
+        playerMaxHp: 100,
+        playerAttack: 10,
+        playerDefense: 0,
+        playerCritRate: 5,
+        coins: 0,
+        weaponId: 0,
+        completedStages: '[]',
+        loginTime: '',
+        loginIp: ''
+      });
+
+      hideLoading();
+
+      if (result.isOk) {
+        showMessage('registerMessage', '註冊成功！請登入', false);
+        setTimeout(() => {
+          showLoginScreen();
+        }, 1500);
+      } else {
+        showMessage('registerMessage', '註冊失敗，請稍後再試', true);
       }
     }
 
-    // 開始新遊戲
-    function startNewGame() {
-      resetGameState();
-      saveProgress();
-      startStage(1);
-    }
-    
-    window.startNewGame = startNewGame;
+    // 登入
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
 
-    // 繼續遊戲
-    function continueGame() {
-      if (loadSave()) {
-        startStage(gameState.currentStage);
+      if (!username || !password) {
+        showMessage('loginMessage', '請填寫所有欄位', true);
+        return;
       }
-    }
-    
-    window.continueGame = continueGame;
 
-    // 重置遊戲狀態
-    function resetGameState() {
-      gameState.currentStage = 1;
-      gameState.playerHp = 100;
-      gameState.playerMaxHp = 100;
-      gameState.playerAttack = 10;
-      gameState.playerDefense = 0;
-      gameState.playerCritRate = 2;
-      gameState.coins = 0;
-      gameState.weaponId = 0;
-      gameState.completedStages = [];
+      // 查找用戶
+      const user = allData.find(d => d.type === 'user' && d.username === username && d.password === password);
+      
+      if (!user) {
+        showMessage('loginMessage', '帳號或密碼錯誤', true);
+        return;
+      }
+
+      showLoading();
+
+      // 記錄登入時間和IP
+      const loginTime = new Date().toISOString();
+      const loginIp = 'Local'; // 在瀏覽器環境無法獲取真實IP
+
+      // 創建登入紀錄
+      await window.dataSdk.create({
+        type: 'login_record',
+        username: username,
+        loginTime: loginTime,
+        loginIp: loginIp,
+        currentStage: user.currentStage || 1,
+        playerMaxHp: user.playerMaxHp || 100,
+        playerAttack: user.playerAttack || 10,
+        playerDefense: user.playerDefense || 0,
+        playerCritRate: user.playerCritRate || 5,
+        coins: user.coins || 0,
+        weaponId: user.weaponId || 0,
+        completedStages: user.completedStages || '[]',
+        password: ''
+      });
+
+      hideLoading();
+
+      // 設置當前用戶
+      currentUser = user;
+      
+      // 載入遊戲進度
+      loadGameProgress();
+      
+      // 顯示主選單
+      document.getElementById('welcomeUsername').textContent = username;
+      showScreen('menuScreen');
     }
 
-    // 開始關卡
-    function startStage(stage) {
-      // 清除舊的計時器
+    // 載入遊戲進度
+    function loadGameProgress() {
+      if (!currentUser) return;
+
+      gameState.currentStage = currentUser.currentStage || 1;
+      gameState.playerMaxHp = currentUser.playerMaxHp || 100;
+      gameState.playerAttack = currentUser.playerAttack || 10;
+      gameState.playerDefense = currentUser.playerDefense || 0;
+      gameState.playerCritRate = currentUser.playerCritRate || 5;
+      gameState.coins = currentUser.coins || 0;
+      gameState.weaponId = currentUser.weaponId || 0;
+    }
+
+    // 保存遊戲進度
+    async function saveGameProgress() {
+      if (!currentUser) return;
+
+      showLoading();
+
+      const updatedUser = {
+        ...currentUser,
+        currentStage: gameState.currentStage,
+        playerMaxHp: gameState.playerMaxHp,
+        playerAttack: gameState.playerAttack,
+        playerDefense: gameState.playerDefense,
+        playerCritRate: gameState.playerCritRate,
+        coins: gameState.coins,
+        weaponId: gameState.weaponId
+      };
+
+      const result = await window.dataSdk.update(updatedUser);
+      
+      if (result.isOk) {
+        currentUser = updatedUser;
+      }
+
+      hideLoading();
+    }
+
+    // 登出
+    function logout() {
+      currentUser = null;
+      gameState = {
+        currentStage: 1,
+        playerHp: 100,
+        playerMaxHp: 100,
+        playerAttack: 10,
+        playerDefense: 0,
+        playerCritRate: 5,
+        coins: 0,
+        weaponId: 0,
+        enemyHp: 100,
+        enemyMaxHp: 100,
+        enemyAttack: 8,
+        enemyDefense: 0,
+        enemyCritRate: 2,
+        currentWord: null,
+        weaponHitCount: 0,
+        poisonStacks: 0,
+        enemyDefenseReduction: 0,
+        enemyAttackReduction: 0,
+        battleInterval: null
+      };
+      
       if (gameState.battleInterval) {
         clearInterval(gameState.battleInterval);
       }
-      if (gameState.countdownInterval) {
-        clearInterval(gameState.countdownInterval);
-      }
       
+      showLoginScreen();
+    }
+
+    // 顯示登入畫面
+    function showLoginScreen() {
+      document.getElementById('loginUsername').value = '';
+      document.getElementById('loginPassword').value = '';
+      showScreen('loginScreen');
+    }
+
+    // 顯示註冊畫面
+    function showRegisterScreen() {
+      document.getElementById('registerUsername').value = '';
+      document.getElementById('registerPassword').value = '';
+      document.getElementById('registerPasswordConfirm').value = '';
+      showScreen('registerScreen');
+    }
+
+    window.showLoginScreen = showLoginScreen;
+    window.showRegisterScreen = showRegisterScreen;
+
+    // 開始遊戲
+    function startGame() {
+      startStage(gameState.currentStage);
+    }
+
+    window.startGame = startGame;
+
+    // 開始關卡
+    function startStage(stage) {
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+      }
+
       gameState.currentStage = stage;
       gameState.playerHp = gameState.playerMaxHp;
       gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.2, stage - 1));
@@ -1284,75 +1141,45 @@
       gameState.poisonStacks = 0;
       gameState.enemyDefenseReduction = 0;
       gameState.enemyAttackReduction = 0;
-      gameState.battleLogEntries = [];
-      gameState.countdown = 5;
 
       updateUI();
       showScreen('gameScreen');
       nextWord();
-      
-      // 開始倒數計時（每秒更新）
-      gameState.countdownInterval = setInterval(() => {
-        gameState.countdown--;
-        updateCountdown();
-        
-        if (gameState.countdown <= 0) {
-          gameState.countdown = 5;
-        }
-      }, 1000);
-      
+
       // 開始自動戰鬥（每5秒一次）
       gameState.battleInterval = setInterval(() => {
         autoBattle();
       }, 5000);
-      
-      document.getElementById('typingInput').focus();
-    }
 
-    // 更新倒數計時顯示
-    function updateCountdown() {
-      const countdownEl = document.getElementById('countdownDisplay');
-      if (countdownEl) {
-        if (gameState.countdown === 0) {
-          countdownEl.textContent = '攻擊!';
-          countdownEl.style.color = '#ff4444';
-        } else {
-          countdownEl.textContent = gameState.countdown;
-          countdownEl.style.color = '#ffd700';
-        }
-      }
+      document.getElementById('typingInput').focus();
     }
 
     // 更新UI
     function updateUI() {
       document.getElementById('currentStage').textContent = gameState.currentStage;
       document.getElementById('coinsDisplay').textContent = gameState.coins;
-      
-      const upgradeCoinsEl = document.getElementById('upgradeCoins');
-      if (upgradeCoinsEl) {
-        upgradeCoinsEl.textContent = gameState.coins;
-      }
-      
+      document.getElementById('shopCoinsDisplay').textContent = gameState.coins;
+
       document.getElementById('playerHp').textContent = `${gameState.playerHp}/${gameState.playerMaxHp}`;
       document.getElementById('playerAttack').textContent = gameState.playerAttack;
-      document.getElementById('playerDefense').textContent = `${gameState.playerDefense}%${gameState.playerDefense >= 90 ? ' MAX' : ''}`;
-      document.getElementById('playerCrit').textContent = `${gameState.playerCritRate}%${gameState.playerCritRate >= 100 ? ' MAX' : ''}`;
-      
+      document.getElementById('playerDefense').textContent = `${gameState.playerDefense}%`;
+      document.getElementById('playerCrit').textContent = `${gameState.playerCritRate}%`;
+
       const playerHpPercent = (gameState.playerHp / gameState.playerMaxHp) * 100;
       document.getElementById('playerHpBar').style.width = `${playerHpPercent}%`;
-      
+
       document.getElementById('enemyHp').textContent = `${gameState.enemyHp}/${gameState.enemyMaxHp}`;
       document.getElementById('enemyAttack').textContent = Math.max(1, gameState.enemyAttack - gameState.enemyAttackReduction);
       document.getElementById('enemyDefense').textContent = `${Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction)}%`;
       document.getElementById('enemyCrit').textContent = `${gameState.enemyCritRate}%`;
-      
+
       const enemyHpPercent = (gameState.enemyHp / gameState.enemyMaxHp) * 100;
       document.getElementById('enemyHpBar').style.width = `${enemyHpPercent}%`;
-      
+
       const monsterIndex = (gameState.currentStage - 1) % monsters.length;
       document.getElementById('enemyAvatar').textContent = monsters[monsterIndex];
       document.getElementById('enemyName').textContent = `妖怪 Lv.${gameState.currentStage}`;
-      
+
       const weapon = weapons[gameState.weaponId];
       document.getElementById('currentWeaponName').textContent = weapon.name;
       document.getElementById('currentWeaponEffect').textContent = weapon.effect;
@@ -1362,22 +1189,27 @@
     function nextWord() {
       const randomIndex = Math.floor(Math.random() * wordBank.length);
       gameState.currentWord = wordBank[randomIndex];
-      
+
       document.getElementById('wordDisplay').textContent = gameState.currentWord.word;
       document.getElementById('pinyinDisplay').textContent = gameState.currentWord.pinyin;
       document.getElementById('typingInput').value = '';
     }
 
     // 處理輸入
-    document.getElementById('typingInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        const input = this.value.trim();
-        if (input === gameState.currentWord.word) {
-          handleCorrectAnswer();
-        } else {
-          addBattleLog("❌ 答錯了!再試一次!", "enemy");
-          this.value = '';
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+      const typingInput = document.getElementById('typingInput');
+      if (typingInput) {
+        typingInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            const input = this.value.trim();
+            if (input === gameState.currentWord.word) {
+              handleCorrectAnswer();
+            } else {
+              addBattleLog("❌ 答錯了!再試一次!", "enemy");
+              this.value = '';
+            }
+          }
+        });
       }
     });
 
@@ -1386,6 +1218,7 @@
       gameState.coins += 5;
       addBattleLog("✅ 答對了!獲得5金幣!", "player");
       updateUI();
+      saveGameProgress();
       nextWord();
     }
 
@@ -1400,13 +1233,13 @@
 
       // 武器特效
       switch(gameState.weaponId) {
-        case 1: // 雙刃劍 - 第三次攻擊同時砍兩下
+        case 1: // 雙刃劍
           if (gameState.weaponHitCount % 3 === 0) {
             attacks = 2;
             extraEffects.push("⚔️ 雙重攻擊!");
           }
           break;
-        case 2: // 重錘 - 每一下都是1.5倍傷害
+        case 2: // 重錘
           damageMultiplier = 1.5;
           extraEffects.push("🔨 重擊!");
           break;
@@ -1414,7 +1247,7 @@
           gameState.poisonStacks++;
           extraEffects.push(`☠️ 中毒!每秒扣${gameState.poisonStacks}血`);
           break;
-        case 4: // 神弓 - 第5次攻擊造成5倍傷害
+        case 4: // 神弓
           if (gameState.weaponHitCount % 5 === 0) {
             damageMultiplier = 5;
             extraEffects.push("🏹 強力射擊!5倍傷害!");
@@ -1442,7 +1275,7 @@
             extraEffects.push("📈 攻擊力永久+1!");
           }
           break;
-        case 9: // 暴擊劍 - 第三次攻擊必定爆擊
+        case 9: // 暴擊劍
           if (gameState.weaponHitCount % 3 === 0) {
             damageMultiplier = 2;
             extraEffects.push("💎 必定爆擊!");
@@ -1453,25 +1286,15 @@
             damageMultiplier = 5;
             extraEffects.push("🎰 幸運!5倍傷害!");
           } else {
-            // 打到自己
             const selfDamage = Math.floor(gameState.playerAttack * 0.5);
             gameState.playerHp = Math.max(0, gameState.playerHp - selfDamage);
             addBattleLog(`🎰 失手!打到自己造成${selfDamage}點傷害!`, "enemy");
             updateUI();
-            
-            // 檢查玩家是否死亡
+
             if (gameState.playerHp <= 0) {
-              if (gameState.battleInterval) {
-                clearInterval(gameState.battleInterval);
-                gameState.battleInterval = null;
-              }
-              if (gameState.countdownInterval) {
-                clearInterval(gameState.countdownInterval);
-                gameState.countdownInterval = null;
-              }
-              showScreen('defeatScreen');
+              handleDefeat();
             }
-            return; // 不攻擊敵人
+            return;
           }
           break;
         case 11: // 秒殺劍
@@ -1479,16 +1302,6 @@
             gameState.enemyHp = 0;
             addBattleLog("💀 秒殺成功!敵人被一擊擊敗!", "player");
             updateUI();
-            
-            // 檢查是否通關
-            if (gameState.battleInterval) {
-              clearInterval(gameState.battleInterval);
-              gameState.battleInterval = null;
-            }
-            if (gameState.countdownInterval) {
-              clearInterval(gameState.countdownInterval);
-              gameState.countdownInterval = null;
-            }
             handleStageComplete();
             return;
           }
@@ -1498,18 +1311,16 @@
       // 執行攻擊
       for (let i = 0; i < attacks; i++) {
         let damage = gameState.playerAttack * damageMultiplier;
-        
-        // 爆擊判定
+
         const isCrit = Math.random() * 100 < gameState.playerCritRate;
         if (isCrit && gameState.weaponId !== 9) {
           damage *= 2;
           extraEffects.push("💥 爆擊!");
         }
-        
-        // 防禦減傷：實際傷害 = 攻擊力 * (1 - 防禦率)
+
         const effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
         damage = Math.floor(damage * (100 - effectiveDefense) / 100);
-        
+
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
         addBattleLog(`⚔️ 你造成了${damage}點傷害! ${extraEffects.join(' ')}`, "player");
         extraEffects = [];
@@ -1527,22 +1338,21 @@
     // 敵人攻擊
     function enemyAttack() {
       let damage = Math.max(1, gameState.enemyAttack - gameState.enemyAttackReduction);
-      
+
       const isCrit = Math.random() * 100 < gameState.enemyCritRate;
       if (isCrit) {
         damage *= 2;
       }
-      
-      // 防禦減傷：實際傷害 = 攻擊力 * (1 - 防禦率)
+
       const finalDamage = Math.floor(damage * (100 - gameState.playerDefense) / 100);
       gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
-      
+
       if (isCrit) {
         addBattleLog(`💥 敵人爆擊!造成${finalDamage}點傷害!`, "enemy");
       } else {
         addBattleLog(`👹 敵人攻擊!造成${finalDamage}點傷害!`, "enemy");
       }
-      
+
       updateUI();
     }
 
@@ -1552,31 +1362,11 @@
         return;
       }
 
-      // 觸發對撞動畫
-      const playerChar = document.querySelector('.character:first-child');
-      const enemyChar = document.querySelector('.character:last-child');
-      
-      if (playerChar) playerChar.classList.add('attacking');
-      if (enemyChar) enemyChar.classList.add('attacking');
-      
-      setTimeout(() => {
-        if (playerChar) playerChar.classList.remove('attacking');
-        if (enemyChar) enemyChar.classList.remove('attacking');
-      }, 500);
-
       // 玩家攻擊
       playerAttack();
-      
+
       // 檢查敵人是否死亡
       if (gameState.enemyHp <= 0) {
-        if (gameState.battleInterval) {
-          clearInterval(gameState.battleInterval);
-          gameState.battleInterval = null;
-        }
-        if (gameState.countdownInterval) {
-          clearInterval(gameState.countdownInterval);
-          gameState.countdownInterval = null;
-        }
         handleStageComplete();
         return;
       }
@@ -1584,287 +1374,88 @@
       // 敵人攻擊
       setTimeout(() => {
         enemyAttack();
-        
+
         // 檢查玩家是否死亡
         if (gameState.playerHp <= 0) {
-          if (gameState.battleInterval) {
-            clearInterval(gameState.battleInterval);
-            gameState.battleInterval = null;
-          }
-          if (gameState.countdownInterval) {
-            clearInterval(gameState.countdownInterval);
-            gameState.countdownInterval = null;
-          }
-          showScreen('defeatScreen');
+          handleDefeat();
         }
       }, 500);
     }
 
     // 關卡完成
     function handleStageComplete() {
-      // 清除計時器
       if (gameState.battleInterval) {
         clearInterval(gameState.battleInterval);
         gameState.battleInterval = null;
       }
-      if (gameState.countdownInterval) {
-        clearInterval(gameState.countdownInterval);
-        gameState.countdownInterval = null;
-      }
-      
-      if (!gameState.completedStages.includes(gameState.currentStage)) {
-        gameState.completedStages.push(gameState.currentStage);
-      }
-      
-      saveProgress();
-      
-      // 使用延遲確保畫面切換
-      setTimeout(() => {
-        // 檢查是否通關100關
-        if (gameState.currentStage >= 100) {
-          showScreen('victoryScreen');
-        } else {
-          updateUpgradeScreenCoins();
-          showScreen('upgradeScreen');
-          startAutoNextStageTimer();
-        }
-      }, 500);
-    }
 
-    // 自動進入下一關倒數計時
-    let autoNextStageTimer = null;
-    let autoNextStageCountdown = 5;
+      saveGameProgress();
 
-    function startAutoNextStageTimer() {
-      autoNextStageCountdown = 5;
-      updateAutoNextStageDisplay();
-      
-      if (autoNextStageTimer) {
-        clearInterval(autoNextStageTimer);
-      }
-      
-      autoNextStageTimer = setInterval(() => {
-        autoNextStageCountdown--;
-        updateAutoNextStageDisplay();
-        
-        if (autoNextStageCountdown <= 0) {
-          clearInterval(autoNextStageTimer);
-          autoNextStageTimer = null;
-          continueBattle();
-        }
-      }, 1000);
-    }
-
-    function stopAutoNextStageTimer() {
-      if (autoNextStageTimer) {
-        clearInterval(autoNextStageTimer);
-        autoNextStageTimer = null;
-      }
-      autoNextStageCountdown = 5;
-      updateAutoNextStageDisplay();
-    }
-
-    function updateAutoNextStageDisplay() {
-      const btn = document.getElementById('continueBattleBtn');
-      if (btn) {
-        if (autoNextStageCountdown > 0) {
-          btn.textContent = `繼續戰鬥 (${autoNextStageCountdown}秒後自動進入)`;
-        } else {
-          btn.textContent = '繼續戰鬥';
-        }
-      }
-    }
-
-    // 升級功能
-    function upgradeHealth() {
-      stopAutoNextStageTimer();
-      if (gameState.coins >= 5) {
-        gameState.coins -= 5;
-        gameState.playerMaxHp += 20;
-        gameState.playerHp = Math.min(gameState.playerHp + 20, gameState.playerMaxHp);
-        saveProgress();
-        updateUI();
-        updateUpgradeScreenCoins();
+      // 檢查是否通關100關
+      if (gameState.currentStage >= 100) {
+        showScreen('victoryScreen');
       } else {
-        showInlineMessage("金幣不足!");
+        // 自動進入下一關
+        gameState.currentStage++;
+        setTimeout(() => {
+          startStage(gameState.currentStage);
+        }, 1000);
       }
     }
 
-    function upgradeAttack() {
-      stopAutoNextStageTimer();
-      if (gameState.coins >= 5) {
-        gameState.coins -= 5;
-        gameState.playerAttack += 5;
-        saveProgress();
-        updateUI();
-        updateUpgradeScreenCoins();
-      } else {
-        showInlineMessage("金幣不足!");
+    // 戰敗
+    function handleDefeat() {
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+        gameState.battleInterval = null;
       }
+
+      showScreen('defeatScreen');
     }
 
-    function upgradeDefense() {
-      stopAutoNextStageTimer();
-      if (gameState.playerDefense >= 90) {
-        showInlineMessage("防禦力已達上限90%!");
-        return;
-      }
-      if (gameState.coins >= 5) {
-        gameState.coins -= 5;
-        gameState.playerDefense = Math.min(gameState.playerDefense + 3, 90);
-        saveProgress();
-        updateUI();
-        updateUpgradeScreenCoins();
-      } else {
-        showInlineMessage("金幣不足!");
-      }
-    }
-
-    function upgradeCrit() {
-      stopAutoNextStageTimer();
-      if (gameState.playerCritRate >= 100) {
-        showInlineMessage("爆擊率已達上限100%!");
-        return;
-      }
-      if (gameState.coins >= 5) {
-        gameState.coins -= 5;
-        gameState.playerCritRate = Math.min(gameState.playerCritRate + 2, 100);
-        saveProgress();
-        updateUI();
-        updateUpgradeScreenCoins();
-      } else {
-        showInlineMessage("金幣不足!");
-      }
-    }
-
-    function updateUpgradeScreenCoins() {
-      const upgradeScreenCoinsEl = document.getElementById('upgradeScreenCoins');
-      if (upgradeScreenCoinsEl) {
-        upgradeScreenCoinsEl.textContent = gameState.coins;
-      }
-      
-      // 更新英雄數值顯示
-      const hpEl = document.getElementById('upgradeScreenHp');
-      const maxHpEl = document.getElementById('upgradeScreenMaxHp');
-      const attackEl = document.getElementById('upgradeScreenAttack');
-      const defenseEl = document.getElementById('upgradeScreenDefense');
-      const critEl = document.getElementById('upgradeScreenCrit');
-      
-      if (hpEl) hpEl.textContent = gameState.playerHp;
-      if (maxHpEl) maxHpEl.textContent = gameState.playerMaxHp;
-      if (attackEl) attackEl.textContent = gameState.playerAttack;
-      if (defenseEl) {
-        defenseEl.textContent = gameState.playerDefense;
-        defenseEl.parentElement.querySelector('div:first-child').textContent = `🛡️ 防禦率${gameState.playerDefense >= 90 ? ' MAX' : ''}`;
-      }
-      if (critEl) {
-        critEl.textContent = gameState.playerCritRate;
-        critEl.parentElement.querySelector('div:first-child').textContent = `💥 爆擊率${gameState.playerCritRate >= 100 ? ' MAX' : ''}`;
-      }
-    }
-
-    // 遊戲內即時升級
-    function upgradeHealthInGame() {
-      upgradeHealth();
-    }
-
-    function upgradeAttackInGame() {
-      upgradeAttack();
-    }
-
-    function upgradeDefenseInGame() {
-      upgradeDefense();
-    }
-
-    function upgradeCritInGame() {
-      upgradeCrit();
-    }
-
-    function openShopInGame() {
-      // 不暫停戰鬥，直接開啟浮動視窗
-      openShopModal();
-    }
-
-    function openShopModal() {
-      renderWeaponsShopModal();
-      document.getElementById('shopModal').classList.add('active');
-    }
-
-    function closeShopModal() {
-      document.getElementById('shopModal').classList.remove('active');
-    }
-
-    window.closeShopModal = closeShopModal;
-
-    function showInlineMessage(message) {
-      addBattleLog(`⚠️ ${message}`, "enemy");
-    }
-
-    window.upgradeHealthInGame = upgradeHealthInGame;
-    window.upgradeAttackInGame = upgradeAttackInGame;
-    window.upgradeDefenseInGame = upgradeDefenseInGame;
-    window.upgradeCritInGame = upgradeCritInGame;
-    window.openShopInGame = openShopInGame;
-
-    // 繼續戰鬥
-    function continueBattle() {
-      stopAutoNextStageTimer();
-      gameState.currentStage++;
+    // 重試關卡
+    function retryStage() {
       startStage(gameState.currentStage);
     }
 
-    // 商店
+    window.retryStage = retryStage;
+
+    // 返回選單
+    function backToMenu() {
+      if (gameState.battleInterval) {
+        clearInterval(gameState.battleInterval);
+        gameState.battleInterval = null;
+      }
+
+      saveGameProgress();
+      showScreen('menuScreen');
+    }
+
+    window.backToMenu = backToMenu;
+
+    // 開啟商店
     function openShop() {
-      stopAutoNextStageTimer();
       renderWeaponsShop();
       showScreen('shopScreen');
     }
 
-    function closeShop() {
-      const wasInGame = gameState.enemyHp > 0 && gameState.playerHp > 0 && gameState.currentStage > 0;
-      
-      if (wasInGame) {
-        showScreen('gameScreen');
-        // 恢復戰鬥
-        gameState.countdown = 5;
-        updateCountdown();
-        
-        if (!gameState.countdownInterval) {
-          gameState.countdownInterval = setInterval(() => {
-            gameState.countdown--;
-            updateCountdown();
-            
-            if (gameState.countdown <= 0) {
-              gameState.countdown = 5;
-            }
-          }, 1000);
-        }
-        
-        if (!gameState.battleInterval) {
-          gameState.battleInterval = setInterval(() => {
-            autoBattle();
-          }, 5000);
-        }
-      } else {
-        showScreen('upgradeScreen');
-      }
-    }
-    
-    window.upgradeHealth = upgradeHealth;
-    window.upgradeAttack = upgradeAttack;
-    window.upgradeDefense = upgradeDefense;
-    window.upgradeCrit = upgradeCrit;
-    window.continueBattle = continueBattle;
     window.openShop = openShop;
+
+    // 關閉商店
+    function closeShop() {
+      showScreen('gameScreen');
+    }
+
     window.closeShop = closeShop;
 
+    // 渲染武器商店
     function renderWeaponsShop() {
       const grid = document.getElementById('weaponsGrid');
       grid.innerHTML = '';
-      
+
       weapons.forEach(weapon => {
         const equipped = gameState.weaponId === weapon.id;
-        
+
         const card = document.createElement('div');
         card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
         card.innerHTML = `
@@ -1873,123 +1464,96 @@
           <p>${weapon.effect}</p>
           <div class="upgrade-cost">${equipped ? '✅ 已裝備' : `💰 ${weapon.cost} 金幣`}</div>
         `;
-        
+
         if (!equipped) {
           card.onclick = () => buyWeapon(weapon.id);
         }
-        
+
         grid.appendChild(card);
       });
     }
 
-    function renderWeaponsShopModal() {
-      const grid = document.getElementById('weaponsGridModal');
-      grid.innerHTML = '';
-      
-      weapons.forEach(weapon => {
-        const equipped = gameState.weaponId === weapon.id;
-        
-        const card = document.createElement('div');
-        card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
-        card.innerHTML = `
-          <div class="weapon-icon">${weapon.icon}</div>
-          <h3>${weapon.name}</h3>
-          <p>${weapon.effect}</p>
-          <div class="upgrade-cost">${equipped ? '✅ 已裝備' : `💰 ${weapon.cost} 金幣`}</div>
-        `;
-        
-        if (!equipped) {
-          card.onclick = () => buyWeaponModal(weapon.id);
-        }
-        
-        grid.appendChild(card);
-      });
-    }
-
-    function buyWeapon(weaponId) {
+    // 購買武器
+    async function buyWeapon(weaponId) {
       const weapon = weapons[weaponId];
       if (gameState.coins >= weapon.cost) {
         gameState.coins -= weapon.cost;
         gameState.weaponId = weaponId;
-        saveProgress();
         updateUI();
         renderWeaponsShop();
-      }
-    }
-
-    function buyWeaponModal(weaponId) {
-      const weapon = weapons[weaponId];
-      if (gameState.coins >= weapon.cost) {
-        gameState.coins -= weapon.cost;
-        gameState.weaponId = weaponId;
-        saveProgress();
-        updateUI();
-        renderWeaponsShopModal();
+        await saveGameProgress();
         addBattleLog(`✅ 購買並裝備了 ${weapon.name}!`, "player");
       } else {
         addBattleLog("💰 金幣不足!", "enemy");
       }
     }
 
-    // 關卡選擇
-    function openStageSelect() {
-      // 不暫停戰鬥，直接顯示關卡選擇畫面
-      renderStageSelect();
-      
-      // 創建浮動視窗效果
-      const stageSelectScreen = document.getElementById('stageSelectScreen');
-      stageSelectScreen.style.position = 'fixed';
-      stageSelectScreen.style.top = '0';
-      stageSelectScreen.style.left = '0';
-      stageSelectScreen.style.width = '100%';
-      stageSelectScreen.style.height = '100%';
-      stageSelectScreen.style.background = 'rgba(0,0,0,0.7)';
-      stageSelectScreen.style.zIndex = '1000';
-      
-      showScreen('stageSelectScreen');
+    // 查看登入紀錄
+    function showRecordsScreen() {
+      const recordsList = document.getElementById('recordsList');
+      recordsList.innerHTML = '';
+
+      const userRecords = allData.filter(d => d.type === 'login_record' && d.username === currentUser.username);
+
+      if (userRecords.length === 0) {
+        recordsList.innerHTML = '<div style="text-align: center; padding: 20px;">目前沒有登入紀錄</div>';
+      } else {
+        userRecords.sort((a, b) => new Date(b.loginTime) - new Date(a.loginTime));
+
+        userRecords.forEach(record => {
+          const recordItem = document.createElement('div');
+          recordItem.className = 'record-item';
+          
+          const loginDate = new Date(record.loginTime);
+          const formattedDate = loginDate.toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          });
+
+          recordItem.innerHTML = `
+            <div class="record-time">🕐 ${formattedDate}</div>
+            <div class="record-ip">📍 IP: ${record.loginIp}</div>
+          `;
+
+          recordsList.appendChild(recordItem);
+        });
+      }
+
+      showScreen('recordsScreen');
     }
 
-    function closeStageSelect() {
-      // 直接返回遊戲畫面，戰鬥繼續
-      showScreen('gameScreen');
+    window.showRecordsScreen = showRecordsScreen;
+
+    // 重置遊戲進度
+    async function resetProgress() {
+      if (!currentUser) return;
+
+      const confirmReset = confirm('確定要重置遊戲進度嗎？這將清除所有進度並從第一關開始！');
+      if (!confirmReset) return;
+
+      showLoading();
+
+      gameState.currentStage = 1;
+      gameState.playerMaxHp = 100;
+      gameState.playerAttack = 10;
+      gameState.playerDefense = 0;
+      gameState.playerCritRate = 5;
+      gameState.coins = 0;
+      gameState.weaponId = 0;
+
+      await saveGameProgress();
+
+      hideLoading();
+
+      alert('遊戲進度已重置！');
+      showScreen('menuScreen');
     }
 
-    function backToHomeFromStageSelect() {
-      if (gameState.battleInterval) {
-        clearInterval(gameState.battleInterval);
-      }
-      if (gameState.countdownInterval) {
-        clearInterval(gameState.countdownInterval);
-      }
-      showScreen('homeScreen');
-    }
-    
-    window.openStageSelect = openStageSelect;
-    window.closeStageSelect = closeStageSelect;
-    window.backToHomeFromStageSelect = backToHomeFromStageSelect;
-
-    function renderStageSelect() {
-      const grid = document.getElementById('stagesGrid');
-      grid.innerHTML = '';
-      
-      for (let i = 1; i <= 100; i++) {
-        const card = document.createElement('div');
-        const completed = gameState.completedStages.includes(i);
-        const current = i === gameState.currentStage;
-        const locked = i > Math.max(...gameState.completedStages, gameState.currentStage);
-        
-        card.className = `stage-card ${completed ? 'completed' : ''} ${current ? 'current' : ''} ${locked ? 'locked' : ''}`;
-        card.textContent = i;
-        
-        if (!locked) {
-          card.onclick = () => {
-            startStage(i);
-          };
-        }
-        
-        grid.appendChild(card);
-      }
-    }
+    window.resetProgress = resetProgress;
 
     // 戰鬥日誌
     function addBattleLog(message, type) {
@@ -1999,87 +1563,27 @@
       entry.textContent = message;
       log.appendChild(entry);
       log.scrollTop = log.scrollHeight;
-      
+
       if (log.children.length > 10) {
         log.removeChild(log.children[0]);
       }
     }
 
-    // 重試關卡
-    function retryStage() {
-      startStage(gameState.currentStage);
-    }
-
-    // 返回首頁
-    function backToHome() {
-      if (gameState.battleInterval) {
-        clearInterval(gameState.battleInterval);
-      }
-      if (gameState.countdownInterval) {
-        clearInterval(gameState.countdownInterval);
-      }
-      showScreen('homeScreen');
-    }
-
-    // 二周目
-    function startNewGamePlus() {
-      gameState.currentStage = 1;
-      gameState.completedStages = [];
-      saveProgress();
-      startStage(1);
-    }
-    
-    window.retryStage = retryStage;
-    window.backToHome = backToHome;
-    window.startNewGamePlus = startNewGamePlus;
-
     // 初始化
     window.addEventListener('load', function() {
-      // 事件監聽
-      const startBtn = document.getElementById('startNewGameBtn');
-      const continueBtn = document.getElementById('continueGameBtn');
-      const stageBtn = document.getElementById('stageSelectBtn');
-      
-      if (startBtn) {
-        startBtn.addEventListener('click', startNewGame);
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+
+      if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
       }
-      if (continueBtn) {
-        continueBtn.addEventListener('click', continueGame);
+
+      if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
       }
-      if (stageBtn) {
-        stageBtn.addEventListener('click', openStageSelect);
-      }
-      
-      // 升級畫面按鈕
-      const upgradeHealthCard = document.getElementById('upgradeHealthCard');
-      const upgradeAttackCard = document.getElementById('upgradeAttackCard');
-      const upgradeDefenseCard = document.getElementById('upgradeDefenseCard');
-      const upgradeCritCard = document.getElementById('upgradeCritCard');
-      const openShopCard = document.getElementById('openShopCard');
-      const continueBattleBtn = document.getElementById('continueBattleBtn');
-      
-      if (upgradeHealthCard) {
-        upgradeHealthCard.addEventListener('click', upgradeHealth);
-      }
-      if (upgradeAttackCard) {
-        upgradeAttackCard.addEventListener('click', upgradeAttack);
-      }
-      if (upgradeDefenseCard) {
-        upgradeDefenseCard.addEventListener('click', upgradeDefense);
-      }
-      if (upgradeCritCard) {
-        upgradeCritCard.addEventListener('click', upgradeCrit);
-      }
-      if (openShopCard) {
-        openShopCard.addEventListener('click', openShop);
-      }
-      if (continueBattleBtn) {
-        continueBattleBtn.addEventListener('click', continueBattle);
-      }
-      
+
       initSDKs();
-      loadSave();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6ce90b2f8f251',t:'MTc2MjYyMzExNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b6daeb9250f251',t:'MTc2MjYyMzYyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
