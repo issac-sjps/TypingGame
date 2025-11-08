@@ -448,21 +448,22 @@
     }
 
     .stage-popup-container {
-      background: rgba(255,255,255,0.95);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 40px;
       border-radius: 20px;
       max-width: 900px;
       width: 90%;
       max-height: 80%;
       overflow-y: auto;
-      color: #333;
+      color: #ffffff;
     }
 
     .stage-popup-title {
       font-size: 32px;
       text-align: center;
       margin-bottom: 20px;
-      color: #667eea;
+      color: #ffd700;
+      font-weight: bold;
     }
 
     .shop-title {
@@ -619,7 +620,7 @@
       <h3>🛡️ 數值說明</h3>
       <p>• 血量(HP)：生命值，歸零則失敗<br>
         • 攻擊力：每次攻擊造成的傷害<br>
-        • 防禦率：減少受到的傷害 = 攻擊力×(防禦率/2)/100 (最高100%)<br>
+        • 防禦率：減少受到的傷害 = 對方攻擊力×我方防禦率 (最高100%)<br>
         • 爆擊機率：觸發爆擊的機率(最高100%，100%時必定爆擊)<br>
         • 爆擊傷害：爆擊時的額外傷害加成(無上限)</p>
       <h3>🗡️ 武器系統</h3>
@@ -696,7 +697,7 @@
         </div>
         <div class="stat-row"><span>🛡️ 防禦:</span> <span id="playerDefense">0%</span>
          <div class="tooltip">
-          減少受到的傷害: 攻擊力×(防禦率/2)/100
+          減少受到的傷害: 對方攻擊力×我方防禦率
          </div>
         </div>
         <div class="stat-row"><span>💥 爆擊機率:</span> <span id="playerCrit">0%</span>
@@ -737,7 +738,7 @@
         </div>
         <div class="stat-row"><span>🛡️ 防禦:</span> <span id="enemyDefense">0%</span>
          <div class="tooltip">
-          妖怪減少受到的傷害百分比
+          減少受到的傷害: 對方攻擊力×妖怪防禦率
          </div>
         </div>
         <div class="stat-row"><span>💥 爆擊機率:</span> <span id="enemyCrit">2%</span>
@@ -931,12 +932,12 @@
       
       if (isPlayer) {
         gameState.playerAttackLog.push(log);
-        if (gameState.playerAttackLog.length > 5) {
+        if (gameState.playerAttackLog.length > 3) {
           gameState.playerAttackLog.shift();
         }
       } else {
         gameState.enemyAttackLog.push(log);
-        if (gameState.enemyAttackLog.length > 5) {
+        if (gameState.enemyAttackLog.length > 3) {
           gameState.enemyAttackLog.shift();
         }
       }
@@ -1228,7 +1229,8 @@
         }
         
         const effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
-        damage = Math.floor(damage * (100 - effectiveDefense) / 100);
+        const defenseReduction = Math.floor(damage * effectiveDefense / 100);
+        damage = Math.max(1, damage - defenseReduction);
         
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
         
@@ -1260,7 +1262,7 @@
         critDamagePercent = gameState.enemyCritDamage;
       }
       
-      const defenseReduction = Math.floor(damage * (gameState.playerDefense / 2) / 100);
+      const defenseReduction = Math.floor(damage * gameState.playerDefense / 100);
       const finalDamage = Math.max(1, damage - defenseReduction);
       gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
       
@@ -1699,5 +1701,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b74920e67ff251',t:'MTc2MjYyODEzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b74fb03356f251',t:'MTc2MjYyODQwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
