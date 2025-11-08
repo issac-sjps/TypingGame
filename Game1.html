@@ -155,9 +155,10 @@
 
     .weapon-display {
       background: rgba(255,255,255,0.15);
-      padding: 20px;
+      padding: 15px;
       border-radius: 15px;
-      min-width: 200px;
+      min-width: 150px;
+      max-width: 180px;
       text-align: center;
     }
 
@@ -180,10 +181,10 @@
     .character {
       text-align: center;
       background: rgba(255,255,255,0.15);
-      padding: 25px;
+      padding: 20px;
       border-radius: 15px;
-      flex: 1;
-      max-width: 350px;
+      flex: 0 1 300px;
+      min-width: 280px;
     }
 
     .character-avatar {
@@ -264,23 +265,25 @@
     }
 
     .vs-text {
-      font-size: 60px;
+      font-size: 48px;
       font-weight: bold;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+      flex-shrink: 0;
     }
 
     .upgrade-panel {
-      background: rgba(100,149,237,0.3);
-      padding: 20px;
+      background: rgba(255,255,255,0.25);
+      padding: 25px;
       border-radius: 15px;
       margin-bottom: 20px;
       text-align: center;
+      border: 2px solid rgba(255,255,255,0.3);
     }
 
     .upgrade-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: bold;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .upgrade-buttons {
@@ -291,19 +294,21 @@
     }
 
     .upgrade-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 12px 20px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      padding: 15px 25px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       color: white;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     .upgrade-btn:hover {
       transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
     .upgrade-btn:disabled {
@@ -574,7 +579,7 @@
       </div>
       <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
       </div>
-      <div><button class="btn btn-secondary" id="openShopButton" style="padding: 10px 20px;">🛒 武器商店</button> <button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
+      <div><button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
       </div>
      </div>
      <div class="battle-area">
@@ -587,7 +592,7 @@
        </div>
        <div class="weapon-effect" id="currentWeaponEffect">
         每次攻擊一次
-       </div>
+       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; margin-top: 15px; width: 100%; font-size: 16px;">🛒 武器商店</button>
       </div>
       <div class="character" id="playerCharacter">
        <div class="character-avatar">
@@ -809,6 +814,7 @@
       playerCritDamage: 0,
       coins: 0,
       weaponId: 0,
+      ownedWeapons: [0],
       enemyHp: 100,
       enemyMaxHp: 100,
       enemyBaseAttack: 8,
@@ -837,7 +843,8 @@
         playerCritRate: gameState.playerCritRate,
         playerCritDamage: gameState.playerCritDamage,
         coins: gameState.coins,
-        weaponId: gameState.weaponId
+        weaponId: gameState.weaponId,
+        ownedWeapons: gameState.ownedWeapons
       }));
     }
 
@@ -854,6 +861,7 @@
         gameState.playerCritDamage = data.playerCritDamage || 0;
         gameState.coins = data.coins || 0;
         gameState.weaponId = data.weaponId || 0;
+        gameState.ownedWeapons = data.ownedWeapons || [0];
       }
     }
 
@@ -1270,6 +1278,7 @@
         playerCritDamage: 0,
         coins: 0,
         weaponId: 0,
+        ownedWeapons: [0],
         enemyHp: 100,
         enemyMaxHp: 100,
         enemyBaseAttack: 8,
@@ -1307,14 +1316,25 @@
       
       weapons.forEach(weapon => {
         const equipped = gameState.weaponId === weapon.id;
+        const owned = gameState.ownedWeapons.includes(weapon.id);
         
         const card = document.createElement('div');
         card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
+        
+        let statusText = '';
+        if (equipped) {
+          statusText = '✅ 已裝備';
+        } else if (owned) {
+          statusText = '🔄 點擊裝備';
+        } else {
+          statusText = `💰 ${weapon.cost} 金幣`;
+        }
+        
         card.innerHTML = `
           <div class="weapon-icon">${weapon.icon}</div>
           <h3>${weapon.name}</h3>
           <p>${weapon.effect}</p>
-          <div class="weapon-cost">${equipped ? '✅ 已裝備' : `💰 ${weapon.cost} 金幣`}</div>
+          <div class="weapon-cost">${statusText}</div>
         `;
         
         if (!equipped) {
@@ -1328,9 +1348,19 @@
     // 購買武器
     function buyWeapon(weaponId) {
       const weapon = weapons[weaponId];
-      if (gameState.coins >= weapon.cost) {
+      const owned = gameState.ownedWeapons.includes(weaponId);
+      
+      if (owned) {
+        // 已擁有，直接裝備
+        gameState.weaponId = weaponId;
+        updateUI();
+        renderWeaponsShop();
+        saveGame();
+      } else if (gameState.coins >= weapon.cost) {
+        // 購買並裝備
         gameState.coins -= weapon.cost;
         gameState.weaponId = weaponId;
+        gameState.ownedWeapons.push(weaponId);
         updateUI();
         renderWeaponsShop();
         saveGame();
@@ -1607,19 +1637,23 @@
 
     .battle-area {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       margin-bottom: 20px;
       min-height: 280px;
       position: relative;
       gap: 20px;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .weapon-display {
       background: rgba(255,255,255,0.15);
-      padding: 20px;
+      padding: 15px;
       border-radius: 15px;
-      min-width: 200px;
+      min-width: 150px;
+      max-width: 180px;
       text-align: center;
     }
 
@@ -1642,10 +1676,10 @@
     .character {
       text-align: center;
       background: rgba(255,255,255,0.15);
-      padding: 25px;
+      padding: 20px;
       border-radius: 15px;
-      flex: 1;
-      max-width: 350px;
+      flex: 0 1 300px;
+      min-width: 280px;
     }
 
     .character-avatar {
@@ -1726,23 +1760,25 @@
     }
 
     .vs-text {
-      font-size: 60px;
+      font-size: 48px;
       font-weight: bold;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+      flex-shrink: 0;
     }
 
     .upgrade-panel {
-      background: rgba(100,149,237,0.3);
-      padding: 20px;
+      background: rgba(255,255,255,0.25);
+      padding: 25px;
       border-radius: 15px;
       margin-bottom: 20px;
       text-align: center;
+      border: 2px solid rgba(255,255,255,0.3);
     }
 
     .upgrade-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: bold;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .upgrade-buttons {
@@ -1753,19 +1789,21 @@
     }
 
     .upgrade-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 12px 20px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      padding: 15px 25px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       color: white;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     .upgrade-btn:hover {
       transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
     .upgrade-btn:disabled {
@@ -2031,7 +2069,7 @@
       </div>
       <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span>
       </div>
-      <div><button class="btn btn-secondary" id="openShopButton" style="padding: 10px 20px;">🛒 武器商店</button> <button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
+      <div><button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">返回首頁</button>
       </div>
      </div>
      <div class="battle-area">
@@ -2044,7 +2082,7 @@
        </div>
        <div class="weapon-effect" id="currentWeaponEffect">
         每次攻擊一次
-       </div>
+       </div><button class="btn btn-secondary" id="openShopButton" style="padding: 12px 20px; margin-top: 15px; width: 100%; font-size: 16px;">🛒 武器商店</button>
       </div>
       <div class="character" id="playerCharacter">
        <div class="character-avatar">
@@ -2256,6 +2294,7 @@
       playerCritDamage: 0,
       coins: 0,
       weaponId: 0,
+      ownedWeapons: [0],
       enemyHp: 100,
       enemyMaxHp: 100,
       enemyBaseAttack: 8,
@@ -2284,7 +2323,8 @@
         playerCritRate: gameState.playerCritRate,
         playerCritDamage: gameState.playerCritDamage,
         coins: gameState.coins,
-        weaponId: gameState.weaponId
+        weaponId: gameState.weaponId,
+        ownedWeapons: gameState.ownedWeapons
       }));
     }
 
@@ -2301,6 +2341,7 @@
         gameState.playerCritDamage = data.playerCritDamage || 0;
         gameState.coins = data.coins || 0;
         gameState.weaponId = data.weaponId || 0;
+        gameState.ownedWeapons = data.ownedWeapons || [0];
       }
     }
 
@@ -2717,6 +2758,7 @@
         playerCritDamage: 0,
         coins: 0,
         weaponId: 0,
+        ownedWeapons: [0],
         enemyHp: 100,
         enemyMaxHp: 100,
         enemyBaseAttack: 8,
@@ -2754,14 +2796,25 @@
       
       weapons.forEach(weapon => {
         const equipped = gameState.weaponId === weapon.id;
+        const owned = gameState.ownedWeapons.includes(weapon.id);
         
         const card = document.createElement('div');
         card.className = `weapon-card ${equipped ? 'equipped' : ''}`;
+        
+        let statusText = '';
+        if (equipped) {
+          statusText = '✅ 已裝備';
+        } else if (owned) {
+          statusText = '🔄 點擊裝備';
+        } else {
+          statusText = `💰 ${weapon.cost} 金幣`;
+        }
+        
         card.innerHTML = `
           <div class="weapon-icon">${weapon.icon}</div>
           <h3>${weapon.name}</h3>
           <p>${weapon.effect}</p>
-          <div class="weapon-cost">${equipped ? '✅ 已裝備' : `💰 ${weapon.cost} 金幣`}</div>
+          <div class="weapon-cost">${statusText}</div>
         `;
         
         if (!equipped) {
@@ -2775,9 +2828,19 @@
     // 購買武器
     function buyWeapon(weaponId) {
       const weapon = weapons[weaponId];
-      if (gameState.coins >= weapon.cost) {
+      const owned = gameState.ownedWeapons.includes(weaponId);
+      
+      if (owned) {
+        // 已擁有，直接裝備
+        gameState.weaponId = weaponId;
+        updateUI();
+        renderWeaponsShop();
+        saveGame();
+      } else if (gameState.coins >= weapon.cost) {
+        // 購買並裝備
         gameState.coins -= weapon.cost;
         gameState.weaponId = weaponId;
+        gameState.ownedWeapons.push(weaponId);
         updateUI();
         renderWeaponsShop();
         saveGame();
@@ -2910,5 +2973,5 @@
       loadGame();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b71dea8170f251',t:'MTc2MjYyNjM2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99b727210660f251',t:'MTc2MjYyNjc0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
