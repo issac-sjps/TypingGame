@@ -114,18 +114,22 @@
       width: 100%;
       max-width: 1600px;
       margin: 0 auto;
-      padding: 15px 20px;
+      padding: 8px 20px;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     .game-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       background: rgba(255,255,255,0.1);
-      padding: 12px 20px;
+      padding: 8px 20px;
       border-radius: 10px;
+      flex-shrink: 0;
     }
 
     .stage-info {
@@ -149,13 +153,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 15px;
-      min-height: 240px;
+      margin-bottom: 8px;
+      min-height: 220px;
       position: relative;
-      gap: 15px;
+      gap: 12px;
       max-width: 1400px;
       margin-left: auto;
       margin-right: auto;
+      flex-shrink: 0;
     }
 
     .weapon-display {
@@ -320,17 +325,18 @@
 
     .upgrade-panel {
       background: rgba(255,255,255,0.25);
-      padding: 18px;
+      padding: 10px;
       border-radius: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       text-align: center;
       border: 2px solid rgba(255,255,255,0.3);
+      flex-shrink: 0;
     }
 
     .upgrade-title {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: bold;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
     }
 
     .upgrade-buttons {
@@ -365,24 +371,25 @@
 
     .typing-area {
       background: rgba(255,255,255,0.2);
-      padding: 20px;
+      padding: 12px;
       border-radius: 12px;
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 0;
+      flex-shrink: 0;
     }
 
     .word-display {
-      font-size: 60px;
+      font-size: 52px;
       font-weight: bold;
-      margin-bottom: 12px;
-      min-height: 64px;
+      margin-bottom: 8px;
+      min-height: 56px;
     }
 
     .pinyin-display {
-      font-size: 30px;
+      font-size: 26px;
       color: #ffd700;
-      margin-bottom: 18px;
-      min-height: 32px;
+      margin-bottom: 10px;
+      min-height: 28px;
     }
 
     .typing-input {
@@ -2822,18 +2829,22 @@
       width: 100%;
       max-width: 1600px;
       margin: 0 auto;
-      padding: 15px 20px;
+      padding: 8px 20px;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     .game-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       background: rgba(255,255,255,0.1);
-      padding: 12px 20px;
+      padding: 8px 20px;
       border-radius: 10px;
+      flex-shrink: 0;
     }
 
     .stage-info {
@@ -2857,13 +2868,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-bottom: 15px;
-      min-height: 240px;
+      margin-bottom: 8px;
+      min-height: 220px;
       position: relative;
-      gap: 15px;
+      gap: 12px;
       max-width: 1400px;
       margin-left: auto;
       margin-right: auto;
+      flex-shrink: 0;
     }
 
     .weapon-display {
@@ -3028,17 +3040,18 @@
 
     .upgrade-panel {
       background: rgba(255,255,255,0.25);
-      padding: 18px;
+      padding: 10px;
       border-radius: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       text-align: center;
       border: 2px solid rgba(255,255,255,0.3);
+      flex-shrink: 0;
     }
 
     .upgrade-title {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: bold;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
     }
 
     .upgrade-buttons {
@@ -3073,24 +3086,25 @@
 
     .typing-area {
       background: rgba(255,255,255,0.2);
-      padding: 20px;
+      padding: 12px;
       border-radius: 12px;
       text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 0;
+      flex-shrink: 0;
     }
 
     .word-display {
-      font-size: 60px;
+      font-size: 52px;
       font-weight: bold;
-      margin-bottom: 12px;
-      min-height: 64px;
+      margin-bottom: 8px;
+      min-height: 56px;
     }
 
     .pinyin-display {
-      font-size: 30px;
+      font-size: 26px;
       color: #ffd700;
-      margin-bottom: 18px;
-      min-height: 32px;
+      margin-bottom: 10px;
+      min-height: 28px;
     }
 
     .typing-input {
@@ -5315,5 +5329,5 @@
       updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99cbd4bf440da39d',t:'MTc2Mjg0MzU3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99cbd8c865fea39d',t:'MTc2Mjg0MzczNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
