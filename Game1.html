@@ -1690,15 +1690,15 @@
       
       // 道具效果：混亂藥水（50%機率攻擊自己）
       if (gameState.itemConfusionCount > 0) {
-        gameState.itemConfusionCount--;
-        if (gameState.itemConfusionCount === 0) {
-          resetItemToNone();
-        }
         if (Math.random() < 0.5) {
           let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
           gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
           updateUI();
           return;
+        }
+        gameState.itemConfusionCount--;
+        if (gameState.itemConfusionCount === 0) {
+          resetItemToNone();
         }
       }
       
@@ -4364,15 +4364,15 @@
       
       // 道具效果：混亂藥水（50%機率攻擊自己）
       if (gameState.itemConfusionCount > 0) {
-        gameState.itemConfusionCount--;
-        if (gameState.itemConfusionCount === 0) {
-          resetItemToNone();
-        }
         if (Math.random() < 0.5) {
           let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
           gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
           updateUI();
           return;
+        }
+        gameState.itemConfusionCount--;
+        if (gameState.itemConfusionCount === 0) {
+          resetItemToNone();
         }
       }
       
@@ -5349,5 +5349,5 @@
       updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e386aa30b1f22a',t:'MTc2MzA5MjAzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99e39710406f6a8c',t:'MTc2MzA5MjcwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
