@@ -439,7 +439,7 @@
       color: #ffffff;
     }
 
-    /* 關卡選擇浮動視窗 */
+    /* 關卡選擇浮���視窗 */
     .stage-overlay {
       display: none;
       position: fixed;
@@ -696,7 +696,7 @@
          無
         </div>
         <div class="weapon-effect" id="currentRelicEffect">
-         未裝備聖遺物
+         ��裝備��遺物
         </div>
        </div><button class="btn btn-secondary" id="openRelicShopButton" style="padding: 8px 12px; width: 130px; font-size: 13px; font-weight: bold; background: linear-gradient(135deg, #ffd700 0%, #ffA500 100%);">✨ 聖遺物商店</button>
       </div>
@@ -801,7 +801,7 @@
           減少受到的傷害: 對方攻擊力×妖怪防禦率
          </div>
         </div>
-        <div class="stat-row"><span>💥 爆擊機率:</span> <span id="enemyCrit">2%</span>
+        <div class="stat-row"><span>💥 爆擊機��:</span> <span id="enemyCrit">2%</span>
          <div class="tooltip">
           妖怪觸發爆擊的機率
          </div>
@@ -913,38 +913,38 @@
     const wordBank = [
       {word: "學習", pinyin: "ㄒㄩㄝˊ ㄒㄧˊ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"}, {word: "老師", pinyin: "ㄌㄠˇ ㄕ"}, 
       {word: "學生", pinyin: "ㄒㄩㄝˊ ㄕㄥ"}, {word: "教室", pinyin: "ㄐㄧㄠˋ ㄕˋ"}, {word: "書本", pinyin: "ㄕㄨ ㄅㄣˇ"},
-      {word: "鉛筆", pinyin: "ㄑㄧㄢ ㄅㄧˇ"}, {word: "橡皮", pinyin: "ㄒㄧㄤˋ ㄆㄧˊ"}, {word: "黑板", pinyin: "ㄏㄟ ㄅㄢˇ"},
+      {word: "鉛筆", pinyin: "ㄑㄧㄢ ㄅㄧˇ"}, {word: "橡皮", pinyin: "ㄒㄧㄤˋ ㄆㄧˊ"}, {word: "黑板", pinyin: "��ㄟ ㄅㄢˇ"},
       {word: "粉筆", pinyin: "ㄈㄣˇ ㄅㄧˇ"}, {word: "課本", pinyin: "ㄎㄜˋ ㄅㄣˇ"}, {word: "作業", pinyin: "ㄗㄨㄛˋ ㄧㄝˋ"},
       {word: "考試", pinyin: "ㄎㄠˇ ㄕˋ"}, {word: "成績", pinyin: "ㄔㄥˊ ㄐㄧ"}, {word: "朋友", pinyin: "ㄆㄥˊ ㄧㄡˇ"},
       {word: "家人", pinyin: "ㄐㄧㄚ ㄖㄣˊ"}, {word: "蘋果", pinyin: "ㄆㄧㄥˊ ㄍㄨㄛˇ"}, {word: "媽媽", pinyin: "ㄇㄚ ㄇㄚ"},
       {word: "哥哥", pinyin: "ㄍㄜ ㄍㄜ"}, {word: "澎湖", pinyin: "ㄆㄥˊ ㄏㄨˊ"}, {word: "弟弟", pinyin: "ㄉㄧˋ ㄉㄧˋ"},
       {word: "西瓜", pinyin: "ㄒㄧ ㄍㄨㄚ"}, {word: "香蕉", pinyin: "ㄒㄧㄤ ㄐㄧㄠ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"},
       {word: "早安", pinyin: "ㄗㄠˇ ㄢ"}, {word: "午安", pinyin: "ㄨˇ ㄢ"}, {word: "晚安", pinyin: "ㄨㄢˇ ㄢ"},
-      {word: "謝謝", pinyin: "ㄒㄧㄝˋ ㄒㄧㄝˋ"}, {word: "對不起", pinyin: "ㄉㄨㄟˋ ㄅㄨˋ ㄑㄧˇ"}, {word: "沒關係", pinyin: "ㄇㄟˊ ㄍㄨㄢ ㄒㄧˋ"},
+      {word: "謝謝", pinyin: "ㄒㄧㄝˋ ㄒㄧㄝˋ"}, {word: "對不起", pinyin: "ㄉ���ㄟˋ ㄅㄨˋ ㄑㄧˇ"}, {word: "沒關係", pinyin: "ㄇㄟˊ ㄍㄨㄢ ㄒㄧˋ"},
       {word: "請問", pinyin: "ㄑㄧㄥˇ ㄨㄣˋ"}, {word: "再見", pinyin: "ㄗㄞˋ ㄐㄧㄢˋ"}, {word: "你好", pinyin: "ㄋㄧˇ ㄏㄠˇ"},
       {word: "歡迎", pinyin: "ㄏㄨㄢ ㄧㄥˊ"}, {word: "幫忙", pinyin: "ㄅㄤ ㄇㄤˊ"}, {word: "麻煩", pinyin: "ㄇㄚˊ ㄈㄢˊ"},
       {word: "快樂", pinyin: "ㄎㄨㄞˋ ㄌㄜˋ"}, {word: "開心", pinyin: "ㄎㄞ ㄒㄧㄣ"}, {word: "高興", pinyin: "ㄍㄠ ㄒㄧㄥˋ"},
       {word: "傷心", pinyin: "ㄕㄤ ㄒㄧㄣ"}, {word: "生氣", pinyin: "ㄕㄥ ㄑㄧˋ"}, {word: "害怕", pinyin: "ㄏㄞˋ ㄆㄚˋ"},
-      {word: "勇敢", pinyin: "ㄩㄥˇ ㄍㄢˇ"}, {word: "聰明", pinyin: "ㄘㄨㄥ ㄇㄧㄥˊ"}, {word: "努力", pinyin: "ㄋㄨˇ ㄌㄧˋ"},
+      {word: "勇敢", pinyin: "ㄩㄥˇ ㄍㄢˇ"}, {word: "��明", pinyin: "ㄘㄨㄥ ㄇㄧㄥˊ"}, {word: "努力", pinyin: "ㄋㄨˇ ㄌㄧˋ"},
       {word: "認真", pinyin: "ㄖㄣˋ ㄓㄣ"}, {word: "仔細", pinyin: "ㄗˇ ㄒㄧˋ"}, {word: "小心", pinyin: "ㄒㄧㄠˇ ㄒㄧㄣ"},
       {word: "注意", pinyin: "ㄓㄨˋ ㄧˋ"}, {word: "安全", pinyin: "ㄢ ㄑㄩㄢˊ"}, {word: "危險", pinyin: "ㄨㄟˊ ㄒㄧㄢˇ"},
       {word: "健康", pinyin: "ㄐㄧㄢˋ ㄎㄤ"}, {word: "運動", pinyin: "ㄩㄣˋ ㄉㄨㄥˋ"}, {word: "跑步", pinyin: "ㄆㄠˇ ㄅㄨˋ"},
       {word: "游泳", pinyin: "ㄧㄡˊ ㄩㄥˇ"}, {word: "籃球", pinyin: "ㄌㄢˊ ㄑㄧㄡˊ"}, {word: "足球", pinyin: "ㄗㄨˊ ㄑㄧㄡˊ"},
       {word: "音樂", pinyin: "ㄧㄣ ㄩㄝˋ"}, {word: "美術", pinyin: "ㄇㄟˇ ㄕㄨˋ"}, {word: "數學", pinyin: "ㄕㄨˋ ㄒㄩㄝˊ"},
-      {word: "國語", pinyin: "ㄍㄨㄛˊ ㄩˇ"}, {word: "英文", pinyin: "ㄧㄥ ㄨㄣˊ"}, {word: "自然", pinyin: "ㄗˋ ㄖㄢˊ"},
+      {word: "國語", pinyin: "ㄍㄨㄛˊ ㄩˇ"}, {word: "英文", pinyin: "ㄧㄥ ㄨㄣˊ"}, {word: "自��", pinyin: "ㄗˋ ㄖㄢˊ"},
       {word: "社會", pinyin: "ㄕㄜˋ ㄏㄨㄟˋ"}, {word: "體育", pinyin: "ㄊㄧˇ ㄩˋ"}, {word: "電視", pinyin: "ㄉㄧㄢˋ ㄕˋ"},
       {word: "電影", pinyin: "ㄉㄧㄢˋ ㄧㄥˇ"}, {word: "故事", pinyin: "ㄍㄨˋ ㄕˋ"}, {word: "圖書", pinyin: "ㄊㄨˊ ㄕㄨ"},
       {word: "公園", pinyin: "ㄍㄨㄥ ㄩㄢˊ"}, {word: "學校", pinyin: "ㄒㄩㄝˊ ㄒㄧㄠˋ"}, {word: "醫院", pinyin: "ㄧ ㄩㄢˋ"},
       {word: "商店", pinyin: "ㄕㄤ ㄉㄧㄢˋ"}, {word: "餐廳", pinyin: "ㄘㄢ ㄊㄧㄥ"}, {word: "車站", pinyin: "ㄔㄜ ㄓㄢˋ"},
       {word: "機場", pinyin: "ㄐㄧ ㄔㄤˇ"}, {word: "銀行", pinyin: "ㄧㄣˊ ㄏㄤˊ"}, {word: "郵局", pinyin: "ㄧㄡˊ ㄐㄩˊ"},
       {word: "警察", pinyin: "ㄐㄧㄥˇ ㄔㄚˊ"}, {word: "消防", pinyin: "ㄒㄧㄠ ㄈㄤˊ"}, {word: "醫生", pinyin: "ㄧ ㄕㄥ"},
-      {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"}, {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"},
+      {word: "護��", pinyin: "ㄏㄨˋ ㄕˋ"}, {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"},
       {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"}, {word: "工人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "老闆", pinyin: "ㄌㄠˇ ㄅㄢˇ"},
       {word: "客人", pinyin: "ㄎㄜˋ ㄖㄣˊ"}, {word: "鄰居", pinyin: "ㄌㄧㄣˊ ㄐㄩ"}, {word: "親戚", pinyin: "ㄑㄧㄣ ㄑㄧ"},
       {word: "同學", pinyin: "ㄊㄨㄥˊ ㄒㄩㄝˊ"}, {word: "同事", pinyin: "ㄊㄨㄥˊ ㄕˋ"}, {word: "客氣", pinyin: "ㄎㄜˋ ㄑㄧˋ"},
       {word: "禮物", pinyin: "ㄌㄧˇ ㄨˋ"}, {word: "蛋糕", pinyin: "ㄉㄢˋ ㄍㄠ"}, {word: "糖果", pinyin: "ㄊㄤˊ ㄍㄨㄛˇ"},
       {word: "餅乾", pinyin: "ㄅㄧㄥˇ ㄍㄢ"}, {word: "麵包", pinyin: "ㄇㄧㄢˋ ㄅㄠ"}, {word: "牛奶", pinyin: "ㄋㄧㄡˊ ㄋㄞˇ"},
-      {word: "果汁", pinyin: "ㄍㄨㄛˇ ㄓ"}, {word: "茶葉", pinyin: "ㄔㄚˊ ㄧㄝˋ"}, {word: "咖啡", pinyin: "ㄎㄚ ㄈㄟ"},
+      {word: "果汁", pinyin: "ㄍㄨㄛˇ ㄓ"}, {word: "茶葉", pinyin: "ㄔ���ˊ ㄧㄝˋ"}, {word: "咖啡", pinyin: "ㄎㄚ ㄈㄟ"},
       {word: "米飯", pinyin: "ㄇㄧˇ ㄈㄢˋ"}, {word: "麵條", pinyin: "ㄇㄧㄢˋ ㄊㄧㄠˊ"}, {word: "水果", pinyin: "ㄕㄨㄟˇ ㄍㄨㄛˇ"},
       {word: "蔬菜", pinyin: "ㄕㄨ ㄘㄞˋ"}, {word: "雞蛋", pinyin: "ㄐㄧ ㄉㄢˋ"}, {word: "魚肉", pinyin: "ㄩˊ ㄖㄡˋ"}
     ];
@@ -955,7 +955,7 @@
       {id: 1, name: "雙刃劍", cost: 50, effect: "每次攻擊兩下", icon: "⚔️"},
       {id: 2, name: "重錘", cost: 60, effect: "每一下攻擊都是1.5倍傷害", icon: "🔨"},
       {id: 3, name: "毒刃", cost: 70, effect: "附加毒性傷害,每秒額外扣血", icon: "☠️"},
-      {id: 4, name: "神弓", cost: 80, effect: "每次攻擊隨機×1~5倍傷害", icon: "🏹"},
+      {id: 4, name: "���弓", cost: 80, effect: "每次攻擊隨機×1~5倍傷害", icon: "🏹"},
       {id: 5, name: "破甲劍", cost: 85, effect: "每打一下減少對手5%防禦率", icon: "🛡️"},
       {id: 6, name: "虛弱劍", cost: 85, effect: "每打一下減少對手2點攻擊力", icon: "⚡"},
       {id: 7, name: "財富劍", cost: 90, effect: "每打一下會多一個金幣", icon: "💰"},
@@ -975,7 +975,7 @@
       {id: 5, name: "爆擊傷害藥水", cost: 30, effect: "接下來5次攻擊爆擊傷害×2", icon: "💥"},
       {id: 6, name: "混亂藥水", cost: 30, effect: "接下來5次攻擊怪物50%機率攻擊自己", icon: "😵"},
       {id: 7, name: "運氣藥水", cost: 30, effect: "3分鐘內答對金幣×2", icon: "🍀"},
-      {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"},
+      {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊���定爆擊", icon: "💎"},
       {id: 9, name: "破甲藥水", cost: 60, effect: "接下來5次攻擊無視對手防禦率", icon: "🔓"},
       {id: 10, name: "變身藥水", cost: 60, effect: "獲得50-100關隨機怪獸數值3分鐘", icon: "🧪"},
       {id: 11, name: "降魔杵", cost: 60, effect: "3分鐘內每次攻擊3%機率即死秒殺", icon: "🔱"}
@@ -988,8 +988,8 @@
       {id: 2, name: "天使的光環", cost: 100, effect: "50%機率攻擊無效", icon: "😇"},
       {id: 3, name: "赫拉克勒斯的戰車", cost: 100, effect: "爆擊傷害機率×2", icon: "🏛️"},
       {id: 4, name: "阿瑞斯的長矛", cost: 100, effect: "攻擊力×2", icon: "🔱"},
-      {id: 5, name: "奧菲斯的七弦琴", cost: 100, effect: "敵人永久50%機率打到自己", icon: "🎻"},
-      {id: 6, name: "聚寶盆", cost: 100, effect: "每次攻擊後隨機給予1-10金幣", icon: "🏺"},
+      {id: 5, name: "奧菲斯的七弦琴", cost: 100, effect: "敵人��久50%機率打到自己", icon: "🎻"},
+      {id: 6, name: "聚寶盆", cost: 100, effect: "每次攻擊���隨機給予1-10金幣", icon: "🏺"},
       {id: 7, name: "書卷獎", cost: 100, effect: "答題後金幣+10", icon: "📜"}
     ];
 
@@ -1000,8 +1000,8 @@
       "🦖", "🦕", "🐍", "🦂", "🕷️", "🦇", "🐺", "🦁", "🐯", "🐻",
       "🦍", "🦧", "🐗", "🐊", "🦈", "🐙", "🦑", "🦞", "🦀", "🐡",
       "🦐", "🐢", "🦎", "🐛", "🦗", "🕸️", "🦟", "🐝", "🐜", "🦋",
-      "🐞", "🦂", "🕷️", "🦇", "🐺", "🦊", "🦝", "🐻", "🐼", "🦘",
-      "🦡", "🦨", "🦦", "🦥", "🐁", "🐀", "🐹", "🐰", "🐇", "🐿️",
+      "🐞", "🦂", "🕷️", "🦇", "🐺", "🦊", "🦝", "��", "🐼", "🦘",
+      "🦡", "🦨", "🦦", "🦥", "��", "🐀", "🐹", "🐰", "🐇", "🐿️",
       "🦔", "🦇", "🐻", "🐨", "🐯", "🦁", "🐮", "🐷", "🐗", "🐵",
       "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐩",
       "🐺", "🦊", "🦝", "🐱", "🐈", "🦁", "🐯", "🐅", "🐆", "🐴"
@@ -1095,7 +1095,7 @@
       }
     }
 
-    // 重置計時
+    // 重置��時
     function resetPlayTimer() {
       stopPlayTimer();
       playTimeStarted = 0;
@@ -1460,7 +1460,7 @@
       // 玩家攻擊
       playerAttack();
       
-      // 檢查敵人是否死亡
+      // 檢查敵人��否死亡
       if (gameState.enemyHp <= 0) {
         handleStageComplete();
         return;
@@ -1656,7 +1656,7 @@
         addAttackLog(true, damage, isCrit, critDamagePercent);
       }
       
-      // 破甲藥水次數減少
+      // 破甲藥水次數���少
       if (gameState.itemArmorBreakCount > 0) {
         gameState.itemArmorBreakCount--;
         if (gameState.itemArmorBreakCount === 0) {
@@ -1716,7 +1716,7 @@
         }
       }
       
-      // 道具效果：無敵盾牌（不受傷害）
+      // 道具效果：��敵盾牌（不受傷害）
       if (gameState.itemShieldCount > 0) {
         gameState.itemShieldCount--;
         if (gameState.itemShieldCount === 0) {
@@ -1788,7 +1788,7 @@
       }
     }
     
-    // 檢查降魔杵是否過期
+    // 檢查降魔杵是否過��
     function checkInstakillPotionExpiry() {
       if (gameState.itemInstakillEndTime > 0 && gameState.itemInstakillEndTime <= Date.now() && gameState.itemId === 11) {
         gameState.itemInstakillEndTime = 0;
@@ -1907,7 +1907,7 @@
       document.getElementById('currentItemName').textContent = item.name;
       document.getElementById('currentItemEffect').textContent = itemEffect;
       
-      // 聖遺物顯示
+      // 聖遺��顯示
       const relic = relics[gameState.relicId];
       document.getElementById('currentRelicIcon').textContent = relic.icon;
       document.getElementById('currentRelicName').textContent = relic.name;
@@ -1959,7 +1959,7 @@
       gameState.maxStage = Math.max(gameState.maxStage, gameState.currentStage + 1);
       saveGame();
       
-      // 檢查是否通關100關
+      // 檢查是否���關100關
       if (gameState.currentStage >= 100) {
         showVictoryScreen();
       } else {
@@ -1987,7 +1987,7 @@
         box.innerHTML = `
           <div style="font-size: 60px; margin-bottom: 30px;">🎊 恭喜通關!</div>
           <div style="font-size: 28px; margin-bottom: 20px;">你真厲害！完成了全部100關！</div>
-          <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
+          <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">��️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
           <button class="victory-btn" data-action="newgameplus" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #ffd700; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">⭐ 二周目</button>
           <button class="victory-btn" data-action="restart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
           <button class="victory-btn" data-action="home" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
@@ -2202,7 +2202,7 @@
       document.getElementById('shopOverlay').classList.remove('active');
     }
 
-    // 開啟關卡選擇浮動視窗
+    // 開啟關卡選擇浮動視��
     function openStageSelectPopup() {
       renderStageSelectPopup();
       document.getElementById('stageOverlay').classList.add('active');
@@ -2624,7 +2624,7 @@
       box.style.cssText = 'background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); padding: 40px; border-radius: 20px; text-align: center; color: white;';
       box.innerHTML = `
         <div style="font-size: 48px; margin-bottom: 20px;">⚠️ 確認清除</div>
-        <div style="font-size: 24px; margin-bottom: 30px;">確定要清除所有遊戲紀錄嗎？<br>此操作無法復原！</div>
+        <div style="font-size: 24px; margin-bottom: 30px;">確定要清除所有遊戲紀錄嗎？<br>此操作��法復原！</div>
         <button id="confirmClear" style="padding: 15px 30px; font-size: 18px; border: none; border-radius: 10px; background: white; color: #ff6b6b; font-weight: bold; cursor: pointer; margin: 10px;">確定清除</button>
         <button id="cancelClear" style="padding: 15px 30px; font-size: 18px; border: none; border-radius: 10px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">取消</button>
       `;
@@ -2637,7 +2637,7 @@
         resetGame();
         document.body.removeChild(overlay);
         
-        // 顯示清除成功訊息
+        // 顯示清除成功���息
         const successBox = document.createElement('div');
         successBox.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,200,0,0.9); padding: 30px 50px; border-radius: 15px; color: white; font-size: 24px; z-index: 10001;';
         successBox.textContent = '✅ 遊戲紀錄已清除！';
@@ -2693,11 +2693,44 @@
       renderStageSelectPopup();
     });
     
-    document.getElementById('upgradeHpButton').addEventListener('click', upgradeHp);
-    document.getElementById('upgradeAttackButton').addEventListener('click', upgradeAttack);
-    document.getElementById('upgradeDefenseButton').addEventListener('click', upgradeDefense);
-    document.getElementById('upgradeCritButton').addEventListener('click', upgradeCrit);
-    document.getElementById('upgradeCritDamageButton').addEventListener('click', upgradeCritDamage);
+    // 長按升級功能
+    let upgradeInterval = null;
+    let upgradeTimeout = null;
+    
+    function setupLongPressUpgrade(buttonId, upgradeFunc) {
+      const button = document.getElementById(buttonId);
+      
+      // 點擊事件
+      button.addEventListener('click', upgradeFunc);
+      
+      // 長按開始
+      button.addEventListener('mousedown', () => {
+        upgradeTimeout = setTimeout(() => {
+          upgradeInterval = setInterval(upgradeFunc, 100); // 每0.1秒升級一次
+        }, 500); // 長按0.5秒後開始快速升級
+      });
+      
+      // 長按結束
+      const stopUpgrade = () => {
+        if (upgradeTimeout) {
+          clearTimeout(upgradeTimeout);
+          upgradeTimeout = null;
+        }
+        if (upgradeInterval) {
+          clearInterval(upgradeInterval);
+          upgradeInterval = null;
+        }
+      };
+      
+      button.addEventListener('mouseup', stopUpgrade);
+      button.addEventListener('mouseleave', stopUpgrade);
+    }
+    
+    setupLongPressUpgrade('upgradeHpButton', upgradeHp);
+    setupLongPressUpgrade('upgradeAttackButton', upgradeAttack);
+    setupLongPressUpgrade('upgradeDefenseButton', upgradeDefense);
+    setupLongPressUpgrade('upgradeCritButton', upgradeCrit);
+    setupLongPressUpgrade('upgradeCritDamageButton', upgradeCritDamage);
     
     document.getElementById('typingInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
@@ -2732,5 +2765,5 @@
       updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a1e5fa9c2a18282',t:'MTc2MzcwOTA5My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a35247fd3144a40',t:'MTc2Mzk0Nzg0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
