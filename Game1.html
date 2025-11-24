@@ -439,7 +439,7 @@
       color: #ffffff;
     }
 
-    /* 關卡選���浮���視窗 */
+    /* 關卡選擇浮動視窗 */
     .stage-overlay {
       display: none;
       position: fixed;
@@ -631,7 +631,7 @@
       🎮 中文打字英雄大冒險
      </div>
      <div id="newGamePlusHomeIndicator" style="display: none; font-size: 22px; color: #ffd700; font-weight: bold; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
-      ⭐ 二周目模�� ⭐
+      ⭐ 二周目模式 ⭐
      </div>
      <div class="game-rules">
       <h3>🎯 遊戲目標</h3>
@@ -644,8 +644,8 @@
       <p>你和妖怪每5秒輪流攻擊。妖怪每關會變強(血量×1.05、攻擊力×1.05、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%))。</p>
       <div id="newGamePlusRules" style="display: none; background: rgba(255,215,0,0.2); padding: 12px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">
        <h3 style="color: #ffd700; font-size: 18px; margin-bottom: 5px;">⭐ 二周目超難模式</h3>
-       <p style="color: #ffeb3b; font-size: 14px; margin: 0;">妖怪成長速度大幅提升��每關變強��則改為：<br>
-         血量×1.1、攻擊力×1.1、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%)<br><span style="font-size: 14px; font-weight: bold;">挑戰極限，證���你的實力！</span></p>
+       <p style="color: #ffeb3b; font-size: 14px; margin: 0;">妖怪成長速度大幅提升，每關變強規則改為：<br>
+         血量×1.1、攻擊力×1.1、防禦率+1%(最高50%)、爆擊率+0.5%、爆擊傷害+1%(最高100%)<br><span style="font-size: 14px; font-weight: bold;">挑戰極限，證明你的實力！</span></p>
       </div>
       <h3>🛡️ 數值說明</h3>
       <p>• 血量(HP)：生命值，歸零則失敗<br>
@@ -658,7 +658,7 @@
       <h3>💾 進度保存</h3>
       <p>遊戲進度會自動保存在你的電腦上。</p>
      </div>
-     <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;"><button class="btn btn-primary" id="startButton">開始遊戲</button> <button class="btn btn-secondary" id="stageSelectButton">關卡選擇</button> <button class="btn" id="clearDataButton" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">🗑️ 清除遊戲紀���</button>
+     <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;"><button class="btn btn-primary" id="startButton">開始遊戲</button> <button class="btn btn-secondary" id="stageSelectButton">關卡選擇</button> <button class="btn" id="clearDataButton" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">🗑️ 清除遊戲紀錄</button>
      </div>
     </div>
    </div><!-- 遊戲畫面 -->
@@ -690,7 +690,7 @@
       <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
        <div class="weapon-display" style="background: rgba(255,215,0,0.15);">
         <div class="weapon-icon" id="currentRelicIcon">
-         ����
+         📦
         </div>
         <div class="weapon-name" id="currentRelicName">
          無
@@ -742,7 +742,7 @@
         英雄
        </div>
        <div class="stats">
-        <div class="stat-row"><span>��️ 血量:</span> <span id="playerHp">100/100</span>
+        <div class="stat-row"><span>❤️ 血量:</span> <span id="playerHp">100/100</span>
          <div class="tooltip">
           生命值，歸零則失敗
          </div>
@@ -750,7 +750,7 @@
         <div class="hp-bar">
          <div class="hp-fill" id="playerHpBar" style="width: 100%;"></div>
         </div>
-        <div class="stat-row"><span>���️ 攻擊:</span> <span id="playerAttack">10</span>
+        <div class="stat-row"><span>⚔️ 攻擊:</span> <span id="playerAttack">10</span>
          <div class="tooltip">
           每次攻擊造成的傷害
          </div>
@@ -824,7 +824,7 @@
      </div>
      <div class="upgrade-panel">
       <div class="upgrade-title">
-       💰 即時升級 (金��: <span id="upgradeCoins">0</span>)
+       💰 即時升級 (金幣: <span id="upgradeCoins">0</span>)
       </div>
       <div class="upgrade-buttons"><button class="upgrade-btn" id="upgradeHpButton">❤️ 血量 (+100 HP) - 5💰</button> <button class="upgrade-btn" id="upgradeAttackButton">⚔️ 攻擊 (+5 ATK) - 5💰</button> <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ 防禦 (+2%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritButton">💥 爆擊機率 (+5%) - 5💰</button> <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 爆擊傷害 (+5%) - 5💰</button>
       </div>
@@ -909,56 +909,56 @@
 
     const config = window.elementSdk ? window.elementSdk.config : defaultConfig;
 
-    // 100個中文單字庫（兩個字以上）
+    // 100個中文單字庫
     const wordBank = [
-      {word: "學習", pinyin: "ㄒㄩㄝˊ ㄒㄧˊ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠ��"}, {word: "老師", pinyin: "ㄌㄠˇ ㄕ"}, 
+      {word: "學習", pinyin: "ㄒㄩㄝˊ ㄒㄧˊ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"}, {word: "老師", pinyin: "ㄌㄠˇ ㄕ"}, 
       {word: "學生", pinyin: "ㄒㄩㄝˊ ㄕㄥ"}, {word: "教室", pinyin: "ㄐㄧㄠˋ ㄕˋ"}, {word: "書本", pinyin: "ㄕㄨ ㄅㄣˇ"},
-      {word: "鉛筆", pinyin: "ㄑㄧㄢ ㄅㄧˇ"}, {word: "橡皮", pinyin: "ㄒㄧㄤˋ ㄆㄧˊ"}, {word: "黑板", pinyin: "��ㄟ ㄅㄢˇ"},
-      {word: "粉筆", pinyin: "ㄈㄣˇ ㄅㄧˇ"}, {word: "課本", pinyin: "ㄎㄜˋ ㄅㄣˇ"}, {word: "���業", pinyin: "ㄗ��ㄛˋ ��ㄝˋ"},
+      {word: "鉛筆", pinyin: "ㄑㄧㄢ ㄅㄧˇ"}, {word: "橡皮", pinyin: "ㄒㄧㄤˋ ㄆㄧˊ"}, {word: "黑板", pinyin: "ㄏㄟ ㄅㄢˇ"},
+      {word: "粉筆", pinyin: "ㄈㄣˇ ㄅㄧˇ"}, {word: "課本", pinyin: "ㄎㄜˋ ㄅㄣˇ"}, {word: "作業", pinyin: "ㄗㄨㄛˋ ㄧㄝˋ"},
       {word: "考試", pinyin: "ㄎㄠˇ ㄕˋ"}, {word: "成績", pinyin: "ㄔㄥˊ ㄐㄧ"}, {word: "朋友", pinyin: "ㄆㄥˊ ㄧㄡˇ"},
       {word: "家人", pinyin: "ㄐㄧㄚ ㄖㄣˊ"}, {word: "蘋果", pinyin: "ㄆㄧㄥˊ ㄍㄨㄛˇ"}, {word: "媽媽", pinyin: "ㄇㄚ ㄇㄚ"},
       {word: "哥哥", pinyin: "ㄍㄜ ㄍㄜ"}, {word: "澎湖", pinyin: "ㄆㄥˊ ㄏㄨˊ"}, {word: "弟弟", pinyin: "ㄉㄧˋ ㄉㄧˋ"},
       {word: "西瓜", pinyin: "ㄒㄧ ㄍㄨㄚ"}, {word: "香蕉", pinyin: "ㄒㄧㄤ ㄐㄧㄠ"}, {word: "電腦", pinyin: "ㄉㄧㄢˋ ㄋㄠˇ"},
       {word: "早安", pinyin: "ㄗㄠˇ ㄢ"}, {word: "午安", pinyin: "ㄨˇ ㄢ"}, {word: "晚安", pinyin: "ㄨㄢˇ ㄢ"},
-      {word: "謝謝", pinyin: "ㄒㄧㄝˋ ㄒㄧㄝˋ"}, {word: "對不���", pinyin: "ㄉㄨㄟˋ ㄅㄨˋ ��ㄧˇ"}, {word: "沒關係", pinyin: "ㄇㄟˊ ㄍㄨ��� ㄒ���ˋ"},
-      {word: "��問", pinyin: "ㄑㄧㄥˇ ㄨㄣˋ"}, {word: "再見", pinyin: "ㄗㄞˋ ㄐㄧㄢˋ"}, {word: "你好", pinyin: "ㄋㄧˇ ㄏㄠˇ"},
-      {word: "歡迎", pinyin: "ㄏㄨㄢ ㄧㄥˊ"}, {word: "��忙", pinyin: "ㄅㄤ ㄇㄤˊ"}, {word: "麻煩", pinyin: "ㄇㄚˊ ㄈㄢˊ"},
+      {word: "謝謝", pinyin: "ㄒㄧㄝˋ ㄒㄧㄝˋ"}, {word: "對不起", pinyin: "ㄉㄨㄟˋ ㄅㄨˋ ㄑㄧˇ"}, {word: "沒關係", pinyin: "ㄇㄟˊ ㄍㄨㄢ ㄒㄧˋ"},
+      {word: "請問", pinyin: "ㄑㄧㄥˇ ㄨㄣˋ"}, {word: "再見", pinyin: "ㄗㄞˋ ㄐㄧㄢˋ"}, {word: "你好", pinyin: "ㄋㄧˇ ㄏㄠˇ"},
+      {word: "歡迎", pinyin: "ㄏㄨㄢ ㄧㄥˊ"}, {word: "幫忙", pinyin: "ㄅㄤ ㄇㄤˊ"}, {word: "麻煩", pinyin: "ㄇㄚˊ ㄈㄢˊ"},
       {word: "快樂", pinyin: "ㄎㄨㄞˋ ㄌㄜˋ"}, {word: "開心", pinyin: "ㄎㄞ ㄒㄧㄣ"}, {word: "高興", pinyin: "ㄍㄠ ㄒㄧㄥˋ"},
       {word: "傷心", pinyin: "ㄕㄤ ㄒㄧㄣ"}, {word: "生氣", pinyin: "ㄕㄥ ㄑㄧˋ"}, {word: "害怕", pinyin: "ㄏㄞˋ ㄆㄚˋ"},
       {word: "勇敢", pinyin: "ㄩㄥˇ ㄍㄢˇ"}, {word: "聰明", pinyin: "ㄘㄨㄥ ㄇㄧㄥˊ"}, {word: "努力", pinyin: "ㄋㄨˇ ㄌㄧˋ"},
-      {word: "認真", pinyin: "ㄖㄣˋ ㄓㄣ"}, {word: "���細", pinyin: "ㄗˇ ㄒ���ˋ"}, {word: "小心", pinyin: "ㄒ���ㄠˇ ㄒㄧㄣ"},
+      {word: "認真", pinyin: "ㄖㄣˋ ㄓㄣ"}, {word: "仔細", pinyin: "ㄗˇ ㄒㄧˋ"}, {word: "小心", pinyin: "ㄒㄧㄠˇ ㄒㄧㄣ"},
       {word: "注意", pinyin: "ㄓㄨˋ ㄧˋ"}, {word: "安全", pinyin: "ㄢ ㄑㄩㄢˊ"}, {word: "危險", pinyin: "ㄨㄟˊ ㄒㄧㄢˇ"},
       {word: "健康", pinyin: "ㄐㄧㄢˋ ㄎㄤ"}, {word: "運動", pinyin: "ㄩㄣˋ ㄉㄨㄥˋ"}, {word: "跑步", pinyin: "ㄆㄠˇ ㄅㄨˋ"},
       {word: "游泳", pinyin: "ㄧㄡˊ ㄩㄥˇ"}, {word: "籃球", pinyin: "ㄌㄢˊ ㄑㄧㄡˊ"}, {word: "足球", pinyin: "ㄗㄨˊ ㄑㄧㄡˊ"},
       {word: "音樂", pinyin: "ㄧㄣ ㄩㄝˋ"}, {word: "美術", pinyin: "ㄇㄟˇ ㄕㄨˋ"}, {word: "數學", pinyin: "ㄕㄨˋ ㄒㄩㄝˊ"},
       {word: "國語", pinyin: "ㄍㄨㄛˊ ㄩˇ"}, {word: "英文", pinyin: "ㄧㄥ ㄨㄣˊ"}, {word: "自然", pinyin: "ㄗˋ ㄖㄢˊ"},
-      {word: "社會", pinyin: "ㄕ��ˋ ㄏㄨㄟˋ"}, {word: "體育", pinyin: "ㄊㄧˇ ��ˋ"}, {word: "電視", pinyin: "ㄉㄧ��ˋ ㄕˋ"},
+      {word: "社會", pinyin: "ㄕㄜˋ ㄏㄨㄟˋ"}, {word: "體育", pinyin: "ㄊㄧˇ ㄩˋ"}, {word: "電視", pinyin: "ㄉㄧㄢˋ ㄕˋ"},
       {word: "電影", pinyin: "ㄉㄧㄢˋ ㄧㄥˇ"}, {word: "故事", pinyin: "ㄍㄨˋ ㄕˋ"}, {word: "圖書", pinyin: "ㄊㄨˊ ㄕㄨ"},
       {word: "公園", pinyin: "ㄍㄨㄥ ㄩㄢˊ"}, {word: "學校", pinyin: "ㄒㄩㄝˊ ㄒㄧㄠˋ"}, {word: "醫院", pinyin: "ㄧ ㄩㄢˋ"},
       {word: "商店", pinyin: "ㄕㄤ ㄉㄧㄢˋ"}, {word: "餐廳", pinyin: "ㄘㄢ ㄊㄧㄥ"}, {word: "車站", pinyin: "ㄔㄜ ㄓㄢˋ"},
       {word: "機場", pinyin: "ㄐㄧ ㄔㄤˇ"}, {word: "銀行", pinyin: "ㄧㄣˊ ㄏㄤˊ"}, {word: "郵局", pinyin: "ㄧㄡˊ ㄐㄩˊ"},
       {word: "警察", pinyin: "ㄐㄧㄥˇ ㄔㄚˊ"}, {word: "消防", pinyin: "ㄒㄧㄠ ㄈㄤˊ"}, {word: "醫生", pinyin: "ㄧ ㄕㄥ"},
-      {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"}, {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "���師", pinyin: "ㄔㄨˊ ㄕ"},
-      {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"}, {word: "��人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "���闆", pinyin: "ㄌㄠˇ ㄅㄢˇ"},
+      {word: "護士", pinyin: "ㄏㄨˋ ㄕˋ"}, {word: "司機", pinyin: "ㄙ ㄐㄧ"}, {word: "廚師", pinyin: "ㄔㄨˊ ㄕ"},
+      {word: "農夫", pinyin: "ㄋㄨㄥˊ ㄈㄨ"}, {word: "工人", pinyin: "ㄍㄨㄥ ㄖㄣˊ"}, {word: "老闆", pinyin: "ㄌㄠˇ ㄅㄢˇ"},
       {word: "客人", pinyin: "ㄎㄜˋ ㄖㄣˊ"}, {word: "鄰居", pinyin: "ㄌㄧㄣˊ ㄐㄩ"}, {word: "親戚", pinyin: "ㄑㄧㄣ ㄑㄧ"},
       {word: "同學", pinyin: "ㄊㄨㄥˊ ㄒㄩㄝˊ"}, {word: "同事", pinyin: "ㄊㄨㄥˊ ㄕˋ"}, {word: "客氣", pinyin: "ㄎㄜˋ ㄑㄧˋ"},
       {word: "禮物", pinyin: "ㄌㄧˇ ㄨˋ"}, {word: "蛋糕", pinyin: "ㄉㄢˋ ㄍㄠ"}, {word: "糖果", pinyin: "ㄊㄤˊ ㄍㄨㄛˇ"},
       {word: "餅乾", pinyin: "ㄅㄧㄥˇ ㄍㄢ"}, {word: "麵包", pinyin: "ㄇㄧㄢˋ ㄅㄠ"}, {word: "牛奶", pinyin: "ㄋㄧㄡˊ ㄋㄞˇ"},
       {word: "果汁", pinyin: "ㄍㄨㄛˇ ㄓ"}, {word: "茶葉", pinyin: "ㄔㄚˊ ㄧㄝˋ"}, {word: "咖啡", pinyin: "ㄎㄚ ㄈㄟ"},
-      {word: "米飯", pinyin: "ㄇㄧˇ ㄈㄢˋ"}, {word: "麵條", pinyin: "ㄇ���ㄢˋ ㄊㄧㄠˊ"}, {word: "水果", pinyin: "ㄕㄨㄟˇ ㄍㄨㄛˇ"},
-      {word: "蔬��", pinyin: "ㄕㄨ ㄘㄞˋ"}, {word: "雞蛋", pinyin: "ㄐㄧ ㄉㄢˋ"}, {word: "魚肉", pinyin: "ㄩˊ ㄖㄡˋ"}
+      {word: "米飯", pinyin: "ㄇㄧˇ ㄈㄢˋ"}, {word: "麵條", pinyin: "ㄇㄧㄢˋ ㄊㄧㄠˊ"}, {word: "水果", pinyin: "ㄕㄨㄟˇ ㄍㄨㄛˇ"},
+      {word: "蔬菜", pinyin: "ㄕㄨ ㄘㄞˋ"}, {word: "雞蛋", pinyin: "ㄐㄧ ㄉㄢˋ"}, {word: "魚肉", pinyin: "ㄩˊ ㄖㄡˋ"}
     ];
 
-    // 武器定義（按金額排序）
+    // 武器定義
     const weapons = [
       {id: 0, name: "普通劍", cost: 0, effect: "每次攻擊一次", icon: "🗡️"},
       {id: 1, name: "雙刃劍", cost: 50, effect: "每次攻擊兩下", icon: "⚔️"},
       {id: 2, name: "重錘", cost: 60, effect: "每一下攻擊都是1.5倍傷害", icon: "🔨"},
       {id: 3, name: "毒刃", cost: 70, effect: "附加毒性傷害,每秒額外扣血", icon: "☠️"},
-      {id: 4, name: "神弓", cost: 80, effect: "每次攻擊隨機×1~5倍傷害", icon: "��"},
-      {id: 5, name: "破���劍", cost: 85, effect: "每打一下減少對手5%防禦率", icon: "🛡️"},
+      {id: 4, name: "神弓", cost: 80, effect: "每次攻擊隨機×1~5倍傷害", icon: "🏹"},
+      {id: 5, name: "破甲劍", cost: 85, effect: "每打一下減少對手5%防禦率", icon: "🛡️"},
       {id: 6, name: "虛弱劍", cost: 85, effect: "每打一下減少對手2點攻擊力", icon: "⚡"},
-      {id: 7, name: "財富劍", cost: 90, effect: "每打一下��多一個金幣", icon: "💰"},
+      {id: 7, name: "財富劍", cost: 90, effect: "每打一下多送一個金幣", icon: "💰"},
       {id: 8, name: "成長劍", cost: 95, effect: "每次攻擊後提升1點攻擊力", icon: "📈"},
       {id: 9, name: "爆擊劍", cost: 100, effect: "必爆擊,100%時爆傷×1.2", icon: "💎"},
       {id: 10, name: "賭徒劍", cost: 110, effect: "50%機率5倍傷害,50%機率打到自己", icon: "🎰"},
@@ -968,7 +968,7 @@
     // 道具定義
     const items = [
       {id: 0, name: "無裝備", cost: 0, effect: "未使用道具", icon: "📦"},
-      {id: 1, name: "灼燒藥水", cost: 30, effect: "���次攻擊額外造成自��攻擊10%傷害", icon: "🔥"},
+      {id: 1, name: "灼燒藥水", cost: 30, effect: "每次攻擊額外造成自身攻擊10%傷害", icon: "🔥"},
       {id: 2, name: "無敵盾牌", cost: 30, effect: "不受到傷害五次後失效", icon: "🛡️"},
       {id: 3, name: "攻擊加倍藥水", cost: 30, effect: "接下來5次攻擊基礎攻擊力×2", icon: "💪"},
       {id: 4, name: "毒藥水", cost: 30, effect: "對手防禦率減半", icon: "☠️"},
@@ -977,7 +977,7 @@
       {id: 7, name: "運氣藥水", cost: 30, effect: "3分鐘內答對金幣×2", icon: "🍀"},
       {id: 8, name: "爆擊藥水", cost: 30, effect: "接下來5次攻擊必定爆擊", icon: "💎"},
       {id: 9, name: "破甲藥水", cost: 60, effect: "接下來5次攻擊無視對手防禦率", icon: "🔓"},
-      {id: 10, name: "����藥水", cost: 60, effect: "獲得50-100關隨��怪獸數值3分鐘", icon: "��"},
+      {id: 10, name: "變身藥水", cost: 60, effect: "獲得50-100關隨機怪獸數值3分鐘", icon: "👹"},
       {id: 11, name: "降魔杵", cost: 60, effect: "3分鐘內每次攻擊3%機率即死秒殺", icon: "🔱"}
     ];
 
@@ -988,22 +988,22 @@
       {id: 2, name: "天使的光環", cost: 100, effect: "50%機率攻擊無效", icon: "😇"},
       {id: 3, name: "赫拉克勒斯的戰車", cost: 100, effect: "爆擊傷害機率×2", icon: "🏛️"},
       {id: 4, name: "阿瑞斯的長矛", cost: 100, effect: "攻擊力×2", icon: "🔱"},
-      {id: 5, name: "奧菲斯的七弦琴", cost: 100, effect: "敵人永久50%機率打到���己", icon: "🎻"},
-      {id: 6, name: "聚寶盆", cost: 100, effect: "每次攻擊���隨���給予1-10金幣", icon: "🏺"},
-      {id: 7, name: "��卷獎", cost: 100, effect: "答題後��幣+10", icon: "📜"}
+      {id: 5, name: "奧菲斯的七弦琴", cost: 100, effect: "敵人永久50%機率打到自己", icon: "🎻"},
+      {id: 6, name: "聚寶盆", cost: 100, effect: "每次攻擊後隨機給予1-10金幣", icon: "🏺"},
+      {id: 7, name: "書卷獎", cost: 100, effect: "答題後金幣+10", icon: "📜"}
     ];
 
     // 100種妖怪
     const monsters = [
       "👹", "👺", "👻", "👽", "👾", "🤖", "😈", "💀", "☠️", "👿",
-      "🧟", "🧛", "🧙", "🧚", "🧜", "🧝", "🧞", "🧌", "���", "🐲",
+      "🧟", "🧛", "🧙", "🧚", "🧜", "🧝", "🧞", "🧌", "🐉", "🐲",
       "🦖", "🦕", "🐍", "🦂", "🕷️", "🦇", "🐺", "🦁", "🐯", "🐻",
       "🦍", "🦧", "🐗", "🐊", "🦈", "🐙", "🦑", "🦞", "🦀", "🐡",
       "🦐", "🐢", "🦎", "🐛", "🦗", "🕸️", "🦟", "🐝", "🐜", "🦋",
-      "🐞", "🦂", "🕷️", "🦇", "🐺", "🦊", "🦝", "��", "🐼", "🦘",
-      "🦡", "🦨", "🦦", "🦥", "��", "🐀", "🐹", "🐰", "��", "🐿️",
-      "🦔", "🦇", "��", "🐨", "🐯", "���", "🐮", "🐷", "🐗", "��",
-      "🙈", "����", "🙊", "🐒", "🦍", "🦧", "����", "🐕", "🦮", "🐩",
+      "🐞", "🦂", "🕷️", "🦇", "🐺", "🦊", "🦝", "🐱", "🐼", "🦘",
+      "🦡", "🦨", "🦦", "🦥", "🐁", "🐀", "🐹", "🐰", "🐇", "🐿️",
+      "🦔", "🦇", "🐻", "🐨", "🐯", "🦁", "🐮", "🐷", "🐗", "🐵",
+      "🙈", "🙉", "🙊", "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐩",
       "🐺", "🦊", "🦝", "🐱", "🐈", "🦁", "🐯", "🐅", "🐆", "🐴"
     ];
 
@@ -1058,12 +1058,10 @@
       freeMode: false
     };
 
-    // 遊玩時間追蹤
     let playTimeStarted = 0;
     let playTimeElapsed = 0;
     let playTimeInterval = null;
 
-    // 格式化時間顯示 (秒數轉換為 HH:MM:SS)
     function formatPlayTime(seconds) {
       const hours = Math.floor(seconds / 3600);
       const minutes = Math.floor((seconds % 3600) / 60);
@@ -1071,7 +1069,6 @@
       return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // 開始計時
     function startPlayTimer() {
       if (!playTimeStarted) {
         playTimeStarted = Date.now();
@@ -1087,7 +1084,6 @@
       }, 1000);
     }
 
-    // 停止計時
     function stopPlayTimer() {
       if (playTimeInterval) {
         clearInterval(playTimeInterval);
@@ -1095,7 +1091,6 @@
       }
     }
 
-    // 重置��時
     function resetPlayTimer() {
       stopPlayTimer();
       playTimeStarted = 0;
@@ -1103,7 +1098,6 @@
       document.getElementById('playTimeDisplay').textContent = '00:00:00';
     }
 
-    // 添加攻擊紀錄
     function addAttackLog(isPlayer, damage, isCrit, critDamagePercent) {
       const log = {
         damage: damage,
@@ -1127,7 +1121,6 @@
       updateAttackLogDisplay();
     }
 
-    // 更新攻擊紀錄顯示
     function updateAttackLogDisplay() {
       const playerLogContent = document.getElementById('playerLogContent');
       const enemyLogContent = document.getElementById('enemyLogContent');
@@ -1148,7 +1141,7 @@
       }
       
       if (gameState.enemyAttackLog.length === 0) {
-        enemyLogContent.innerHTML = '等待戰����開始...';
+        enemyLogContent.innerHTML = '等待戰鬥開始...';
       } else {
         enemyLogContent.innerHTML = gameState.enemyAttackLog.map(log => {
           let critText = '';
@@ -1163,7 +1156,6 @@
       }
     }
 
-    // 本地儲存
     function saveGame() {
       localStorage.setItem('typingGameSave', JSON.stringify({
         currentStage: gameState.currentStage,
@@ -1176,7 +1168,7 @@
         coins: gameState.coins,
         weaponId: gameState.weaponId,
         ownedWeapons: gameState.ownedWeapons,
-        itemId: 0, // 不保存道具狀態，每次開始遊戲都是無裝備
+        itemId: 0,
         ownedItems: gameState.ownedItems,
         relicId: gameState.relicId,
         ownedRelics: gameState.ownedRelics,
@@ -1200,7 +1192,7 @@
         gameState.coins = data.coins || 0;
         gameState.weaponId = data.weaponId || 0;
         gameState.ownedWeapons = data.ownedWeapons || [0];
-        gameState.itemId = 0; // 總是載入為無裝備狀態
+        gameState.itemId = 0;
         gameState.ownedItems = data.ownedItems || [0];
         gameState.relicId = data.relicId || 0;
         gameState.ownedRelics = data.ownedRelics || [0];
@@ -1208,7 +1200,6 @@
         gameState.freeMode = data.freeMode || false;
         gameState.useHardDifficulty = data.useHardDifficulty || false;
         
-        // 重置所有道具效果狀態
         gameState.itemBurnActive = false;
         gameState.itemShieldCount = 0;
         gameState.itemAttackBoostCount = 0;
@@ -1224,7 +1215,6 @@
       }
     }
 
-    // 初始化 SDK
     async function initSDK() {
       if (window.elementSdk) {
         await window.elementSdk.init({
@@ -1248,20 +1238,17 @@
       }
     }
 
-    // 切換畫面
     function showScreen(screenId) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
     }
 
-    // 開始遊戲
     function startGame() {
       loadGame();
       startPlayTimer();
       startStage(gameState.currentStage);
     }
 
-    // 計算怪獸數值（用於變身藥水）
     function calculateMonsterStats(stage, isNewGamePlus) {
       if (isNewGamePlus) {
         return {
@@ -1282,20 +1269,17 @@
       }
     }
 
-    // 開始關卡（不換題目版本）
     function startStageWithoutNewWord(stage) {
       stopBattle();
       
       gameState.currentStage = stage;
       
-      // 聖遺物效果：巨人戒指（血量×2）
       if (gameState.relicId === 1) {
         gameState.playerHp = gameState.playerMaxHp * 2;
       } else {
         gameState.playerHp = gameState.playerMaxHp;
       }
       
-      // 計算敵人數值（自由��式不調整難度）
       if (gameState.freeMode) {
         gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
         gameState.enemyHp = gameState.enemyMaxHp;
@@ -1305,7 +1289,6 @@
         gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
         gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
       } else if (gameState.useHardDifficulty) {
-        // 二周目難度
         gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.1, stage - 1));
         gameState.enemyHp = gameState.enemyMaxHp;
         gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.1, stage - 1));
@@ -1314,7 +1297,6 @@
         gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
         gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
       } else {
-        // 一周目��度
         gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
         gameState.enemyHp = gameState.enemyMaxHp;
         gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
@@ -1324,7 +1306,6 @@
         gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
       }
       
-      // ���置武器效��
       gameState.weaponHitCount = 0;
       gameState.poisonStacks = 0;
       gameState.enemyDefenseReduction = 0;
@@ -1332,7 +1313,6 @@
       gameState.battleTimer = 5;
       gameState.attackCount = 0;
       
-      // 重置道具效果（除了運氣藥水和變身藥水）
       gameState.itemBurnActive = false;
       gameState.itemShieldCount = 0;
       gameState.itemAttackBoostCount = 0;
@@ -1344,26 +1324,22 @@
       
       updateUI();
       updateAttackLogDisplay();
-      // 不呼叫 nextWord()，保留當前題目
       startBattleTimer();
       
       document.getElementById('typingInput').focus();
     }
 
-    // 開始關卡
     function startStage(stage) {
       stopBattle();
       
       gameState.currentStage = stage;
       
-      // 聖遺物效果：巨人戒指���血量×2）
       if (gameState.relicId === 1) {
         gameState.playerHp = gameState.playerMaxHp * 2;
       } else {
         gameState.playerHp = gameState.playerMaxHp;
       }
       
-      // 計算敵人數值（自由模式不調整難度）
       if (gameState.freeMode) {
         gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
         gameState.enemyHp = gameState.enemyMaxHp;
@@ -1373,7 +1349,6 @@
         gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
         gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
       } else if (gameState.useHardDifficulty) {
-        // 二周目難度
         gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.1, stage - 1));
         gameState.enemyHp = gameState.enemyMaxHp;
         gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.1, stage - 1));
@@ -1382,7 +1357,6 @@
         gameState.enemyCritRate = Math.min(2 + (stage - 1) * 0.5, 100);
         gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
       } else {
-        // 一周目難度
         gameState.enemyMaxHp = Math.floor(100 * Math.pow(1.05, stage - 1));
         gameState.enemyHp = gameState.enemyMaxHp;
         gameState.enemyBaseAttack = Math.floor(8 * Math.pow(1.05, stage - 1));
@@ -1392,7 +1366,6 @@
         gameState.enemyCritDamage = Math.min((stage - 1) * 1, 100);
       }
       
-      // 重置武器效果
       gameState.weaponHitCount = 0;
       gameState.poisonStacks = 0;
       gameState.enemyDefenseReduction = 0;
@@ -1400,7 +1373,6 @@
       gameState.battleTimer = 5;
       gameState.attackCount = 0;
       
-      // 重置道具效果（除了運氣藥水和變身藥水）
       gameState.itemBurnActive = false;
       gameState.itemShieldCount = 0;
       gameState.itemAttackBoostCount = 0;
@@ -1409,8 +1381,6 @@
       gameState.itemConfusionCount = 0;
       gameState.itemCritBoostCount = 0;
       gameState.itemArmorBreakCount = 0;
-      
-      // ���清空攻擊紀錄，保留上一次的紀錄
       
       updateUI();
       updateAttackLogDisplay();
@@ -1421,7 +1391,6 @@
       document.getElementById('typingInput').focus();
     }
 
-    // 開始戰鬥計時器
     function startBattleTimer() {
       stopBattle();
       
@@ -1439,7 +1408,6 @@
       }, 1000);
     }
 
-    // 停止戰鬥
     function stopBattle() {
       if (gameState.timerInterval) {
         clearInterval(gameState.timerInterval);
@@ -1447,37 +1415,30 @@
       }
     }
 
-    // 執行戰鬥
     function executeBattle() {
       if (gameState.enemyHp <= 0 || gameState.playerHp <= 0) {
         return;
       }
       
-      // 增加攻擊次數
       gameState.attackCount++;
       document.getElementById('attackCountDisplay').textContent = gameState.attackCount;
       
-      // 玩家攻擊
       playerAttack();
       
-      // ���查敵人�����死���
       if (gameState.enemyHp <= 0) {
         handleStageComplete();
         return;
       }
       
-      // 敵人攻擊
       setTimeout(() => {
         enemyAttack();
         
-        // 檢查玩家是否死亡
         if (gameState.playerHp <= 0) {
           handleDefeat();
         }
       }, 500);
     }
 
-    // 獲取當前玩家數值（考慮變身藥水）
     function getCurrentPlayerStats() {
       if (gameState.itemTransformEndTime > Date.now() && gameState.itemTransformStats) {
         return {
@@ -1497,7 +1458,6 @@
       };
     }
 
-    // 玩家攻擊
     function playerAttack() {
       const playerChar = document.getElementById('playerCharacter');
       playerChar.classList.add('attacking');
@@ -1509,16 +1469,13 @@
       
       gameState.weaponHitCount++;
       
-      // 獲取當前玩家數值（考慮變身藥水）
       const currentStats = getCurrentPlayerStats();
       
-      // 聖遺物效果：阿瑞斯的長矛（攻擊力×2）
       let relicAttackBoost = 1;
       if (gameState.relicId === 4) {
         relicAttackBoost = 2;
       }
       
-      // 道具效果：攻擊加倍藥水
       let attackBoost = 1;
       if (gameState.itemAttackBoostCount > 0) {
         attackBoost = 2;
@@ -1528,13 +1485,11 @@
         }
       }
       
-      // 聖遺物效果：赫拉克勒斯的戰車（爆擊傷害×2）
       let relicCritDamageBoost = 1;
       if (gameState.relicId === 3) {
         relicCritDamageBoost = 2;
       }
       
-      // 道具效果：爆擊傷害藥水
       let critDamageBoost = 1;
       if (gameState.itemCritDamageBoostCount > 0) {
         critDamageBoost = 2;
@@ -1544,7 +1499,6 @@
         }
       }
       
-      // 道具效果：爆擊藥水
       let forceCrit = false;
       if (gameState.itemCritBoostCount > 0) {
         forceCrit = true;
@@ -1554,7 +1508,6 @@
         }
       }
       
-      // 道具效果：降魔杵（3%機率即死秒殺）
       if (gameState.itemInstakillEndTime > Date.now()) {
         if (Math.random() < 0.03) {
           gameState.enemyHp = 0;
@@ -1564,36 +1517,35 @@
         }
       }
       
-      // 武器特��
       switch(gameState.weaponId) {
-        case 1: // 雙刃劍
+        case 1:
           attacks = 2;
           break;
-        case 2: // 重錘
+        case 2:
           damageMultiplier = 1.5;
           break;
-        case 3: // 毒刃
+        case 3:
           gameState.poisonStacks++;
           break;
-        case 4: // 神弓
-          damageMultiplier = Math.floor(Math.random() * 5) + 1; // 隨機1~5倍
+        case 4:
+          damageMultiplier = Math.floor(Math.random() * 5) + 1;
           break;
-        case 5: // 破甲劍
+        case 5:
           gameState.enemyDefenseReduction += 5;
           break;
-        case 6: // 虛弱劍
+        case 6:
           gameState.enemyAttackReduction += 2;
           break;
-        case 7: // 財富劍
+        case 7:
           gameState.coins++;
           break;
-        case 8: // 成長劍
+        case 8:
           gameState.playerAttack++;
           break;
-        case 9: // 爆擊劍
-          forceCrit = true; // 必定爆擊
+        case 9:
+          forceCrit = true;
           break;
-        case 10: // 賭徒劍
+        case 10:
           if (Math.random() < 0.5) {
             damageMultiplier = 5;
           } else {
@@ -1606,7 +1558,7 @@
             return;
           }
           break;
-        case 11: // 秒殺劍
+        case 11:
           if (Math.random() < 0.03) {
             gameState.enemyHp = 0;
             updateUI();
@@ -1616,14 +1568,12 @@
           break;
       }
       
-      // 執行攻擊
       for (let i = 0; i < attacks; i++) {
         let damage = currentStats.attack * relicAttackBoost * attackBoost * damageMultiplier;
         
         const isCrit = forceCrit || Math.random() * 100 < currentStats.critRate;
         let critDamagePercent = 0;
         if (isCrit) {
-          // 爆擊劍��殊處理：如���爆擊率已達100%，爆��×1.2
           let critMultiplier = 1;
           if (gameState.weaponId === 9 && currentStats.critRate >= 100) {
             critMultiplier = 1.2;
@@ -1632,12 +1582,10 @@
           critDamagePercent = currentStats.critDamage * relicCritDamageBoost * critDamageBoost * critMultiplier;
         }
         
-        // 道具效果：破甲藥水（���視防禦率）
         let effectiveDefense = Math.max(0, gameState.enemyDefense - gameState.enemyDefenseReduction);
         if (gameState.itemArmorBreakCount > 0) {
           effectiveDefense = 0;
         } else if (gameState.itemPoisonActive) {
-          // 道具效果：毒藥水（防禦率減半）
           effectiveDefense = Math.floor(effectiveDefense / 2);
         }
         
@@ -1646,17 +1594,14 @@
         
         gameState.enemyHp = Math.max(0, gameState.enemyHp - damage);
         
-        // 道具效果：灼燒藥水（額外10%傷害）
         if (gameState.itemBurnActive) {
           const burnDamage = Math.floor(currentStats.attack * 0.1);
           gameState.enemyHp = Math.max(0, gameState.enemyHp - burnDamage);
         }
         
-        // 記錄攻擊
         addAttackLog(true, damage, isCrit, critDamagePercent);
       }
       
-      // 破甲���水��數�����少
       if (gameState.itemArmorBreakCount > 0) {
         gameState.itemArmorBreakCount--;
         if (gameState.itemArmorBreakCount === 0) {
@@ -1664,12 +1609,10 @@
         }
       }
       
-      // 毒性傷害
       if (gameState.poisonStacks > 0) {
         gameState.enemyHp = Math.max(0, gameState.enemyHp - gameState.poisonStacks);
       }
       
-      // 聖遺物效果：聚寶盆（每次攻擊後隨��給予1-10金幣）
       if (gameState.relicId === 6) {
         const bonusCoins = Math.floor(Math.random() * 10) + 1;
         gameState.coins += bonusCoins;
@@ -1678,13 +1621,11 @@
       updateUI();
     }
 
-    // 敵人攻擊
     function enemyAttack() {
       const enemyChar = document.getElementById('enemyCharacter');
       enemyChar.classList.add('attacking');
       setTimeout(() => enemyChar.classList.remove('attacking'), 500);
       
-      // 聖遺物效果：奧菲斯的七弦琴��敵人永久50%機率打到自己）
       if (gameState.relicId === 5) {
         if (Math.random() < 0.5) {
           let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
@@ -1694,7 +1635,6 @@
         }
       }
       
-      // 道具效果：混亂藥水（50%機率攻擊自己）
       if (gameState.itemConfusionCount > 0) {
         if (Math.random() < 0.5) {
           let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
@@ -1708,7 +1648,6 @@
         }
       }
       
-      // 聖遺物效果：天使的光環（50%機率攻擊無效）
       if (gameState.relicId === 2) {
         if (Math.random() < 0.5) {
           updateUI();
@@ -1716,7 +1655,6 @@
         }
       }
       
-      // 道具效��：��敵盾���（不受傷害）
       if (gameState.itemShieldCount > 0) {
         gameState.itemShieldCount--;
         if (gameState.itemShieldCount === 0) {
@@ -1726,7 +1664,6 @@
         return;
       }
       
-      // 獲取當前玩家數值（考慮變身藥水）
       const currentStats = getCurrentPlayerStats();
       
       let damage = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
@@ -1742,13 +1679,11 @@
       const finalDamage = Math.max(1, damage - defenseReduction);
       gameState.playerHp = Math.max(0, gameState.playerHp - finalDamage);
       
-      // 記錄攻擊
       addAttackLog(false, finalDamage, isCrit, critDamagePercent);
       
       updateUI();
     }
 
-    // 重置道具為無裝備
     function resetItemToNone() {
       gameState.itemId = 0;
       gameState.itemBurnActive = false;
@@ -1759,12 +1694,10 @@
       gameState.itemConfusionCount = 0;
       gameState.itemCritBoostCount = 0;
       gameState.itemArmorBreakCount = 0;
-      // 不重置運氣藥水和變身藥水時間���讓它們自然過期
       updateUI();
       saveGame();
     }
 
-    // 檢查運氣藥水是否過期
     function checkLuckPotionExpiry() {
       if (gameState.itemLuckEndTime > 0 && gameState.itemLuckEndTime <= Date.now() && gameState.itemId === 7) {
         gameState.itemLuckEndTime = 0;
@@ -1772,12 +1705,10 @@
       }
     }
 
-    // 檢查變身藥水是否過期
     function checkTransformPotionExpiry() {
       if (gameState.itemTransformEndTime > 0 && gameState.itemTransformEndTime <= Date.now()) {
         gameState.itemTransformEndTime = 0;
         gameState.itemTransformStats = null;
-        // 恢復英雄圖片
         const playerAvatar = document.getElementById('playerCharacter').querySelector('.character-avatar');
         if (playerAvatar) {
           playerAvatar.textContent = '🦸';
@@ -1788,7 +1719,6 @@
       }
     }
     
-    // 檢查降魔杵是否過��
     function checkInstakillPotionExpiry() {
       if (gameState.itemInstakillEndTime > 0 && gameState.itemInstakillEndTime <= Date.now() && gameState.itemId === 11) {
         gameState.itemInstakillEndTime = 0;
@@ -1796,14 +1726,11 @@
       }
     }
 
-    // 更新UI
     function updateUI() {
-      // 檢查運氣藥水、變身藥水和降魔杵是否過期
       checkLuckPotionExpiry();
       checkTransformPotionExpiry();
       checkInstakillPotionExpiry();
       
-      // 顯示二周目或自由模式標記
       if (gameState.freeMode) {
         document.getElementById('freeModeIndicator').style.display = 'inline';
         document.getElementById('newGamePlusIndicator').style.display = 'none';
@@ -1822,10 +1749,8 @@
       document.getElementById('upgradeCoins').textContent = gameState.coins;
       document.getElementById('attackCountDisplay').textContent = gameState.attackCount;
       
-      // 獲取當前玩家數值（考慮變身藥水）
       const currentStats = getCurrentPlayerStats();
       
-      // 玩家數值
       const displayMaxHp = gameState.relicId === 1 ? currentStats.maxHp * 2 : currentStats.maxHp;
       document.getElementById('playerHp').textContent = `${gameState.playerHp}/${displayMaxHp}`;
       document.getElementById('playerAttack').textContent = currentStats.attack;
@@ -1844,7 +1769,6 @@
       const playerHpPercent = (gameState.playerHp / actualMaxHp) * 100;
       document.getElementById('playerHpBar').style.width = `${playerHpPercent}%`;
       
-      // 敵人數值
       document.getElementById('enemyHp').textContent = `${gameState.enemyHp}/${gameState.enemyMaxHp}`;
       document.getElementById('enemyAttack').textContent = Math.max(1, gameState.enemyBaseAttack - gameState.enemyAttackReduction);
       
@@ -1865,17 +1789,14 @@
       document.getElementById('enemyAvatar').textContent = monsters[monsterIndex];
       document.getElementById('enemyName').textContent = `妖怪 Lv.${gameState.currentStage}`;
       
-      // 武器顯示
       const weapon = weapons[gameState.weaponId];
       document.getElementById('currentWeaponIcon').textContent = weapon.icon;
       document.getElementById('currentWeaponName').textContent = weapon.name;
       document.getElementById('currentWeaponEffect').textContent = weapon.effect;
       
-      // 道具顯示
       const item = items[gameState.itemId];
       let itemEffect = item.effect;
       
-      // 顯示剩餘次數或時間
       if (gameState.itemAttackBoostCount > 0) {
         itemEffect = `攻擊×2 (剩${gameState.itemAttackBoostCount}次)`;
       } else if (gameState.itemCritDamageBoostCount > 0) {
@@ -1907,14 +1828,12 @@
       document.getElementById('currentItemName').textContent = item.name;
       document.getElementById('currentItemEffect').textContent = itemEffect;
       
-      // 聖遺��顯示
       const relic = relics[gameState.relicId];
       document.getElementById('currentRelicIcon').textContent = relic.icon;
       document.getElementById('currentRelicName').textContent = relic.name;
       document.getElementById('currentRelicEffect').textContent = relic.effect;
       document.getElementById('relicShopCoinsDisplay').textContent = gameState.coins;
       
-      // 升級按鈕狀態
       document.getElementById('upgradeHpButton').disabled = gameState.coins < 5;
       document.getElementById('upgradeAttackButton').disabled = gameState.coins < 5;
       document.getElementById('upgradeDefenseButton').disabled = gameState.coins < 5 || gameState.playerDefense >= 90;
@@ -1922,7 +1841,6 @@
       document.getElementById('upgradeCritDamageButton').disabled = gameState.coins < 5;
     }
 
-    // 下一個單字
     function nextWord() {
       const randomIndex = Math.floor(Math.random() * wordBank.length);
       gameState.currentWord = wordBank[randomIndex];
@@ -1932,16 +1850,13 @@
       document.getElementById('typingInput').value = '';
     }
 
-    // 處理正確答案
     function handleCorrectAnswer() {
       let baseCoins = 5;
       
-      // 聖遺物效果：書卷獎（答題後金幣+10）
       if (gameState.relicId === 7) {
         baseCoins = 10;
       }
       
-      // 道具效果：運氣藥水（���幣×2）
       if (gameState.itemLuckEndTime > Date.now()) {
         gameState.coins += baseCoins * 2;
       } else {
@@ -1952,18 +1867,15 @@
       nextWord();
     }
 
-    // 關卡完成
     function handleStageComplete() {
       stopBattle();
       
       gameState.maxStage = Math.max(gameState.maxStage, gameState.currentStage + 1);
       saveGame();
       
-      // 檢查是否���關100關
       if (gameState.currentStage >= 100) {
         showVictoryScreen();
       } else {
-        // 自動進入下一關（不換題目）
         gameState.currentStage++;
         setTimeout(() => {
           startStageWithoutNewWord(gameState.currentStage);
@@ -1971,7 +1883,6 @@
       }
     }
 
-    // 顯示通關畫面
     function showVictoryScreen() {
       stopPlayTimer();
       
@@ -1983,19 +1894,16 @@
       box.style.cssText = 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 60px; border-radius: 20px; text-align: center; color: white; max-width: 800px;';
       
       if (gameState.newGamePlus === 0) {
-        // 一周目通關
         box.innerHTML = `
-          <div style="font-size: 60px; margin-bottom: 30px;">�� 恭喜通關!</div>
-          <div style="font-size: 28px; margin-bottom: 20px;">��真厲害！完成了��部100關！</div>
+          <div style="font-size: 60px; margin-bottom: 30px;">🎉 恭喜通關!</div>
+          <div style="font-size: 28px; margin-bottom: 20px;">你真厲害！完成了全部100關！</div>
           <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
           <button class="victory-btn" data-action="newgameplus" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #ffd700; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">⭐ 二周目</button>
           <button class="victory-btn" data-action="restart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
-          <button class="victory-btn" data-action="home" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回���頁</button>
+          <button class="victory-btn" data-action="home" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
         `;
       } else {
-        // 二周目通關
         if (gameState.newGamePlus === 1) {
-          // 第一次通關二周目
           box.innerHTML = `
             <div style="font-size: 60px; margin-bottom: 30px;">🏆 恭喜你已經無所不能！</div>
             <div style="font-size: 24px; margin-bottom: 20px; line-height: 1.6;">
@@ -2004,12 +1912,11 @@
             </div>
             <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
             <button class="victory-btn" data-action="newgameplus2" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #ffd700; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">⭐ 再來一次二周目</button>
-            <button class="victory-btn" data-action="freemode" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #00ff00; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">�� 自由模式</button>
+            <button class="victory-btn" data-action="freemode" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #00ff00; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">🎮 自由模式</button>
             <button class="victory-btn" data-action="restart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
             <button class="victory-btn" data-action="home" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
           `;
         } else {
-          // 第二次以上通關二周目
           box.innerHTML = `
             <div style="font-size: 60px; margin-bottom: 30px;">🏆 這已經是第三周目了</div>
             <div style="font-size: 28px; margin-bottom: 20px; color: #ffeb3b;">休息一下吧！</div>
@@ -2020,7 +1927,7 @@
             <div style="font-size: 32px; margin-bottom: 40px; color: #ffd700;">⏱️ 總耗時: ${formatPlayTime(playTimeElapsed)}</div>
             <button class="victory-btn" data-action="newgameplus2" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #ffd700; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">⭐ 再來一次二周目</button>
             <button class="victory-btn" data-action="freemode" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: #00ff00; color: #333; font-weight: bold; cursor: pointer; margin: 10px;">🎮 自由模式</button>
-            <button class="victory-btn" data-action="restart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重���開始</button>
+            <button class="victory-btn" data-action="restart" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: white; color: #f5576c; font-weight: bold; cursor: pointer; margin: 10px;">重新開始</button>
             <button class="victory-btn" data-action="home" style="padding: 18px 40px; font-size: 20px; border: none; border-radius: 12px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">返回首頁</button>
           `;
         }
@@ -2029,7 +1936,6 @@
       overlay.appendChild(box);
       document.body.appendChild(overlay);
       
-      // 使用事件委派處理按鈕點擊
       setTimeout(() => {
         const buttons = overlay.querySelectorAll('.victory-btn');
         buttons.forEach(btn => {
@@ -2066,31 +1972,28 @@
       }, 100);
     }
     
-    // 開始��周目
     function startNewGamePlus() {
       gameState.newGamePlus = 1;
       gameState.currentStage = 1;
-      gameState.maxStage = 100; // 二周目解鎖所有關卡
+      gameState.maxStage = 100;
       gameState.freeMode = false;
-      gameState.useHardDifficulty = true; // 預設使用二周目難度
+      gameState.useHardDifficulty = true;
       saveGame();
       resetPlayTimer();
       startGame();
     }
     
-    // 再來一次二周目（增加計��）
     function startNewGamePlus2() {
       gameState.newGamePlus++;
       gameState.currentStage = 1;
       gameState.maxStage = 100;
       gameState.freeMode = false;
-      gameState.useHardDifficulty = true; // 預設使用二周目難度
+      gameState.useHardDifficulty = true;
       saveGame();
       resetPlayTimer();
       startGame();
     }
     
-    // 開始自由模式
     function startFreeMode() {
       gameState.freeMode = true;
       gameState.currentStage = 1;
@@ -2099,14 +2002,12 @@
       startGame();
     }
 
-    // 戰敗
     function handleDefeat() {
       stopBattle();
       document.getElementById('defeatNotice').style.display = 'block';
       startAutoRetryCountdown();
     }
 
-    // 自動重試倒數
     let autoRetryTimer = null;
     function startAutoRetryCountdown() {
       let countdown = 5;
@@ -2138,7 +2039,6 @@
       document.getElementById('defeatNotice').style.display = 'none';
     }
 
-    // 重置遊戲
     function resetGame() {
       gameState = {
         currentStage: 1,
@@ -2191,38 +2091,31 @@
       saveGame();
     }
 
-    // 開���商店
     function openShop() {
       renderWeaponsShop();
       document.getElementById('shopOverlay').classList.add('active');
     }
 
-    // 關閉商店
     function closeShop() {
       document.getElementById('shopOverlay').classList.remove('active');
     }
 
-    // 開啟關卡選擇浮動視��
     function openStageSelectPopup() {
       renderStageSelectPopup();
       document.getElementById('stageOverlay').classList.add('active');
     }
 
-    // 關閉關卡選擇浮動視窗
     function closeStageSelectPopup() {
       document.getElementById('stageOverlay').classList.remove('active');
     }
 
-    // 渲染關卡選擇浮動視窗
     function renderStageSelectPopup() {
       const grid = document.getElementById('stagesPopupGrid');
       grid.innerHTML = '';
       
-      // ��示難度選擇按鈕（只在二周目以上顯示）
       const difficultySelector = document.getElementById('difficultySelector');
       if (gameState.newGamePlus > 0) {
         difficultySelector.style.display = 'block';
-        // 更新按鈕樣式
         const normalBtn = document.getElementById('normalDifficultyButton');
         const hardBtn = document.getElementById('hardDifficultyButton');
         if (gameState.useHardDifficulty) {
@@ -2241,7 +2134,6 @@
         btn.className = 'stage-btn';
         btn.textContent = i;
         
-        // 二周目或自由模式解鎖所有關卡
         if (gameState.newGamePlus > 0 || gameState.freeMode) {
           if (i === gameState.currentStage) {
             btn.classList.add('current');
@@ -2265,7 +2157,6 @@
       }
     }
 
-    // 渲染武器商店
     function renderWeaponsShop() {
       const grid = document.getElementById('weaponsGrid');
       grid.innerHTML = '';
@@ -2281,7 +2172,7 @@
         if (equipped) {
           statusText = '✅ 已裝備';
         } else if (owned) {
-          statusText = '🔄 點擊���備';
+          statusText = '🔄 點擊裝備';
         } else {
           statusText = `💰 ${weapon.cost} 金幣`;
         }
@@ -2301,19 +2192,16 @@
       });
     }
 
-    // 購買武器
     function buyWeapon(weaponId) {
       const weapon = weapons[weaponId];
       const owned = gameState.ownedWeapons.includes(weaponId);
       
       if (owned) {
-        // ���擁有，直接裝備
         gameState.weaponId = weaponId;
         updateUI();
         renderWeaponsShop();
         saveGame();
       } else if (gameState.coins >= weapon.cost) {
-        // 購買並裝備
         gameState.coins -= weapon.cost;
         gameState.weaponId = weaponId;
         gameState.ownedWeapons.push(weaponId);
@@ -2323,18 +2211,15 @@
       }
     }
 
-    // 開啟道具商店
     function openItemShop() {
       renderItemsShop();
       document.getElementById('itemShopOverlay').classList.add('active');
     }
 
-    // 關閉道具商店
     function closeItemShop() {
       document.getElementById('itemShopOverlay').classList.remove('active');
     }
 
-    // 渲染道具商店
     function renderItemsShop() {
       const grid = document.getElementById('itemsGrid');
       grid.innerHTML = '';
@@ -2371,12 +2256,10 @@
       });
     }
 
-    // 購買道具
     function buyItem(itemId) {
       const item = items[itemId];
       
       if (itemId === 0) {
-        // 選擇無裝備
         resetItemToNone();
         updateUI();
         renderItemsShop();
@@ -2384,7 +2267,6 @@
       }
       
       if (gameState.coins >= item.cost) {
-        // 購買並裝備
         gameState.coins -= item.cost;
         gameState.itemId = itemId;
         activateItem(itemId);
@@ -2394,18 +2276,15 @@
       }
     }
 
-    // 開啟聖遺物商店
     function openRelicShop() {
       renderRelicsShop();
       document.getElementById('relicShopOverlay').classList.add('active');
     }
 
-    // 關閉聖遺物商店
     function closeRelicShop() {
       document.getElementById('relicShopOverlay').classList.remove('active');
     }
 
-    // 渲染聖遺物商店
     function renderRelicsShop() {
       const grid = document.getElementById('relicsGrid');
       grid.innerHTML = '';
@@ -2443,20 +2322,17 @@
       });
     }
 
-    // 購買聖遺物
     function buyRelic(relicId) {
       const relic = relics[relicId];
       const owned = gameState.ownedRelics.includes(relicId);
       
       if (owned) {
-        // 已擁有，直接裝備
         gameState.relicId = relicId;
         applyRelicEffects();
         updateUI();
         renderRelicsShop();
         saveGame();
       } else if (gameState.coins >= relic.cost) {
-        // 購買並裝備
         gameState.coins -= relic.cost;
         gameState.relicId = relicId;
         gameState.ownedRelics.push(relicId);
@@ -2467,14 +2343,10 @@
       }
     }
 
-    // 應用聖遺物效果
     function applyRelicEffects() {
-      // 聖遺物���果在戰鬥中動態應用，這裡不需要做什麼
     }
 
-    // 啟動道具效果
     function activateItem(itemId) {
-      // 重置所有道具效果
       gameState.itemBurnActive = false;
       gameState.itemShieldCount = 0;
       gameState.itemAttackBoostCount = 0;
@@ -2484,52 +2356,48 @@
       gameState.itemCritBoostCount = 0;
       gameState.itemArmorBreakCount = 0;
       
-      // 啟動新道具效果
       switch(itemId) {
-        case 1: // 灼燒藥水
+        case 1:
           gameState.itemBurnActive = true;
           break;
-        case 2: // 無敵盾牌
+        case 2:
           gameState.itemShieldCount = 5;
           break;
-        case 3: // 攻擊加倍藥水
+        case 3:
           gameState.itemAttackBoostCount = 5;
           break;
-        case 4: // 毒藥水
+        case 4:
           gameState.itemPoisonActive = true;
           break;
-        case 5: // 爆擊傷害藥水
+        case 5:
           gameState.itemCritDamageBoostCount = 5;
           break;
-        case 6: // 混亂藥水
+        case 6:
           gameState.itemConfusionCount = 5;
           break;
-        case 7: // 運氣藥水
-          gameState.itemLuckEndTime = Date.now() + 180000; // 3分��
+        case 7:
+          gameState.itemLuckEndTime = Date.now() + 180000;
           break;
-        case 8: // 爆擊藥水
+        case 8:
           gameState.itemCritBoostCount = 5;
           break;
-        case 9: // 破甲藥水
+        case 9:
           gameState.itemArmorBreakCount = 5;
           break;
-        case 10: // 變身藥水
-          // 隨機選擇50-100關的怪獸數值
-          const randomStage = Math.floor(Math.random() * 51) + 50; // 50-100
+        case 10:
+          const randomStage = Math.floor(Math.random() * 51) + 50;
           const monsterStats = calculateMonsterStats(randomStage, gameState.newGamePlus > 0);
           gameState.itemTransformStats = monsterStats;
-          gameState.itemTransformEndTime = Date.now() + 180000; // 3分��
-          // 變身成怪獸圖片
+          gameState.itemTransformEndTime = Date.now() + 180000;
           const transformMonsterIndex = (randomStage - 1) % monsters.length;
           document.getElementById('playerCharacter').querySelector('.character-avatar').textContent = monsters[transformMonsterIndex];
           break;
-        case 11: // 降魔杵
-          gameState.itemInstakillEndTime = Date.now() + 180000; // 3分鐘
+        case 11:
+          gameState.itemInstakillEndTime = Date.now() + 180000;
           break;
       }
     }
 
-    // ��卡選擇
     function showStageSelect() {
       loadGame();
       renderStageSelect();
@@ -2545,7 +2413,6 @@
         btn.className = 'stage-btn';
         btn.textContent = i;
         
-        // 二周目或自由模式解鎖所有關卡
         if (gameState.newGamePlus > 0 || gameState.freeMode) {
           if (i === gameState.currentStage) {
             btn.classList.add('current');
@@ -2568,7 +2435,6 @@
       }
     }
 
-    // 升級功能
     function upgradeHp() {
       if (gameState.coins >= 5) {
         gameState.coins -= 5;
@@ -2615,7 +2481,6 @@
       }
     }
 
-    // 清除遊戲���錄
     function clearGameData() {
       const overlay = document.createElement('div');
       overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center;';
@@ -2624,9 +2489,9 @@
       box.style.cssText = 'background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); padding: 40px; border-radius: 20px; text-align: center; color: white;';
       box.innerHTML = `
         <div style="font-size: 48px; margin-bottom: 20px;">⚠️ 確認清除</div>
-        <div style="font-size: 24px; margin-bottom: 30px;">確定��清除所有遊戲紀錄嗎？<br>此操作無法復原！</div>
+        <div style="font-size: 24px; margin-bottom: 30px;">確定要清除所有遊戲紀錄嗎？<br>此操作無法復原！</div>
         <button id="confirmClear" style="padding: 15px 30px; font-size: 18px; border: none; border-radius: 10px; background: white; color: #ff6b6b; font-weight: bold; cursor: pointer; margin: 10px;">確定清除</button>
-        <button id="cancelClear" style="padding: 15px 30px; font-size: 18px; border: none; border-radius: 10px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">取���</button>
+        <button id="cancelClear" style="padding: 15px 30px; font-size: 18px; border: none; border-radius: 10px; background: rgba(255,255,255,0.3); color: white; font-weight: bold; cursor: pointer; margin: 10px;">取消</button>
       `;
       
       overlay.appendChild(box);
@@ -2637,7 +2502,6 @@
         resetGame();
         document.body.removeChild(overlay);
         
-        // 顯示清除成功���息
         const successBox = document.createElement('div');
         successBox.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,200,0,0.9); padding: 30px 50px; border-radius: 15px; color: white; font-size: 24px; z-index: 10001;';
         successBox.textContent = '✅ 遊戲紀錄已清除！';
@@ -2653,7 +2517,6 @@
       };
     }
     
-    // 事��監聽器
     document.getElementById('startButton').addEventListener('click', () => {
       startGame();
     });
@@ -2693,24 +2556,20 @@
       renderStageSelectPopup();
     });
     
-    // 長按升級功能
     let upgradeInterval = null;
     let upgradeTimeout = null;
     
     function setupLongPressUpgrade(buttonId, upgradeFunc) {
       const button = document.getElementById(buttonId);
       
-      // 點擊事件
       button.addEventListener('click', upgradeFunc);
       
-      // 長按開始
       button.addEventListener('mousedown', () => {
         upgradeTimeout = setTimeout(() => {
-          upgradeInterval = setInterval(upgradeFunc, 100); // 每0.1��升級一次
-        }, 500); // 長按0.5秒後開始快速升級
+          upgradeInterval = setInterval(upgradeFunc, 100);
+        }, 500);
       });
       
-      // 長按結束
       const stopUpgrade = () => {
         if (upgradeTimeout) {
           clearTimeout(upgradeTimeout);
@@ -2743,14 +2602,13 @@
       }
     });
 
-    // 更新首頁二周目顯示
     function updateHomeScreenNewGamePlus() {
       const indicator = document.getElementById('newGamePlusHomeIndicator');
       const rules = document.getElementById('newGamePlusRules');
       
       if (gameState.newGamePlus > 0) {
         indicator.style.display = 'block';
-        indicator.textContent = `⭐ ${gameState.newGamePlus + 1}周目模�� ⭐`;
+        indicator.textContent = `⭐ ${gameState.newGamePlus + 1}周目模式 ⭐`;
         rules.style.display = 'block';
       } else {
         indicator.style.display = 'none';
@@ -2758,12 +2616,11 @@
       }
     }
 
-    // 初始化
     (async function() {
       await initSDK();
       loadGame();
       updateHomeScreenNewGamePlus();
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a356135216ea3ac',t:'MTc2Mzk1MDMyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a35e8bd812b4a45',t:'MTc2Mzk1NTg4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
