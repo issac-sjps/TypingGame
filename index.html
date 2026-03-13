@@ -70,10 +70,11 @@
 
         .games-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            /* 調整為適應 4 個卡片，最小寬度稍微縮小一點讓排版更靈活 */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
         }
 
         .game-card {
@@ -98,12 +99,21 @@
             margin-bottom: 1rem;
         }
 
+        /* 個別卡片的頂部顏色 */
         .english-card {
             border-top: 5px solid #4CAF50;
         }
 
         .chinese-card {
             border-top: 5px solid #FF6B6B;
+        }
+
+        .english-game-card {
+            border-top: 5px solid #00BCD4;
+        }
+
+        .chinese-game-card {
+            border-top: 5px solid #FF9800;
         }
 
         .game-title {
@@ -191,11 +201,31 @@
                 </p>
                 <button class="start-button">開始練習</button>
             </div>
+
+            <div class="game-card english-game-card" onclick="window.open('https://issac-sjps.github.io/TypingGame/ENGame', '_blank')">
+                <div class="game-icon">🎮</div>
+                <h2 class="game-title">英文打字遊戲</h2>
+                <p class="game-description">
+                    趣味英文打字挑戰<br>
+                    從遊戲中輕鬆學英文
+                </p>
+                <button class="start-button">進入遊戲</button>
+            </div>
+
+            <div class="game-card chinese-game-card" onclick="window.open('https://issac-sjps.github.io/TypingGame/CHGame', '_blank')">
+                <div class="game-icon">🕹️</div>
+                <h2 class="game-title">中文打字遊戲</h2>
+                <p class="game-description">
+                    趣味中文打字挑戰<br>
+                    在挑戰中增進打字能力
+                </p>
+                <button class="start-button">進入遊戲</button>
+            </div>
         </section>
     </main>
 
     <footer class="footer">
         <p>© 2024 新莊國小打字練習網 - 讓學習更有趣！</p>
     </footer>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992f7a08c00b074c',t:'MTc2MTIwNDA3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
