@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Typing Hero Adventure</title>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100%;
+      overflow: hidden;
+    }
+
+    html { height: 100%; }
+
+    .game-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      color: #ffffff;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .home-container {
+      background: rgba(255,255,255,0.2);
+      padding: 15px 40px;
+      border-radius: 0;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .game-title {
+      font-size: 44px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .game-rules {
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    .game-rules h3 {
+      font-size: 20px;
+      margin-bottom: 6px;
+      color: #ffd700;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #ffffff;
+      margin: 5px;
+    }
+
+    .btn-primary { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .btn-primary:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
+    .btn-secondary { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .btn-secondary:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
+
+    .game-screen {
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 8px 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+      background: rgba(255,255,255,0.1);
+      padding: 5px 15px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .stage-info { font-size: 20px; font-weight: bold; }
+    .timer-display { font-size: 16px; color: #ffd700; }
+    .coins-info { font-size: 20px; display: flex; align-items: center; gap: 5px; }
+
+    .battle-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 5px;
+      min-height: 160px;
+      position: relative;
+      gap: 8px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      flex-shrink: 0;
+    }
+
+    .weapon-display {
+      background: rgba(255,255,255,0.15);
+      padding: 8px;
+      border-radius: 8px;
+      width: 110px;
+      min-width: 110px;
+      max-width: 110px;
+      text-align: center;
+    }
+
+    .weapon-icon { font-size: 32px; margin-bottom: 4px; }
+    .weapon-name { font-size: 15px; font-weight: bold; margin-bottom: 3px; }
+    .weapon-effect { font-size: 13px; color: #ffd700; }
+
+    .character {
+      text-align: center;
+      background: rgba(255,255,255,0.15);
+      padding: 10px;
+      border-radius: 10px;
+      flex: 0 1 190px;
+      min-width: 180px;
+    }
+
+    .character-avatar {
+      font-size: 60px;
+      margin-bottom: 8px;
+      animation: idle 2s ease-in-out infinite;
+    }
+
+    @keyframes idle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .character.attacking { animation: attack 0.5s ease-out; }
+
+    @keyframes attack {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(30px) scale(1.1); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+
+    .character-name { font-size: 20px; font-weight: bold; margin-bottom: 6px; }
+
+    .stats { text-align: left; font-size: 14px; }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      padding: 4px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 4px;
+      cursor: help;
+      position: relative;
+    }
+
+    .stat-row:hover .tooltip { display: block; }
+
+    .tooltip {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      white-space: nowrap;
+      z-index: 100;
+      margin-bottom: 5px;
+    }
+
+    .hp-bar {
+      width: 100%;
+      height: 18px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 3px;
+    }
+
+    .hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+      transition: width 0.5s;
+    }
+
+    .vs-text {
+      font-size: 26px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+    }
+
+    .attack-log {
+      background: rgba(255,255,255,0.15);
+      padding: 8px;
+      border-radius: 8px;
+      min-width: 110px;
+      max-width: 130px;
+      text-align: center;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .log-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; color: #ffd700; }
+    .log-content { font-size: 13px; text-align: left; line-height: 1.4; }
+
+    .log-entry {
+      margin-bottom: 4px;
+      padding: 3px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 3px;
+    }
+
+    .log-entry.crit {
+      background: rgba(255,215,0,0.3);
+      border-left: 3px solid #ffd700;
+    }
+
+    .upgrade-panel {
+      background: rgba(255,255,255,0.25);
+      padding: 6px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      text-align: center;
+      border: 2px solid rgba(255,255,255,0.3);
+      flex-shrink: 0;
+    }
+
+    .upgrade-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+
+    .upgrade-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .upgrade-btn {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    .upgrade-btn:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .upgrade-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .typing-area {
+      background: rgba(255,255,255,0.2);
+      padding: 8px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    /* The hint (definition) */
+    .word-display {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      min-height: 28px;
+      color: #ffd700;
+    }
+
+    /* Category label */
+    .pinyin-display {
+      font-size: 14px;
+      color: #cce0ff;
+      margin-bottom: 6px;
+      min-height: 16px;
+    }
+
+    .typing-input {
+      padding: 8px;
+      font-size: 22px;
+      border: 2px solid #ffffff;
+      border-radius: 6px;
+      width: 350px;
+      max-width: 100%;
+      text-align: center;
+      background: rgba(255,255,255,0.9);
+      color: #000000;
+    }
+
+    .typing-input:focus {
+      outline: none;
+      border-color: #ffd700;
+      box-shadow: 0 0 15px rgba(255,215,0,0.5);
+    }
+
+    .shop-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shop-overlay.active { display: flex; }
+
+    .shop-container {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 25px;
+      border-radius: 20px;
+      max-width: 1200px;
+      width: 95%;
+      max-height: 85%;
+      overflow-y: auto;
+      color: #ffffff;
+    }
+
+    .stage-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stage-overlay.active { display: flex; }
+
+    .stage-popup-container {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 900px;
+      width: 90%;
+      max-height: 80%;
+      overflow-y: auto;
+      color: #ffffff;
+    }
+
+    .stage-popup-title { font-size: 42px; text-align: center; margin-bottom: 20px; color: #ffd700; font-weight: bold; }
+    .shop-title { font-size: 36px; text-align: center; margin-bottom: 15px; color: #ffd700; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+    .shop-coins { text-align: center; font-size: 24px; margin-bottom: 20px; color: #ffeb3b; font-weight: bold; }
+
+    .weapons-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .weapon-card {
+      background: rgba(255,255,255,0.15);
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid rgba(255,255,255,0.3);
+      color: white;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .weapon-card:hover { transform: translateY(-3px); border-color: #ffd700; }
+    .weapon-card.equipped { border-color: #f5576c; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .weapon-card .weapon-icon { font-size: 28px; margin-bottom: 4px; }
+    .weapon-card h3 { font-size: 14px; margin-bottom: 4px; line-height: 1.2; }
+    .weapon-card p { font-size: 12px; margin-bottom: 6px; min-height: 32px; line-height: 1.3; }
+    .weapon-cost { font-size: 14px; color: #ffd700; font-weight: bold; }
+
+    .stage-select-container {
+      background: rgba(255,255,255,0.2);
+      padding: 40px;
+      border-radius: 0;
+      width: 100%;
+      backdrop-filter: blur(10px);
+      margin: 0;
+    }
+
+    .stage-select-title { font-size: 46px; text-align: center; margin-bottom: 30px; }
+
+    .stages-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .stage-btn {
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.3);
+      color: white;
+      transition: all 0.3s;
+    }
+
+    .stage-btn:hover:not(:disabled) { transform: scale(1.1); background: rgba(255,255,255,0.5); }
+    .stage-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .stage-btn.current { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+
+    @media (max-width: 1200px) { .weapons-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 768px) { .weapons-grid { grid-template-columns: repeat(3, 1fr); } .stages-grid { grid-template-columns: repeat(5, 1fr); } }
+    @media (max-width: 480px) { .weapons-grid { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+ </head>
+ <body>
+  <div class="game-container">
+   <!-- Home Screen -->
+   <div class="screen active" id="homeScreen">
+    <div class="home-container">
+     <div class="game-title">🎮 English Typing Hero Adventure</div>
+     <div id="newGamePlusHomeIndicator" style="display: none; font-size: 22px; color: #ffd700; font-weight: bold; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">⭐ New Game+ Mode ⭐</div>
+     <div class="game-rules">
+      <h3>🎯 Goal</h3>
+      <p>Defeat 100 stages of monsters by typing English words correctly!</p>
+      <h3>⌨️ How to Play</h3>
+      <p>Read the <span style="color:#ffd700;">definition/hint</span> shown on screen, then type the correct English word and press <strong>Enter</strong>. Each correct answer earns coins and deals damage to the enemy.</p>
+      <h3>💰 Coin System</h3>
+      <p>Earn 5 coins per correct answer. Spend coins to upgrade HP (+100), Attack (+5), Defense (+2%), Crit Rate (+5%), or Crit Damage (+5%) — each costs 5 coins. You can also buy special weapons.</p>
+      <h3>⚔️ Battle System</h3>
+      <p>You and the monster take turns attacking every 5 seconds. Each stage, monsters grow stronger (HP ×1.05, ATK ×1.05, DEF +1% up to 50%, Crit +0.5%, Crit DMG +1% up to 100%).</p>
+      <div id="newGamePlusRules" style="display: none; background: rgba(255,215,0,0.2); padding: 12px; border-radius: 8px; border: 2px solid #ffd700; margin-top: 10px;">
+       <h3 style="color: #ffd700; font-size: 18px; margin-bottom: 5px;">⭐ New Game+ Hard Mode</h3>
+       <p style="color: #ffeb3b; font-size: 14px; margin: 0;">Monster growth is greatly increased: HP ×1.1, ATK ×1.1 per stage. Challenge your limits!</p>
+      </div>
+      <h3>🛡️ Stats Explained</h3>
+      <p>• HP: Life points — reach 0 and you fail<br>• Attack: Damage per hit<br>• Defense: Reduces damage taken (max 90%)<br>• Crit Rate: Chance to critically hit (max 100%)<br>• Crit Damage: Bonus damage on critical hits</p>
+      <h3>🗡️ Weapon System</h3>
+      <p>12 special weapons with unique effects (double hit, poison, instant kill, etc.).</p>
+      <h3>💾 Auto-Save</h3>
+      <p>Progress is automatically saved to your browser.</p>
+     </div>
+     <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+      <button class="btn btn-primary" id="startButton">▶ Start Game</button>
+      <button class="btn btn-secondary" id="stageSelectButton">📋 Stage Select</button>
+      <button class="btn" id="clearDataButton" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">🗑️ Clear Save Data</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- Game Screen -->
+   <div class="screen" id="gameScreen">
+    <div class="game-screen">
+     <div class="game-header">
+      <div class="stage-info">
+       <span id="newGamePlusIndicator" style="display: none; color: #ffd700; font-size: 20px; margin-right: 10px;">⭐ NG+</span>
+       <span id="freeModeIndicator" style="display: none; color: #00ff00; font-size: 20px; margin-right: 10px;">🎮 Free Mode</span>
+       Stage <span id="currentStage">1</span>
+      </div>
+      <div style="display: flex; gap: 20px; align-items: center;">
+       <div class="timer-display">⏱️ Time: <span id="playTimeDisplay">00:00:00</span></div>
+       <div class="timer-display">Next Attack: <span id="timerDisplay">5</span>s</div>
+       <div class="timer-display">Attacks: <span id="attackCountDisplay">0</span></div>
+      </div>
+      <div id="defeatNotice" style="display: none; font-size: 24px; font-weight: bold; color: #ff6b6b; animation: pulse 1s ease-in-out infinite;">
+       💀 Defeated! Retrying in <span id="retryCountdown">5</span>s...
+      </div>
+      <div class="coins-info"><span>💰</span> <span id="coinsDisplay">0</span></div>
+      <div style="display: flex; gap: 10px;">
+       <button class="btn btn-secondary" id="openStageSelectButton" style="padding: 10px 20px;">Stage Select</button>
+       <button class="btn btn-secondary" id="backToHomeButton" style="padding: 10px 20px;">🏠 Home</button>
+      </div>
+     </div>
+
+     <div class="battle-area">
+      <!-- Relic -->
+      <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+       <div class="weapon-display" style="background: rgba(255,215,0,0.15);">
+        <div class="weapon-icon" id="currentRelicIcon">📦</div>
+        <div class="weapon-name" id="currentRelicName">None</div>
+        <div class="weapon-effect" id="currentRelicEffect">No relic equipped</div>
+       </div>
+       <button class="btn btn-secondary" id="openRelicShopButton" style="padding: 8px 12px; width: 130px; font-size: 13px; font-weight: bold; background: linear-gradient(135deg, #ffd700 0%, #ffA500 100%);">✨ Relic Shop</button>
+      </div>
+      <!-- Item -->
+      <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+       <div class="weapon-display" style="background: rgba(255,200,100,0.15);">
+        <div class="weapon-icon" id="currentItemIcon">📦</div>
+        <div class="weapon-name" id="currentItemName">No Item</div>
+        <div class="weapon-effect" id="currentItemEffect">No item used</div>
+       </div>
+       <button class="btn btn-secondary" id="openItemShopButton" style="padding: 8px 12px; width: 130px; font-size: 13px; font-weight: bold; background: linear-gradient(135deg, #ffa500 0%, #ff6347 100%);">🧪 Item Shop</button>
+      </div>
+      <!-- Weapon -->
+      <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+       <div class="weapon-display">
+        <div class="weapon-icon" id="currentWeaponIcon">🗡️</div>
+        <div class="weapon-name" id="currentWeaponName">Basic Sword</div>
+        <div class="weapon-effect" id="currentWeaponEffect">Attack once per turn</div>
+       </div>
+       <button class="btn btn-secondary" id="openShopButton" style="padding: 8px 12px; width: 130px; font-size: 13px; font-weight: bold;">🛒 Weapon Shop</button>
+      </div>
+      <!-- Player log -->
+      <div class="attack-log" id="playerAttackLog">
+       <div class="log-title">⚔️ Hero Log</div>
+       <div class="log-content" id="playerLogContent">Waiting...</div>
+      </div>
+      <!-- Player -->
+      <div class="character" id="playerCharacter">
+       <div class="character-avatar">🦸</div>
+       <div class="character-name">Hero</div>
+       <div class="stats">
+        <div class="stat-row"><span>❤️ HP:</span> <span id="playerHp">100/100</span><div class="tooltip">Life points — reach 0 and you fail</div></div>
+        <div class="hp-bar"><div class="hp-fill" id="playerHpBar" style="width: 100%;"></div></div>
+        <div class="stat-row"><span>⚔️ ATK:</span> <span id="playerAttack">10</span><div class="tooltip">Damage dealt per hit</div></div>
+        <div class="stat-row"><span>🛡️ DEF:</span> <span id="playerDefense">0%</span><div class="tooltip">Damage reduction (max 90%)</div></div>
+        <div class="stat-row"><span>💥 Crit%:</span> <span id="playerCrit">0%</span><div class="tooltip">Chance to critically hit</div></div>
+        <div class="stat-row"><span>🔥 Crit DMG:</span> <span id="playerCritDamage">0%</span><div class="tooltip">Bonus damage on critical hits</div></div>
+       </div>
+      </div>
+      <div class="vs-text">VS</div>
+      <!-- Enemy -->
+      <div class="character" id="enemyCharacter">
+       <div class="character-avatar" id="enemyAvatar">👹</div>
+       <div class="character-name" id="enemyName">Monster Lv.1</div>
+       <div class="stats">
+        <div class="stat-row"><span>❤️ HP:</span> <span id="enemyHp">100/100</span><div class="tooltip">Monster life points</div></div>
+        <div class="hp-bar"><div class="hp-fill" id="enemyHpBar" style="width: 100%;"></div></div>
+        <div class="stat-row"><span>⚔️ ATK:</span> <span id="enemyAttack">8</span><div class="tooltip">Monster attack damage</div></div>
+        <div class="stat-row"><span>🛡️ DEF:</span> <span id="enemyDefense">0%</span><div class="tooltip">Monster damage reduction</div></div>
+        <div class="stat-row"><span>💥 Crit%:</span> <span id="enemyCrit">2%</span><div class="tooltip">Monster crit chance</div></div>
+        <div class="stat-row"><span>🔥 Crit DMG:</span> <span id="enemyCritDamage">0%</span><div class="tooltip">Monster crit damage bonus</div></div>
+       </div>
+      </div>
+      <!-- Enemy log -->
+      <div class="attack-log" id="enemyAttackLog">
+       <div class="log-title">💀 Monster Log</div>
+       <div class="log-content" id="enemyLogContent">Waiting...</div>
+      </div>
+     </div>
+
+     <!-- Upgrade panel -->
+     <div class="upgrade-panel">
+      <div class="upgrade-title">💰 Quick Upgrade (Coins: <span id="upgradeCoins">0</span>)</div>
+      <div class="upgrade-buttons">
+       <button class="upgrade-btn" id="upgradeHpButton">❤️ HP (+100) - 5💰</button>
+       <button class="upgrade-btn" id="upgradeAttackButton">⚔️ ATK (+5) - 5💰</button>
+       <button class="upgrade-btn" id="upgradeDefenseButton">🛡️ DEF (+2%) - 5💰</button>
+       <button class="upgrade-btn" id="upgradeCritButton">💥 Crit% (+5%) - 5💰</button>
+       <button class="upgrade-btn" id="upgradeCritDamageButton">🔥 Crit DMG (+5%) - 5💰</button>
+      </div>
+     </div>
+
+     <!-- Typing area -->
+     <div class="typing-area">
+      <div style="font-size:13px; color:#cce0ff; margin-bottom:3px;">📖 Definition / Hint:</div>
+      <div class="word-display" id="wordDisplay">Get Ready...</div>
+      <div class="pinyin-display" id="pinyinDisplay"></div>
+      <input type="text" class="typing-input" id="typingInput" placeholder="Type the English word and press Enter" autocomplete="off" autocorrect="off" spellcheck="false">
+     </div>
+    </div>
+   </div>
+
+   <!-- Stage Select Screen -->
+   <div class="screen" id="stageSelectScreen">
+    <div class="stage-select-container">
+     <div class="stage-select-title">📋 Stage Select</div>
+     <div class="stages-grid" id="stagesGrid"></div>
+     <div style="text-align: center;"><button class="btn btn-secondary" id="backToHomeFromStageButton">🏠 Back to Home</button></div>
+    </div>
+   </div>
+  </div>
+
+  <!-- Weapon Shop Overlay -->
+  <div class="shop-overlay" id="shopOverlay">
+   <div class="shop-container">
+    <div class="shop-title">🛒 Weapon Shop</div>
+    <div class="shop-coins">💰 Coins: <span id="shopCoinsDisplay">0</span></div>
+    <div class="weapons-grid" id="weaponsGrid"></div>
+    <div style="text-align: center;"><button class="btn btn-secondary" id="closeShopButton">Close</button></div>
+   </div>
+  </div>
+
+  <!-- Stage Select Popup -->
+  <div class="stage-overlay" id="stageOverlay">
+   <div class="stage-popup-container">
+    <div class="stage-popup-title">📋 Stage Select</div>
+    <div id="difficultySelector" style="display: none; text-align: center; margin-bottom: 20px;">
+     <div style="font-size: 20px; margin-bottom: 15px; color: #ffd700;">Choose Difficulty:</div>
+     <button class="btn" id="normalDifficultyButton" style="padding: 12px 30px; font-size: 18px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); margin: 0 10px;">📘 Normal (NG)</button>
+     <button class="btn" id="hardDifficultyButton" style="padding: 12px 30px; font-size: 18px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); margin: 0 10px;">⭐ Hard (NG+)</button>
+    </div>
+    <div class="stages-grid" id="stagesPopupGrid"></div>
+    <div style="text-align: center; margin-top: 20px;"><button class="btn btn-secondary" id="closeStageSelectButton">Close</button></div>
+   </div>
+  </div>
+
+  <!-- Item Shop Overlay -->
+  <div class="shop-overlay" id="itemShopOverlay">
+   <div class="shop-container">
+    <div class="shop-title">🧪 Item Shop</div>
+    <div class="shop-coins">💰 Coins: <span id="itemShopCoinsDisplay">0</span></div>
+    <div class="weapons-grid" id="itemsGrid"></div>
+    <div style="text-align: center;"><button class="btn btn-secondary" id="closeItemShopButton">Close</button></div>
+   </div>
+  </div>
+
+  <!-- Relic Shop Overlay -->
+  <div class="shop-overlay" id="relicShopOverlay">
+   <div class="shop-container">
+    <div class="shop-title">✨ Relic Shop</div>
+    <div class="shop-coins">💰 Coins: <span id="relicShopCoinsDisplay">0</span></div>
+    <div class="weapons-grid" id="relicsGrid"></div>
+    <div style="text-align: center;"><button class="btn btn-secondary" id="closeRelicShopButton">Close</button></div>
+   </div>
+  </div>
+
+  <script>
+    // ===== ENGLISH WORD BANK =====
+    // Format: { word: "answer", pinyin: "category", hint: "definition shown to player" }
+    const wordBank = [
+      // Animals
+      {word: "elephant", pinyin: "🐾 Animals", hint: "The largest land animal, has a trunk and tusks"},
+      {word: "dolphin",  pinyin: "🐾 Animals", hint: "A smart ocean mammal that loves to jump"},
+      {word: "penguin",  pinyin: "🐾 Animals", hint: "A flightless bird that lives in cold climates"},
+      {word: "giraffe",  pinyin: "🐾 Animals", hint: "The tallest animal in the world, long neck"},
+      {word: "leopard",  pinyin: "🐾 Animals", hint: "A spotted wild cat known for speed and stealth"},
+      {word: "octopus",  pinyin: "🐾 Animals", hint: "A sea creature with eight arms"},
+      {word: "butterfly",pinyin: "🐾 Animals", hint: "A colorful insect with wings that starts as a caterpillar"},
+      {word: "crocodile",pinyin: "🐾 Animals", hint: "A large reptile that lives near rivers, very sharp teeth"},
+      {word: "hamster",  pinyin: "🐾 Animals", hint: "A small fluffy pet that runs on a wheel"},
+      {word: "parrot",   pinyin: "🐾 Animals", hint: "A colorful bird that can mimic human speech"},
+      // Food & Drink
+      {word: "sandwich", pinyin: "🍔 Food", hint: "Bread with fillings like meat and cheese"},
+      {word: "spaghetti",pinyin: "🍔 Food", hint: "Long thin Italian pasta noodles"},
+      {word: "chocolate",pinyin: "🍔 Food", hint: "A sweet brown treat made from cocoa beans"},
+      {word: "broccoli", pinyin: "🍔 Food", hint: "A green vegetable that looks like a tiny tree"},
+      {word: "strawberry",pinyin:"🍔 Food", hint: "A small red juicy fruit with seeds on the outside"},
+      {word: "lemonade", pinyin: "🍔 Food", hint: "A cold drink made from lemons, water, and sugar"},
+      {word: "pineapple",pinyin: "🍔 Food", hint: "A tropical fruit with a spiky skin and yellow inside"},
+      {word: "mushroom", pinyin: "🍔 Food", hint: "A fungus often used in cooking, has a cap"},
+      {word: "yogurt",   pinyin: "🍔 Food", hint: "A thick creamy food made from fermented milk"},
+      {word: "avocado",  pinyin: "🍔 Food", hint: "A green fruit with creamy inside, used in guacamole"},
+      // School & Learning
+      {word: "notebook", pinyin: "📚 School", hint: "A book with blank pages for writing notes"},
+      {word: "scissors", pinyin: "📚 School", hint: "A tool with two blades used for cutting paper"},
+      {word: "calendar", pinyin: "📚 School", hint: "A chart showing the days, weeks, and months of the year"},
+      {word: "library",  pinyin: "📚 School", hint: "A place where you can borrow books for free"},
+      {word: "homework", pinyin: "📚 School", hint: "Schoolwork that students do at home"},
+      {word: "blackboard",pinyin:"📚 School", hint: "A dark board in classrooms where teachers write with chalk"},
+      {word: "eraser",   pinyin: "📚 School", hint: "A small rubber tool used to remove pencil marks"},
+      {word: "pencil",   pinyin: "📚 School", hint: "A writing tool with a graphite core, can be erased"},
+      {word: "classroom",pinyin: "📚 School", hint: "A room in school where students learn"},
+      {word: "teacher",  pinyin: "📚 School", hint: "A person whose job is to educate students"},
+      // Sports & Activities
+      {word: "swimming", pinyin: "⚽ Sports", hint: "Moving through water using your arms and legs"},
+      {word: "baseball", pinyin: "⚽ Sports", hint: "A sport played with a bat and ball, nine innings"},
+      {word: "volleyball",pinyin:"⚽ Sports", hint: "A sport where teams hit a ball over a net"},
+      {word: "jogging",  pinyin: "⚽ Sports", hint: "Running at a slow and steady pace for exercise"},
+      {word: "cycling",  pinyin: "⚽ Sports", hint: "Riding a bicycle as sport or transportation"},
+      {word: "football", pinyin: "⚽ Sports", hint: "A popular sport where you kick a ball into a goal"},
+      {word: "skating",  pinyin: "⚽ Sports", hint: "Moving on ice or wheels wearing special boots"},
+      {word: "climbing", pinyin: "⚽ Sports", hint: "Going up a mountain, wall, or tree using hands and feet"},
+      {word: "archery",  pinyin: "⚽ Sports", hint: "The sport of shooting arrows at a target with a bow"},
+      {word: "boxing",   pinyin: "⚽ Sports", hint: "A combat sport where two people fight using gloved fists"},
+      // Nature & Weather
+      {word: "rainbow",  pinyin: "🌈 Nature", hint: "An arc of colors in the sky after rain"},
+      {word: "thunder",  pinyin: "🌈 Nature", hint: "The loud sound you hear during a storm after lightning"},
+      {word: "volcano",  pinyin: "🌈 Nature", hint: "A mountain that can erupt hot lava"},
+      {word: "tornado",  pinyin: "🌈 Nature", hint: "A violently rotating column of air touching the ground"},
+      {word: "glacier",  pinyin: "🌈 Nature", hint: "A huge slowly moving mass of ice"},
+      {word: "waterfall",pinyin: "🌈 Nature", hint: "Water falling from a great height over rocks"},
+      {word: "desert",   pinyin: "🌈 Nature", hint: "A very dry land with little rain and extreme heat"},
+      {word: "forest",   pinyin: "🌈 Nature", hint: "A large area densely covered with trees"},
+      {word: "earthquake",pinyin:"🌈 Nature", hint: "A sudden violent shaking of the ground"},
+      {word: "blizzard", pinyin: "🌈 Nature", hint: "A severe snowstorm with strong winds"},
+      // Technology
+      {word: "keyboard", pinyin: "💻 Tech", hint: "An input device with buttons for typing on a computer"},
+      {word: "internet", pinyin: "💻 Tech", hint: "A global network connecting computers worldwide"},
+      {word: "password", pinyin: "💻 Tech", hint: "A secret word used to gain access to a system"},
+      {word: "software", pinyin: "💻 Tech", hint: "Programs and operating systems used by computers"},
+      {word: "wireless", pinyin: "💻 Tech", hint: "Transmitting data without physical cables"},
+      {word: "database", pinyin: "💻 Tech", hint: "An organized collection of structured information"},
+      {word: "download", pinyin: "💻 Tech", hint: "To copy data from the internet to your device"},
+      {word: "monitor",  pinyin: "💻 Tech", hint: "The screen of a computer or display device"},
+      {word: "printer",  pinyin: "💻 Tech", hint: "A machine that produces printed copies of documents"},
+      {word: "battery",  pinyin: "💻 Tech", hint: "A device that stores and provides electrical energy"},
+      // Places & Buildings
+      {word: "hospital", pinyin: "🏛️ Places", hint: "A building where sick or injured people are treated"},
+      {word: "museum",   pinyin: "🏛️ Places", hint: "A building where art or historical items are displayed"},
+      {word: "stadium",  pinyin: "🏛️ Places", hint: "A large sports arena with seating for many spectators"},
+      {word: "airport",  pinyin: "🏛️ Places", hint: "A place where planes take off and land"},
+      {word: "pharmacy", pinyin: "🏛️ Places", hint: "A shop where medicines and drugs are sold"},
+      {word: "bakery",   pinyin: "🏛️ Places", hint: "A shop that sells bread, cakes, and pastries"},
+      {word: "factory",  pinyin: "🏛️ Places", hint: "A building where goods are made in large quantities"},
+      {word: "palace",   pinyin: "🏛️ Places", hint: "A large grand residence for royalty"},
+      {word: "lighthouse",pinyin:"🏛️ Places", hint: "A tall tower with a bright light to guide ships at sea"},
+      {word: "fountain", pinyin: "🏛️ Places", hint: "A decorative structure that sprays water into the air"},
+      // Feelings & Personality
+      {word: "nervous",  pinyin: "😊 Feelings", hint: "Feeling anxious or worried about something"},
+      {word: "jealous",  pinyin: "😊 Feelings", hint: "Feeling upset because someone else has what you want"},
+      {word: "excited",  pinyin: "😊 Feelings", hint: "Feeling very happy and enthusiastic about something"},
+      {word: "curious",  pinyin: "😊 Feelings", hint: "Eager to learn or know about something"},
+      {word: "grateful", pinyin: "😊 Feelings", hint: "Feeling thankful for something received"},
+      {word: "brave",    pinyin: "😊 Feelings", hint: "Ready to face danger without showing fear"},
+      {word: "patient",  pinyin: "😊 Feelings", hint: "Able to wait calmly without getting angry"},
+      {word: "stubborn", pinyin: "😊 Feelings", hint: "Refusing to change your opinion or behavior"},
+      {word: "cheerful", pinyin: "😊 Feelings", hint: "Noticeably happy and optimistic"},
+      {word: "lonely",   pinyin: "😊 Feelings", hint: "Feeling sad because you are alone or have no friends"},
+      // Science & Space
+      {word: "gravity",  pinyin: "🔬 Science", hint: "The force that pulls objects toward the Earth"},
+      {word: "oxygen",   pinyin: "🔬 Science", hint: "A gas in the air that all living things need to breathe"},
+      {word: "molecule", pinyin: "🔬 Science", hint: "The smallest unit of a substance made of atoms"},
+      {word: "telescope",pinyin: "🔬 Science", hint: "A device used to observe distant objects like stars"},
+      {word: "asteroid", pinyin: "🔬 Science", hint: "A rocky object orbiting the Sun, smaller than a planet"},
+      {word: "eclipse",  pinyin: "🔬 Science", hint: "When one celestial body moves into the shadow of another"},
+      {word: "planet",   pinyin: "🔬 Science", hint: "A large round object orbiting a star in space"},
+      {word: "experiment",pinyin:"🔬 Science", hint: "A scientific test to discover or prove something"},
+      {word: "fossil",   pinyin: "🔬 Science", hint: "Preserved remains of ancient organisms found in rock"},
+      {word: "magnet",   pinyin: "🔬 Science", hint: "An object that attracts iron and steel"},
+      // Daily Life
+      {word: "umbrella", pinyin: "🏠 Daily Life", hint: "A collapsible device used for protection from rain"},
+      {word: "blanket",  pinyin: "🏠 Daily Life", hint: "A large soft covering used to keep warm in bed"},
+      {word: "mirror",   pinyin: "🏠 Daily Life", hint: "A reflective surface used to see your own image"},
+      {word: "curtain",  pinyin: "🏠 Daily Life", hint: "A piece of fabric hanging over a window for privacy"},
+      {word: "pillow",   pinyin: "🏠 Daily Life", hint: "A soft cushion used to rest your head while sleeping"},
+      {word: "envelope", pinyin: "🏠 Daily Life", hint: "A flat paper container used for mailing letters"},
+      {word: "ladder",   pinyin: "🏠 Daily Life", hint: "A structure of steps used to climb up or down"},
+      {word: "compass",  pinyin: "🏠 Daily Life", hint: "A tool that shows direction using a magnetic needle"},
+      {word: "lantern",  pinyin: "🏠 Daily Life", hint: "A portable lamp with a protective frame"},
+      {word: "receipt",  pinyin: "🏠 Daily Life", hint: "A printed slip confirming payment for a purchase"}
+    ];
+
+    // Weapons
+    const weapons = [
+      {id: 0,  name: "Basic Sword",    cost: 0,   effect: "Attack once per turn",                    icon: "🗡️"},
+      {id: 1,  name: "Twin Blades",    cost: 50,  effect: "Attack twice per turn",                   icon: "⚔️"},
+      {id: 2,  name: "War Hammer",     cost: 60,  effect: "Each hit deals 1.5× damage",              icon: "🔨"},
+      {id: 3,  name: "Poison Dagger",  cost: 70,  effect: "Adds poison stacks, extra damage per hit",icon: "☠️"},
+      {id: 4,  name: "Divine Bow",     cost: 80,  effect: "Random ×1–5 damage multiplier",           icon: "🏹"},
+      {id: 5,  name: "Armor Breaker",  cost: 85,  effect: "Each hit reduces enemy DEF by 5%",        icon: "🛡️"},
+      {id: 6,  name: "Weakness Blade", cost: 85,  effect: "Each hit reduces enemy ATK by 2",         icon: "⚡"},
+      {id: 7,  name: "Gold Sword",     cost: 90,  effect: "Each hit gives +1 extra coin",            icon: "💰"},
+      {id: 8,  name: "Growth Sword",   cost: 95,  effect: "Gain +1 ATK after each attack",           icon: "📈"},
+      {id: 9,  name: "Crit Sword",     cost: 100, effect: "Always crits; at 100% crit, crit DMG ×1.2",icon:"💎"},
+      {id: 10, name: "Gambler's Blade",cost: 110, effect: "50% chance 5× damage, 50% hit yourself", icon: "🎰"},
+      {id: 11, name: "Instant Kill",   cost: 120, effect: "3% chance to instantly defeat the enemy", icon: "💀"}
+    ];
+
+    // Items
+    const items = [
+      {id: 0,  name: "No Item",          cost: 0,  effect: "No item equipped",                        icon: "📦"},
+      {id: 1,  name: "Burn Potion",      cost: 30, effect: "Each attack deals +10% ATK as fire dmg",  icon: "🔥"},
+      {id: 2,  name: "Iron Shield",      cost: 30, effect: "Block 5 incoming attacks, then it breaks", icon: "🛡️"},
+      {id: 3,  name: "Power Potion",     cost: 30, effect: "Next 5 attacks deal 2× base damage",       icon: "💪"},
+      {id: 4,  name: "Toxin Potion",     cost: 30, effect: "Enemy DEF is halved",                      icon: "☠️"},
+      {id: 5,  name: "Crit DMG Potion",  cost: 30, effect: "Next 5 attacks have 2× crit damage",       icon: "💥"},
+      {id: 6,  name: "Chaos Potion",     cost: 30, effect: "Next 5 attacks: 50% chance enemy hits self",icon:"😵"},
+      {id: 7,  name: "Lucky Potion",     cost: 30, effect: "Coins ×2 for 3 minutes",                   icon: "🍀"},
+      {id: 8,  name: "Crit Potion",      cost: 30, effect: "Next 5 attacks guaranteed to crit",        icon: "💎"},
+      {id: 9,  name: "Armor Break",      cost: 60, effect: "Next 5 attacks ignore enemy DEF",          icon: "🔓"},
+      {id: 10, name: "Transform Potion", cost: 60, effect: "Gain random monster stats (stage 50-100) for 3 min",icon:"👹"},
+      {id: 11, name: "Demon Mace",       cost: 60, effect: "3% instant kill chance for 3 minutes",     icon: "🔱"}
+    ];
+
+    // Relics
+    const relics = [
+      {id: 0, name: "None",             cost: 0,   effect: "No relic equipped",                  icon: "📦"},
+      {id: 1, name: "Giant's Ring",     cost: 100, effect: "HP ×2",                              icon: "💍"},
+      {id: 2, name: "Angel's Halo",     cost: 100, effect: "50% chance to nullify enemy attacks",icon: "😇"},
+      {id: 3, name: "Chariot of Ares",  cost: 100, effect: "Crit damage multiplier ×2",          icon: "🏛️"},
+      {id: 4, name: "Spear of Ares",    cost: 100, effect: "ATK ×2",                             icon: "🔱"},
+      {id: 5, name: "Orpheus Lyre",     cost: 100, effect: "Enemy has 50% chance to hit itself", icon: "🎻"},
+      {id: 6, name: "Cornucopia",       cost: 100, effect: "Each attack gives 1–10 random coins", icon: "🏺"},
+      {id: 7, name: "Scholar's Scroll", cost: 100, effect: "+10 coins per correct answer",        icon: "📜"}
+    ];
+
+    // 100 monster emojis
+    const monsters = [
+      "👹","👺","👻","👽","👾","🤖","😈","💀","☠️","👿",
+      "🧟","🧛","🧙","🧚","🧜","🧝","🧞","🧌","🐉","🐲",
+      "🦖","🦕","🐍","🦂","🕷️","🦇","🐺","🦁","🐯","🐻",
+      "🦍","🦧","🐗","🐊","🦈","🐙","🦑","🦞","🦀","🐡",
+      "🦐","🐢","🦎","🐛","🦗","🕸️","🦟","🐝","🐜","🦋",
+      "🐞","🦂","🕷️","🦇","🐺","🦊","🦝","🐱","🐼","🦘",
+      "🦡","🦨","🦦","🦥","🐁","🐀","🐹","🐰","🐇","🐿️",
+      "🦔","🦇","🐻","🐨","🐯","🦁","🐮","🐷","🐗","🐵",
+      "🙈","🙉","🙊","🐒","🦍","🦧","🐶","🐕","🦮","🐩",
+      "🐺","🦊","🦝","🐱","🐈","🦁","🐯","🐅","🐆","🐴"
+    ];
+
+    // ===== GAME STATE =====
+    let gameState = {
+      currentStage: 1, maxStage: 1,
+      playerHp: 100, playerMaxHp: 100,
+      playerAttack: 10, playerDefense: 0,
+      playerCritRate: 0, playerCritDamage: 0,
+      coins: 0,
+      weaponId: 0, ownedWeapons: [0],
+      itemId: 0, ownedItems: [0],
+      itemBurnActive: false, itemShieldCount: 0,
+      itemAttackBoostCount: 0, itemPoisonActive: false,
+      itemCritDamageBoostCount: 0, itemConfusionCount: 0,
+      itemLuckEndTime: 0, itemCritBoostCount: 0,
+      itemArmorBreakCount: 0, itemTransformEndTime: 0,
+      itemTransformStats: null, itemInstakillEndTime: 0,
+      relicId: 0, ownedRelics: [0],
+      enemyHp: 100, enemyMaxHp: 100,
+      enemyBaseAttack: 8, enemyAttack: 8,
+      enemyDefense: 0, enemyCritRate: 2, enemyCritDamage: 0,
+      currentWord: null, weaponHitCount: 0,
+      poisonStacks: 0, enemyDefenseReduction: 0,
+      enemyAttackReduction: 0, battleTimer: 5,
+      battleInterval: null, timerInterval: null,
+      playerAttackLog: [], enemyAttackLog: [],
+      attackCount: 0, newGamePlus: 0,
+      freeMode: false, useHardDifficulty: false
+    };
+
+    let playTimeStarted = 0, playTimeElapsed = 0, playTimeInterval = null;
+
+    function formatPlayTime(s) {
+      const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    }
+
+    function startPlayTimer() {
+      if (!playTimeStarted) playTimeStarted = Date.now();
+      if (playTimeInterval) clearInterval(playTimeInterval);
+      playTimeInterval = setInterval(() => {
+        playTimeElapsed = Math.floor((Date.now()-playTimeStarted)/1000);
+        document.getElementById('playTimeDisplay').textContent = formatPlayTime(playTimeElapsed);
+      }, 1000);
+    }
+
+    function stopPlayTimer() { if (playTimeInterval) { clearInterval(playTimeInterval); playTimeInterval = null; } }
+    function resetPlayTimer() { stopPlayTimer(); playTimeStarted=0; playTimeElapsed=0; document.getElementById('playTimeDisplay').textContent='00:00:00'; }
+
+    function addAttackLog(isPlayer, damage, isCrit, critDmgPct) {
+      const log = { damage, isCrit, critDamagePercent: critDmgPct||0 };
+      if (isPlayer) {
+        gameState.playerAttackLog.push(log);
+        if (gameState.playerAttackLog.length > 3) gameState.playerAttackLog.shift();
+      } else {
+        gameState.enemyAttackLog.push(log);
+        if (gameState.enemyAttackLog.length > 3) gameState.enemyAttackLog.shift();
+      }
+      updateAttackLogDisplay();
+    }
+
+    function updateAttackLogDisplay() {
+      const pl = document.getElementById('playerLogContent');
+      const el = document.getElementById('enemyLogContent');
+      pl.innerHTML = gameState.playerAttackLog.length === 0 ? 'Waiting...' :
+        gameState.playerAttackLog.map(l => `<div class="log-entry ${l.isCrit?'crit':''}">${l.isCrit?'💥 ':'⚔️ '}DMG: ${l.damage}${l.isCrit&&l.critDamagePercent>0?`<div style="font-size:11px;color:#ffd700">Crit: ${l.critDamagePercent}%</div>`:''}</div>`).reverse().join('');
+      el.innerHTML = gameState.enemyAttackLog.length === 0 ? 'Waiting...' :
+        gameState.enemyAttackLog.map(l => `<div class="log-entry ${l.isCrit?'crit':''}">${l.isCrit?'💥 ':'👊 '}DMG: ${l.damage}${l.isCrit&&l.critDamagePercent>0?`<div style="font-size:11px;color:#ffd700">Crit: ${l.critDamagePercent}%</div>`:''}</div>`).reverse().join('');
+    }
+
+    function saveGame() {
+      localStorage.setItem('engTypingGameSave', JSON.stringify({
+        currentStage: gameState.currentStage, maxStage: gameState.maxStage,
+        playerMaxHp: gameState.playerMaxHp, playerAttack: gameState.playerAttack,
+        playerDefense: gameState.playerDefense, playerCritRate: gameState.playerCritRate,
+        playerCritDamage: gameState.playerCritDamage, coins: gameState.coins,
+        weaponId: gameState.weaponId, ownedWeapons: gameState.ownedWeapons,
+        itemId: 0, ownedItems: gameState.ownedItems,
+        relicId: gameState.relicId, ownedRelics: gameState.ownedRelics,
+        newGamePlus: gameState.newGamePlus, freeMode: gameState.freeMode,
+        useHardDifficulty: gameState.useHardDifficulty
+      }));
+    }
+
+    function loadGame() {
+      const saved = localStorage.getItem('engTypingGameSave');
+      if (saved) {
+        const d = JSON.parse(saved);
+        gameState.currentStage = d.currentStage||1;
+        gameState.maxStage = d.maxStage||1;
+        gameState.playerMaxHp = d.playerMaxHp||100;
+        gameState.playerAttack = d.playerAttack||10;
+        gameState.playerDefense = d.playerDefense||0;
+        gameState.playerCritRate = d.playerCritRate||0;
+        gameState.playerCritDamage = d.playerCritDamage||0;
+        gameState.coins = d.coins||0;
+        gameState.weaponId = d.weaponId||0;
+        gameState.ownedWeapons = d.ownedWeapons||[0];
+        gameState.itemId = 0;
+        gameState.ownedItems = d.ownedItems||[0];
+        gameState.relicId = d.relicId||0;
+        gameState.ownedRelics = d.ownedRelics||[0];
+        gameState.newGamePlus = d.newGamePlus||0;
+        gameState.freeMode = d.freeMode||false;
+        gameState.useHardDifficulty = d.useHardDifficulty||false;
+        gameState.itemBurnActive=false; gameState.itemShieldCount=0;
+        gameState.itemAttackBoostCount=0; gameState.itemPoisonActive=false;
+        gameState.itemCritDamageBoostCount=0; gameState.itemConfusionCount=0;
+        gameState.itemLuckEndTime=0; gameState.itemCritBoostCount=0;
+        gameState.itemArmorBreakCount=0; gameState.itemTransformEndTime=0;
+        gameState.itemTransformStats=null; gameState.itemInstakillEndTime=0;
+      }
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startGame() { loadGame(); startPlayTimer(); startStage(gameState.currentStage); }
+
+    function calcMonsterStats(stage, hard) {
+      const mult = hard ? 1.1 : 1.05;
+      return {
+        maxHp: Math.floor(100 * Math.pow(mult, stage-1)),
+        attack: Math.floor(8 * Math.pow(mult, stage-1)),
+        defense: Math.min((stage-1)*1, 50),
+        critRate: Math.min(2+(stage-1)*0.5, 100),
+        critDamage: Math.min((stage-1)*1, 100)
+      };
+    }
+
+    function applyEnemyStats(stage) {
+      const hard = gameState.useHardDifficulty && !gameState.freeMode;
+      const s = calcMonsterStats(stage, hard);
+      gameState.enemyMaxHp = s.maxHp;
+      gameState.enemyHp = s.maxHp;
+      gameState.enemyBaseAttack = s.attack;
+      gameState.enemyAttack = s.attack;
+      gameState.enemyDefense = s.defense;
+      gameState.enemyCritRate = s.critRate;
+      gameState.enemyCritDamage = s.critDamage;
+    }
+
+    function resetBattleState() {
+      gameState.weaponHitCount=0; gameState.poisonStacks=0;
+      gameState.enemyDefenseReduction=0; gameState.enemyAttackReduction=0;
+      gameState.battleTimer=5; gameState.attackCount=0;
+      gameState.itemBurnActive=false; gameState.itemShieldCount=0;
+      gameState.itemAttackBoostCount=0; gameState.itemPoisonActive=false;
+      gameState.itemCritDamageBoostCount=0; gameState.itemConfusionCount=0;
+      gameState.itemCritBoostCount=0; gameState.itemArmorBreakCount=0;
+    }
+
+    function startStage(stage, withNewWord=true) {
+      stopBattle();
+      gameState.currentStage = stage;
+      gameState.playerHp = gameState.relicId===1 ? gameState.playerMaxHp*2 : gameState.playerMaxHp;
+      applyEnemyStats(stage);
+      resetBattleState();
+      updateUI(); updateAttackLogDisplay();
+      showScreen('gameScreen');
+      if (withNewWord) nextWord();
+      startBattleTimer();
+      document.getElementById('typingInput').focus();
+    }
+
+    function startStageWithoutNewWord(stage) {
+      stopBattle();
+      gameState.currentStage = stage;
+      gameState.playerHp = gameState.relicId===1 ? gameState.playerMaxHp*2 : gameState.playerMaxHp;
+      applyEnemyStats(stage);
+      resetBattleState();
+      updateUI(); updateAttackLogDisplay();
+      startBattleTimer();
+      document.getElementById('typingInput').focus();
+    }
+
+    function startBattleTimer() {
+      stopBattle();
+      gameState.battleTimer = 5;
+      document.getElementById('timerDisplay').textContent = gameState.battleTimer;
+      gameState.timerInterval = setInterval(() => {
+        gameState.battleTimer--;
+        document.getElementById('timerDisplay').textContent = gameState.battleTimer;
+        if (gameState.battleTimer <= 0) { executeBattle(); gameState.battleTimer=5; }
+      }, 1000);
+    }
+
+    function stopBattle() { if (gameState.timerInterval) { clearInterval(gameState.timerInterval); gameState.timerInterval=null; } }
+
+    function executeBattle() {
+      if (gameState.enemyHp<=0 || gameState.playerHp<=0) return;
+      gameState.attackCount++;
+      document.getElementById('attackCountDisplay').textContent = gameState.attackCount;
+      playerAttack();
+      if (gameState.enemyHp<=0) { handleStageComplete(); return; }
+      setTimeout(() => { enemyAttack(); if (gameState.playerHp<=0) handleDefeat(); }, 500);
+    }
+
+    function getCurrentPlayerStats() {
+      if (gameState.itemTransformEndTime > Date.now() && gameState.itemTransformStats)
+        return {...gameState.itemTransformStats};
+      return { maxHp: gameState.playerMaxHp, attack: gameState.playerAttack,
+               defense: gameState.playerDefense, critRate: gameState.playerCritRate,
+               critDamage: gameState.playerCritDamage };
+    }
+
+    function playerAttack() {
+      document.getElementById('playerCharacter').classList.add('attacking');
+      setTimeout(()=>document.getElementById('playerCharacter').classList.remove('attacking'),500);
+
+      let attacks=1, damageMultiplier=1;
+      gameState.weaponHitCount++;
+      const cs = getCurrentPlayerStats();
+      let relicAtkBoost = gameState.relicId===4 ? 2 : 1;
+      let attackBoost = 1;
+      if (gameState.itemAttackBoostCount>0) { attackBoost=2; gameState.itemAttackBoostCount--; if(!gameState.itemAttackBoostCount) resetItemToNone(); }
+      let relicCritDmgBoost = gameState.relicId===3 ? 2 : 1;
+      let critDmgBoost = 1;
+      if (gameState.itemCritDamageBoostCount>0) { critDmgBoost=2; gameState.itemCritDamageBoostCount--; if(!gameState.itemCritDamageBoostCount) resetItemToNone(); }
+      let forceCrit = false;
+      if (gameState.itemCritBoostCount>0) { forceCrit=true; gameState.itemCritBoostCount--; if(!gameState.itemCritBoostCount) resetItemToNone(); }
+      if (gameState.itemInstakillEndTime>Date.now() && Math.random()<0.03) { gameState.enemyHp=0; updateUI(); handleStageComplete(); return; }
+
+      switch(gameState.weaponId) {
+        case 1: attacks=2; break;
+        case 2: damageMultiplier=1.5; break;
+        case 3: gameState.poisonStacks++; break;
+        case 4: damageMultiplier=Math.floor(Math.random()*5)+1; break;
+        case 5: gameState.enemyDefenseReduction+=5; break;
+        case 6: gameState.enemyAttackReduction+=2; break;
+        case 7: gameState.coins++; break;
+        case 8: gameState.playerAttack++; break;
+        case 9: forceCrit=true; break;
+        case 10:
+          if (Math.random()<0.5) { damageMultiplier=5; }
+          else { const sd=Math.floor(cs.attack*0.5); gameState.playerHp=Math.max(0,gameState.playerHp-sd); updateUI(); if(gameState.playerHp<=0) handleDefeat(); return; }
+          break;
+        case 11: if(Math.random()<0.03){gameState.enemyHp=0;updateUI();handleStageComplete();return;} break;
+      }
+
+      for (let i=0;i<attacks;i++) {
+        let dmg = cs.attack * relicAtkBoost * attackBoost * damageMultiplier;
+        const isCrit = forceCrit || Math.random()*100 < cs.critRate;
+        let critDmgPct = 0;
+        if (isCrit) {
+          let cm = 1;
+          if (gameState.weaponId===9 && cs.critRate>=100) cm=1.2;
+          dmg = Math.floor(dmg*(100+cs.critDamage*relicCritDmgBoost*critDmgBoost*cm)/100);
+          critDmgPct = cs.critDamage*relicCritDmgBoost*critDmgBoost*cm;
+        }
+        let effDef = Math.max(0, gameState.enemyDefense-gameState.enemyDefenseReduction);
+        if (gameState.itemArmorBreakCount>0) effDef=0;
+        else if (gameState.itemPoisonActive) effDef=Math.floor(effDef/2);
+        dmg = Math.max(1, dmg - Math.floor(dmg*effDef/100));
+        gameState.enemyHp = Math.max(0, gameState.enemyHp-dmg);
+        if (gameState.itemBurnActive) gameState.enemyHp=Math.max(0,gameState.enemyHp-Math.floor(cs.attack*0.1));
+        addAttackLog(true, dmg, isCrit, critDmgPct);
+      }
+
+      if (gameState.itemArmorBreakCount>0) { gameState.itemArmorBreakCount--; if(!gameState.itemArmorBreakCount) resetItemToNone(); }
+      if (gameState.poisonStacks>0) gameState.enemyHp=Math.max(0,gameState.enemyHp-gameState.poisonStacks);
+      if (gameState.relicId===6) gameState.coins+=Math.floor(Math.random()*10)+1;
+      updateUI();
+    }
+
+    function enemyAttack() {
+      document.getElementById('enemyCharacter').classList.add('attacking');
+      setTimeout(()=>document.getElementById('enemyCharacter').classList.remove('attacking'),500);
+
+      if (gameState.relicId===5 && Math.random()<0.5) {
+        gameState.enemyHp=Math.max(0,gameState.enemyHp-Math.max(1,gameState.enemyBaseAttack-gameState.enemyAttackReduction));
+        updateUI(); return;
+      }
+      if (gameState.itemConfusionCount>0) {
+        if (Math.random()<0.5) { gameState.enemyHp=Math.max(0,gameState.enemyHp-Math.max(1,gameState.enemyBaseAttack-gameState.enemyAttackReduction)); updateUI(); return; }
+        gameState.itemConfusionCount--;
+        if (!gameState.itemConfusionCount) resetItemToNone();
+      }
+      if (gameState.relicId===2 && Math.random()<0.5) { updateUI(); return; }
+      if (gameState.itemShieldCount>0) { gameState.itemShieldCount--; if(!gameState.itemShieldCount) resetItemToNone(); updateUI(); return; }
+
+      const cs = getCurrentPlayerStats();
+      let dmg = Math.max(1, gameState.enemyBaseAttack-gameState.enemyAttackReduction);
+      const isCrit = Math.random()*100 < gameState.enemyCritRate;
+      let critDmgPct = 0;
+      if (isCrit) { dmg=Math.floor(dmg*(100+gameState.enemyCritDamage)/100); critDmgPct=gameState.enemyCritDamage; }
+      const finalDmg = Math.max(1, dmg-Math.floor(dmg*cs.defense/100));
+      gameState.playerHp = Math.max(0, gameState.playerHp-finalDmg);
+      addAttackLog(false, finalDmg, isCrit, critDmgPct);
+      updateUI();
+    }
+
+    function resetItemToNone() {
+      gameState.itemId=0; gameState.itemBurnActive=false; gameState.itemShieldCount=0;
+      gameState.itemAttackBoostCount=0; gameState.itemPoisonActive=false;
+      gameState.itemCritDamageBoostCount=0; gameState.itemConfusionCount=0;
+      gameState.itemCritBoostCount=0; gameState.itemArmorBreakCount=0;
+      updateUI(); saveGame();
+    }
+
+    function updateUI() {
+      // check expirations
+      if (gameState.itemLuckEndTime>0 && gameState.itemLuckEndTime<=Date.now() && gameState.itemId===7) { gameState.itemLuckEndTime=0; resetItemToNone(); }
+      if (gameState.itemTransformEndTime>0 && gameState.itemTransformEndTime<=Date.now()) {
+        gameState.itemTransformEndTime=0; gameState.itemTransformStats=null;
+        const av=document.querySelector('#playerCharacter .character-avatar');
+        if(av) av.textContent='🦸';
+        if(gameState.itemId===10) resetItemToNone();
+      }
+      if (gameState.itemInstakillEndTime>0 && gameState.itemInstakillEndTime<=Date.now() && gameState.itemId===11) { gameState.itemInstakillEndTime=0; resetItemToNone(); }
+
+      // indicators
+      if (gameState.freeMode) { document.getElementById('freeModeIndicator').style.display='inline'; document.getElementById('newGamePlusIndicator').style.display='none'; }
+      else if (gameState.newGamePlus>0) { document.getElementById('newGamePlusIndicator').style.display='inline'; document.getElementById('newGamePlusIndicator').textContent=`⭐ NG+${gameState.newGamePlus}`; document.getElementById('freeModeIndicator').style.display='none'; }
+      else { document.getElementById('newGamePlusIndicator').style.display='none'; document.getElementById('freeModeIndicator').style.display='none'; }
+
+      document.getElementById('currentStage').textContent = gameState.currentStage;
+      document.getElementById('coinsDisplay').textContent = gameState.coins;
+      document.getElementById('shopCoinsDisplay').textContent = gameState.coins;
+      document.getElementById('upgradeCoins').textContent = gameState.coins;
+      document.getElementById('attackCountDisplay').textContent = gameState.attackCount;
+
+      const cs = getCurrentPlayerStats();
+      const dispMaxHp = gameState.relicId===1 ? cs.maxHp*2 : cs.maxHp;
+      document.getElementById('playerHp').textContent = `${gameState.playerHp}/${dispMaxHp}`;
+      document.getElementById('playerAttack').textContent = cs.attack;
+      document.getElementById('playerDefense').textContent = `${cs.defense}%${cs.defense>=90?' MAX':''}`;
+      document.getElementById('playerCrit').textContent = `${cs.critRate}%${cs.critRate>=100?' MAX':''}`;
+      document.getElementById('playerCritDamage').textContent = `${cs.critDamage}%`;
+      document.getElementById('playerHpBar').style.width = `${(gameState.playerHp/dispMaxHp)*100}%`;
+
+      document.getElementById('enemyHp').textContent = `${gameState.enemyHp}/${gameState.enemyMaxHp}`;
+      document.getElementById('enemyAttack').textContent = Math.max(1,gameState.enemyBaseAttack-gameState.enemyAttackReduction);
+      document.getElementById('enemyDefense').textContent = `${Math.max(0,gameState.enemyDefense-gameState.enemyDefenseReduction)}%${gameState.enemyDefense>=50?' MAX':''}`;
+      document.getElementById('enemyCrit').textContent = `${gameState.enemyCritRate}%`;
+      document.getElementById('enemyCritDamage').textContent = `${gameState.enemyCritDamage}%`;
+      document.getElementById('enemyHpBar').style.width = `${(gameState.enemyHp/gameState.enemyMaxHp)*100}%`;
+      document.getElementById('enemyAvatar').textContent = monsters[(gameState.currentStage-1)%monsters.length];
+      document.getElementById('enemyName').textContent = `Monster Lv.${gameState.currentStage}`;
+
+      const w = weapons[gameState.weaponId];
+      document.getElementById('currentWeaponIcon').textContent = w.icon;
+      document.getElementById('currentWeaponName').textContent = w.name;
+      document.getElementById('currentWeaponEffect').textContent = w.effect;
+
+      const it = items[gameState.itemId];
+      let itEffect = it.effect;
+      if (gameState.itemAttackBoostCount>0) itEffect=`ATK ×2 (${gameState.itemAttackBoostCount} left)`;
+      else if (gameState.itemCritDamageBoostCount>0) itEffect=`Crit DMG ×2 (${gameState.itemCritDamageBoostCount} left)`;
+      else if (gameState.itemCritBoostCount>0) itEffect=`Must Crit (${gameState.itemCritBoostCount} left)`;
+      else if (gameState.itemShieldCount>0) itEffect=`Shield (${gameState.itemShieldCount} left)`;
+      else if (gameState.itemConfusionCount>0) itEffect=`Chaos (${gameState.itemConfusionCount} left)`;
+      else if (gameState.itemArmorBreakCount>0) itEffect=`Armor Break (${gameState.itemArmorBreakCount} left)`;
+      else if (gameState.itemLuckEndTime>Date.now()) itEffect=`Coins ×2 (${Math.ceil((gameState.itemLuckEndTime-Date.now())/1000)}s)`;
+      else if (gameState.itemTransformEndTime>Date.now()) itEffect=`Transformed (${Math.ceil((gameState.itemTransformEndTime-Date.now())/1000)}s)`;
+      else if (gameState.itemInstakillEndTime>Date.now()) itEffect=`Instant Kill (${Math.ceil((gameState.itemInstakillEndTime-Date.now())/1000)}s)`;
+      else if (gameState.itemBurnActive) itEffect=`Burning (active)`;
+      else if (gameState.itemPoisonActive) itEffect=`Toxin (active)`;
+      document.getElementById('currentItemIcon').textContent = it.icon;
+      document.getElementById('currentItemName').textContent = it.name;
+      document.getElementById('currentItemEffect').textContent = itEffect;
+
+      const r = relics[gameState.relicId];
+      document.getElementById('currentRelicIcon').textContent = r.icon;
+      document.getElementById('currentRelicName').textContent = r.name;
+      document.getElementById('currentRelicEffect').textContent = r.effect;
+      document.getElementById('relicShopCoinsDisplay').textContent = gameState.coins;
+
+      document.getElementById('upgradeHpButton').disabled = gameState.coins<5;
+      document.getElementById('upgradeAttackButton').disabled = gameState.coins<5;
+      document.getElementById('upgradeDefenseButton').disabled = gameState.coins<5 || gameState.playerDefense>=90;
+      document.getElementById('upgradeCritButton').disabled = gameState.coins<5 || gameState.playerCritRate>=100;
+      document.getElementById('upgradeCritDamageButton').disabled = gameState.coins<5;
+    }
+
+    function nextWord() {
+      const ri = Math.floor(Math.random()*wordBank.length);
+      gameState.currentWord = wordBank[ri];
+      document.getElementById('wordDisplay').textContent = gameState.currentWord.hint;
+      document.getElementById('pinyinDisplay').textContent = gameState.currentWord.pinyin;
+      document.getElementById('typingInput').value = '';
+    }
+
+    function handleCorrectAnswer() {
+      let base = gameState.relicId===7 ? 10 : 5;
+      gameState.coins += gameState.itemLuckEndTime>Date.now() ? base*2 : base;
+      updateUI(); saveGame(); nextWord();
+    }
+
+    function handleStageComplete() {
+      stopBattle();
+      gameState.maxStage = Math.max(gameState.maxStage, gameState.currentStage+1);
+      saveGame();
+      if (gameState.currentStage>=100) { showVictoryScreen(); }
+      else { gameState.currentStage++; setTimeout(()=>startStageWithoutNewWord(gameState.currentStage),1000); }
+    }
+
+    function showVictoryScreen() {
+      stopPlayTimer();
+      const overlay = document.createElement('div');
+      overlay.id = 'victoryOverlay';
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;';
+      const box = document.createElement('div');
+      box.style.cssText = 'background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);padding:60px;border-radius:20px;text-align:center;color:white;max-width:800px;';
+      const ngp = gameState.newGamePlus;
+      box.innerHTML = `
+        <div style="font-size:60px;margin-bottom:30px;">${ngp===0?'🎉':'🏆'}</div>
+        <div style="font-size:28px;margin-bottom:20px;">${ngp===0?'Congratulations! You cleared all 100 stages!':'You are truly unstoppable!'}</div>
+        <div style="font-size:26px;margin-bottom:40px;color:#ffd700;">⏱️ Total Time: ${formatPlayTime(playTimeElapsed)}</div>
+        ${ngp===0?`<button class="victory-btn" data-action="newgameplus" style="padding:18px 40px;font-size:20px;border:none;border-radius:12px;background:#ffd700;color:#333;font-weight:bold;cursor:pointer;margin:10px;">⭐ New Game+</button>`:''}
+        ${ngp>0?`<button class="victory-btn" data-action="newgameplus2" style="padding:18px 40px;font-size:20px;border:none;border-radius:12px;background:#ffd700;color:#333;font-weight:bold;cursor:pointer;margin:10px;">⭐ Another NG+</button>`:''}
+        ${ngp>0?`<button class="victory-btn" data-action="freemode" style="padding:18px 40px;font-size:20px;border:none;border-radius:12px;background:#00ff00;color:#333;font-weight:bold;cursor:pointer;margin:10px;">🎮 Free Mode</button>`:''}
+        <button class="victory-btn" data-action="restart" style="padding:18px 40px;font-size:20px;border:none;border-radius:12px;background:white;color:#f5576c;font-weight:bold;cursor:pointer;margin:10px;">🔄 Restart</button>
+        <button class="victory-btn" data-action="home" style="padding:18px 40px;font-size:20px;border:none;border-radius:12px;background:rgba(255,255,255,0.3);color:white;font-weight:bold;cursor:pointer;margin:10px;">🏠 Home</button>
+      `;
+      overlay.appendChild(box); document.body.appendChild(overlay);
+      setTimeout(()=>{
+        overlay.querySelectorAll('.victory-btn').forEach(btn=>{
+          btn.addEventListener('click',function(){
+            const a=this.getAttribute('data-action');
+            const ov=document.getElementById('victoryOverlay');
+            if(ov) document.body.removeChild(ov);
+            if(a==='newgameplus'){gameState.newGamePlus=1;gameState.currentStage=1;gameState.maxStage=100;gameState.freeMode=false;gameState.useHardDifficulty=true;saveGame();resetPlayTimer();startGame();}
+            else if(a==='newgameplus2'){gameState.newGamePlus++;gameState.currentStage=1;gameState.maxStage=100;gameState.freeMode=false;gameState.useHardDifficulty=true;saveGame();resetPlayTimer();startGame();}
+            else if(a==='freemode'){gameState.freeMode=true;gameState.currentStage=1;saveGame();resetPlayTimer();startGame();}
+            else if(a==='restart'){resetGame();resetPlayTimer();startGame();}
+            else if(a==='home'){resetPlayTimer();updateHomeScreen();showScreen('homeScreen');}
+          });
+        });
+      },100);
+    }
+
+    function handleDefeat() {
+      stopBattle();
+      document.getElementById('defeatNotice').style.display='block';
+      let cd=5;
+      document.getElementById('retryCountdown').textContent=cd;
+      const t=setInterval(()=>{
+        cd--;
+        document.getElementById('retryCountdown').textContent=cd;
+        if(cd<=0){clearInterval(t);document.getElementById('defeatNotice').style.display='none';startStageWithoutNewWord(gameState.currentStage);}
+      },1000);
+    }
+
+    function resetGame() {
+      gameState={currentStage:1,maxStage:1,playerHp:100,playerMaxHp:100,playerAttack:10,playerDefense:0,playerCritRate:0,playerCritDamage:0,coins:0,weaponId:0,ownedWeapons:[0],itemId:0,ownedItems:[0],itemBurnActive:false,itemShieldCount:0,itemAttackBoostCount:0,itemPoisonActive:false,itemCritDamageBoostCount:0,itemConfusionCount:0,itemLuckEndTime:0,itemCritBoostCount:0,itemArmorBreakCount:0,itemTransformEndTime:0,itemTransformStats:null,itemInstakillEndTime:0,relicId:0,ownedRelics:[0],enemyHp:100,enemyMaxHp:100,enemyBaseAttack:8,enemyAttack:8,enemyDefense:0,enemyCritRate:2,enemyCritDamage:0,currentWord:null,weaponHitCount:0,poisonStacks:0,enemyDefenseReduction:0,enemyAttackReduction:0,battleTimer:5,battleInterval:null,timerInterval:null,playerAttackLog:[],enemyAttackLog:[],attackCount:0,newGamePlus:0,freeMode:false,useHardDifficulty:false};
+      saveGame();
+    }
+
+    function updateHomeScreen() {
+      const ind=document.getElementById('newGamePlusHomeIndicator');
+      const rules=document.getElementById('newGamePlusRules');
+      if(gameState.newGamePlus>0){ind.style.display='block';ind.textContent=`⭐ New Game+ ${gameState.newGamePlus} Mode ⭐`;rules.style.display='block';}
+      else{ind.style.display='none';rules.style.display='none';}
+    }
+
+    // Shop helpers
+    function openShop(){renderWeaponsShop();document.getElementById('shopOverlay').classList.add('active');}
+    function closeShop(){document.getElementById('shopOverlay').classList.remove('active');}
+    function openItemShop(){renderItemsShop();document.getElementById('itemShopOverlay').classList.add('active');}
+    function closeItemShop(){document.getElementById('itemShopOverlay').classList.remove('active');}
+    function openRelicShop(){renderRelicsShop();document.getElementById('relicShopOverlay').classList.add('active');}
+    function closeRelicShop(){document.getElementById('relicShopOverlay').classList.remove('active');}
+    function openStageSelectPopup(){renderStageSelectPopup();document.getElementById('stageOverlay').classList.add('active');}
+    function closeStageSelectPopup(){document.getElementById('stageOverlay').classList.remove('active');}
+
+    function renderWeaponsShop() {
+      const grid=document.getElementById('weaponsGrid'); grid.innerHTML='';
+      weapons.forEach(w=>{
+        const eq=gameState.weaponId===w.id, own=gameState.ownedWeapons.includes(w.id);
+        const card=document.createElement('div');
+        card.className=`weapon-card ${eq?'equipped':''}`;
+        card.innerHTML=`<div class="weapon-icon">${w.icon}</div><h3>${w.name}</h3><p>${w.effect}</p><div class="weapon-cost">${eq?'✅ Equipped':own?'🔄 Equip':'💰 '+w.cost}</div>`;
+        if(!eq) card.onclick=()=>buyWeapon(w.id);
+        grid.appendChild(card);
+      });
+    }
+
+    function buyWeapon(id) {
+      const w=weapons[id], own=gameState.ownedWeapons.includes(id);
+      if(own){gameState.weaponId=id;}
+      else if(gameState.coins>=w.cost){gameState.coins-=w.cost;gameState.weaponId=id;gameState.ownedWeapons.push(id);}
+      updateUI();renderWeaponsShop();saveGame();
+    }
+
+    function renderItemsShop() {
+      const grid=document.getElementById('itemsGrid'); grid.innerHTML='';
+      document.getElementById('itemShopCoinsDisplay').textContent=gameState.coins;
+      items.forEach(it=>{
+        const eq=gameState.itemId===it.id;
+        const card=document.createElement('div');
+        card.className=`weapon-card ${eq?'equipped':''}`;
+        card.innerHTML=`<div class="weapon-icon">${it.icon}</div><h3>${it.name}</h3><p>${it.effect}</p><div class="weapon-cost">${eq?'✅ Active':it.id===0?'🔄 Unequip':'💰 '+it.cost}</div>`;
+        if(!eq) card.onclick=()=>buyItem(it.id);
+        grid.appendChild(card);
+      });
+    }
+
+    function buyItem(id) {
+      if(id===0){resetItemToNone();updateUI();renderItemsShop();return;}
+      const it=items[id];
+      if(gameState.coins>=it.cost){gameState.coins-=it.cost;gameState.itemId=id;activateItem(id);updateUI();renderItemsShop();saveGame();}
+    }
+
+    function renderRelicsShop() {
+      const grid=document.getElementById('relicsGrid'); grid.innerHTML='';
+      document.getElementById('relicShopCoinsDisplay').textContent=gameState.coins;
+      relics.forEach(r=>{
+        const eq=gameState.relicId===r.id, own=gameState.ownedRelics.includes(r.id);
+        const card=document.createElement('div');
+        card.className=`weapon-card ${eq?'equipped':''}`;
+        card.innerHTML=`<div class="weapon-icon">${r.icon}</div><h3>${r.name}</h3><p>${r.effect}</p><div class="weapon-cost">${eq?'✅ Equipped':own?'🔄 Equip':'💰 '+r.cost}</div>`;
+        if(!eq) card.onclick=()=>buyRelic(r.id);
+        grid.appendChild(card);
+      });
+    }
+
+    function buyRelic(id) {
+      const r=relics[id], own=gameState.ownedRelics.includes(id);
+      if(own){gameState.relicId=id;}
+      else if(gameState.coins>=r.cost){gameState.coins-=r.cost;gameState.relicId=id;gameState.ownedRelics.push(id);}
+      updateUI();renderRelicsShop();saveGame();
+    }
+
+    function activateItem(id) {
+      gameState.itemBurnActive=false;gameState.itemShieldCount=0;gameState.itemAttackBoostCount=0;
+      gameState.itemPoisonActive=false;gameState.itemCritDamageBoostCount=0;gameState.itemConfusionCount=0;
+      gameState.itemCritBoostCount=0;gameState.itemArmorBreakCount=0;
+      switch(id){
+        case 1: gameState.itemBurnActive=true; break;
+        case 2: gameState.itemShieldCount=5; break;
+        case 3: gameState.itemAttackBoostCount=5; break;
+        case 4: gameState.itemPoisonActive=true; break;
+        case 5: gameState.itemCritDamageBoostCount=5; break;
+        case 6: gameState.itemConfusionCount=5; break;
+        case 7: gameState.itemLuckEndTime=Date.now()+180000; break;
+        case 8: gameState.itemCritBoostCount=5; break;
+        case 9: gameState.itemArmorBreakCount=5; break;
+        case 10:
+          const rs=Math.floor(Math.random()*51)+50;
+          gameState.itemTransformStats=calcMonsterStats(rs,gameState.newGamePlus>0);
+          gameState.itemTransformEndTime=Date.now()+180000;
+          const av=document.querySelector('#playerCharacter .character-avatar');
+          if(av) av.textContent=monsters[(rs-1)%monsters.length];
+          break;
+        case 11: gameState.itemInstakillEndTime=Date.now()+180000; break;
+      }
+    }
+
+    function renderStageSelectPopup() {
+      const grid=document.getElementById('stagesPopupGrid'); grid.innerHTML='';
+      const ds=document.getElementById('difficultySelector');
+      if(gameState.newGamePlus>0){ds.style.display='block';document.getElementById('normalDifficultyButton').style.opacity=gameState.useHardDifficulty?'0.5':'1';document.getElementById('hardDifficultyButton').style.opacity=gameState.useHardDifficulty?'1':'0.5';}
+      else ds.style.display='none';
+      for(let i=1;i<=100;i++){
+        const btn=document.createElement('button');
+        btn.className='stage-btn';btn.textContent=i;
+        const unlocked=gameState.newGamePlus>0||gameState.freeMode||i<=gameState.maxStage;
+        if(!unlocked) btn.disabled=true;
+        if(i===gameState.currentStage) btn.classList.add('current');
+        btn.onclick=()=>{if(unlocked){closeStageSelectPopup();startStage(i);}};
+        grid.appendChild(btn);
+      }
+    }
+
+    function showStageSelect() {
+      loadGame();
+      const grid=document.getElementById('stagesGrid'); grid.innerHTML='';
+      for(let i=1;i<=100;i++){
+        const btn=document.createElement('button');
+        btn.className='stage-btn';btn.textContent=i;
+        const unlocked=gameState.newGamePlus>0||gameState.freeMode||i<=gameState.maxStage;
+        if(!unlocked) btn.disabled=true;
+        if(i===gameState.currentStage) btn.classList.add('current');
+        btn.onclick=()=>{if(unlocked) startStage(i);};
+        grid.appendChild(btn);
+      }
+      showScreen('stageSelectScreen');
+    }
+
+    // Upgrades
+    function upgradeHp(){if(gameState.coins>=5){gameState.coins-=5;gameState.playerMaxHp+=100;gameState.playerHp+=100;updateUI();saveGame();}}
+    function upgradeAttack(){if(gameState.coins>=5){gameState.coins-=5;gameState.playerAttack+=5;updateUI();saveGame();}}
+    function upgradeDefense(){if(gameState.coins>=5&&gameState.playerDefense<90){gameState.coins-=5;gameState.playerDefense=Math.min(90,gameState.playerDefense+2);updateUI();saveGame();}}
+    function upgradeCrit(){if(gameState.coins>=5&&gameState.playerCritRate<100){gameState.coins-=5;gameState.playerCritRate=Math.min(100,gameState.playerCritRate+5);updateUI();saveGame();}}
+    function upgradeCritDamage(){if(gameState.coins>=5){gameState.coins-=5;gameState.playerCritDamage+=5;updateUI();saveGame();}}
+
+    function clearGameData() {
+      const ov=document.createElement('div');
+      ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;';
+      const box=document.createElement('div');
+      box.style.cssText='background:linear-gradient(135deg,#ff6b6b 0%,#ee5a6f 100%);padding:40px;border-radius:20px;text-align:center;color:white;';
+      box.innerHTML=`<div style="font-size:48px;margin-bottom:20px;">⚠️</div><div style="font-size:24px;margin-bottom:30px;">Delete all save data? This cannot be undone!</div><button id="confirmClear" style="padding:15px 30px;font-size:18px;border:none;border-radius:10px;background:white;color:#ff6b6b;font-weight:bold;cursor:pointer;margin:10px;">Yes, Delete</button><button id="cancelClear" style="padding:15px 30px;font-size:18px;border:none;border-radius:10px;background:rgba(255,255,255,0.3);color:white;font-weight:bold;cursor:pointer;margin:10px;">Cancel</button>`;
+      ov.appendChild(box);document.body.appendChild(ov);
+      document.getElementById('confirmClear').onclick=()=>{
+        localStorage.removeItem('engTypingGameSave');resetGame();document.body.removeChild(ov);
+        const sb=document.createElement('div');
+        sb.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,200,0,0.9);padding:30px 50px;border-radius:15px;color:white;font-size:24px;z-index:10001;';
+        sb.textContent='✅ Save data cleared!';document.body.appendChild(sb);
+        setTimeout(()=>document.body.removeChild(sb),2000);
+      };
+      document.getElementById('cancelClear').onclick=()=>document.body.removeChild(ov);
+    }
+
+    // Long-press upgrade
+    function setupLongPress(btnId, fn) {
+      const btn=document.getElementById(btnId);
+      let ival=null, tval=null;
+      btn.addEventListener('click',fn);
+      btn.addEventListener('mousedown',()=>{tval=setTimeout(()=>{ival=setInterval(fn,100);},500);});
+      const stop=()=>{if(tval){clearTimeout(tval);tval=null;}if(ival){clearInterval(ival);ival=null;}};
+      btn.addEventListener('mouseup',stop);btn.addEventListener('mouseleave',stop);
+    }
+
+    setupLongPress('upgradeHpButton',upgradeHp);
+    setupLongPress('upgradeAttackButton',upgradeAttack);
+    setupLongPress('upgradeDefenseButton',upgradeDefense);
+    setupLongPress('upgradeCritButton',upgradeCrit);
+    setupLongPress('upgradeCritDamageButton',upgradeCritDamage);
+
+    // Event listeners
+    document.getElementById('startButton').addEventListener('click',startGame);
+    document.getElementById('stageSelectButton').addEventListener('click',showStageSelect);
+    document.getElementById('clearDataButton').addEventListener('click',clearGameData);
+    document.getElementById('backToHomeButton').addEventListener('click',()=>{stopBattle();stopPlayTimer();saveGame();updateHomeScreen();showScreen('homeScreen');});
+    document.getElementById('backToHomeFromStageButton').addEventListener('click',()=>showScreen('homeScreen'));
+    document.getElementById('openShopButton').addEventListener('click',openShop);
+    document.getElementById('closeShopButton').addEventListener('click',closeShop);
+    document.getElementById('openItemShopButton').addEventListener('click',openItemShop);
+    document.getElementById('closeItemShopButton').addEventListener('click',closeItemShop);
+    document.getElementById('openRelicShopButton').addEventListener('click',openRelicShop);
+    document.getElementById('closeRelicShopButton').addEventListener('click',closeRelicShop);
+    document.getElementById('openStageSelectButton').addEventListener('click',openStageSelectPopup);
+    document.getElementById('closeStageSelectButton').addEventListener('click',closeStageSelectPopup);
+    document.getElementById('normalDifficultyButton').addEventListener('click',()=>{gameState.useHardDifficulty=false;saveGame();renderStageSelectPopup();});
+    document.getElementById('hardDifficultyButton').addEventListener('click',()=>{gameState.useHardDifficulty=true;saveGame();renderStageSelectPopup();});
+
+    // Typing input — case-insensitive matching
+    document.getElementById('typingInput').addEventListener('keypress',function(e){
+      if(e.key==='Enter'){
+        const input=this.value.trim().toLowerCase();
+        if(input===gameState.currentWord.word.toLowerCase()){
+          handleCorrectAnswer();
+        } else {
+          this.value='';
+        }
+      }
+    });
+
+    // Init
+    loadGame();
+    updateHomeScreen();
+  </script>
+ </body>
+</html>
