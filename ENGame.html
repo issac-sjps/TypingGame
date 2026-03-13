@@ -595,9 +595,10 @@
 
      <!-- Typing area -->
      <div class="typing-area">
-      <div style="font-size:13px; color:#cce0ff; margin-bottom:3px;">📖 中文意思 → 輸入英文單字：</div>
-      <div class="word-display" id="wordDisplay" style="font-size:42px; color:#ffffff; letter-spacing:2px;">準備開始...</div>
-      <div class="pinyin-display" id="pinyinDisplay" style="font-size:15px; color:#aaddff;"></div>
+      <div style="font-size:13px; color:#cce0ff; margin-bottom:3px;">⌨️ 看到英文單字，請輸入並按 Enter：</div>
+      <div id="wordDisplayEng" style="font-size:48px; font-weight:bold; color:#ffd700; letter-spacing:4px; margin-bottom:4px;">...</div>
+      <div class="word-display" id="wordDisplay" style="font-size:22px; color:#ffffff; margin-bottom:4px;">準備開始...</div>
+      <div class="pinyin-display" id="pinyinDisplay" style="font-size:14px; color:#aaddff;"></div>
       <input type="text" class="typing-input" id="typingInput" placeholder="Type the English word and press Enter" autocomplete="off" autocorrect="off" spellcheck="false">
      </div>
     </div>
@@ -1216,7 +1217,11 @@
     function nextWord() {
       const ri = Math.floor(Math.random()*wordBank.length);
       gameState.currentWord = wordBank[ri];
-      document.getElementById('wordDisplay').textContent = gameState.currentWord.hint;
+      // 大字顯示英文單字（金色）
+      document.getElementById('wordDisplayEng').textContent = gameState.currentWord.word;
+      // 中字顯示中文意思（白色）
+      document.getElementById('wordDisplay').textContent = '中文：' + gameState.currentWord.hint;
+      // 小字顯示分類
       document.getElementById('pinyinDisplay').textContent = gameState.currentWord.pinyin;
       document.getElementById('typingInput').value = '';
     }
